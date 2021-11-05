@@ -103,8 +103,10 @@ ul {
 .redips-drag {
 	width: 90px;
 	height: 45px;
+	border: 2px outset gray;
+	border-style: outset !important; /* override redips style */
 	border-radius: 5px;
-	background: #0cc;
+	background: white;
 	/* Center this within td */
 	margin-left: auto;
 	margin-right: auto;
@@ -114,6 +116,11 @@ ul {
 	align-items: center;
 	text-align: center;
 	line-height: 1;
+}
+
+.redips-drag:hover { 
+	background: yellow;
+	border-color: red;
 }
 
 .redips-drag.warning {

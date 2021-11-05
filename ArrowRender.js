@@ -26,8 +26,8 @@ const COLORS = ["#2196F3" /*blue*/, "#4CAF50" /*green*/, "#9C27B0" /*purple*/,
 	"#FFC107" /*amber*/, "#CDDC39" /*lime*/, "#673AB7" /*deep purple*/,
 	"#FF9800" /*orange*/, "#FFEB3B" /*yellow*/, "#009688" /*teal*/,
 	"#03A9F4" /*light blue*/, "#607D8B" /*blue grey*/];
-const ARROWS_FOR_COLOR = 2; // Minimum number of arrows leaving a course before they will be given unique colors
-const DEFAULT_COLOR = "black"; // Color of arrows that don't meet the minimum
+const ARROWS_FOR_COLOR = 999; // Minimum number of arrows leaving a course before they will be given unique colors
+const DEFAULT_COLOR = "gray"; // Color of arrows that don't meet the minimum
 
 /**
 * @class
@@ -145,7 +145,12 @@ class ArrowRender {
 			], [Number.MAX_VALUE, Number.MAX_VALUE]);
 
 			let color = courseColors[arrow.yIn][arrow.xIn];
-			this.draw.polyline(path).fill('none').move(LEFT_OFFSET+mins[0], TOP_OFFSET+mins[1]).stroke({color: color, width: 2, linecap: 'round', linejoin: 'round'});
+			this.draw.polyline(path)
+				.fill('none')
+				.move(LEFT_OFFSET+mins[0], TOP_OFFSET+mins[1])
+				.stroke({color: color, width: 2, linecap: 'round', linejoin: 'round', dasharray: arrow.fromSide ? 4 : 0 /* Dashed lines for corequisites */}) 
+				.attr('data-from', arrow.xIn + ',' + arrow.yIn)
+				.attr('data-to', arrow.xOut + ',' + arrow.yOut);
 		}
 	}
 
