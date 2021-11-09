@@ -172,6 +172,10 @@ class Executive {
 
 		// Test plan
 		//this.createTestPlan();
+		
+		// Automatically load first plan (TODO - TEMPORARY)
+		document.getElementById("planSelect").selectedIndex = "1";
+		document.getElementById("load-plan").click();
 	}
 
 	/**
