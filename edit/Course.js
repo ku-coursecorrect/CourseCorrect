@@ -26,9 +26,31 @@ class Course {
 	* @return {string} The HTML for a draggable div representing this course
 	**/
 	to_html() {
-		return '<div class="redips-drag" data-toggle="tooltip" title="' + this.title + '" data-course="' + this.course_code + '">' + this.course_code + "<br>(" + this.credit_hour + ")</div>";
+		return '<div class="redips-drag" data-toggle="tooltip" title="' + this.title + '" data-course="' + this.course_code + '" onmouseover="hover(this)" onmouseout="unhover(this)">' + this.course_code + "<br>(" + this.credit_hour + ")</div>";
 	}
 }
+
+function hover(course) {
+	// Get the grid coordinates of the course object from the data attributes of the parent td
+	let coords = course.parentElement.dataset.x + "," + course.parentElement.dataset.y;
+	let arrows = document.querySelectorAll("#arrows polyline");
+	for (arrow of arrows) {
+		if (arrow.dataset.from == coords) {
+			arrow.style.stroke = "#B20206"; // Darker red (color of bottom/right of course border)
+		}
+		if (arrow.dataset.to == coords) {
+			arrow.style.stroke = "#FF040F"; // Lighter red (color of top/left of course border)
+		}
+	}
+}
+
+function unhover(course) {
+	let arrows = document.querySelectorAll("#arrows polyline");
+	for (arrow of arrows) {
+		arrow.style.stroke = "";
+	}
+}
+
 COURSES = [
 	new Course("EECS 101", "New Student Seminar", [], ["MATH 104"], [0,0,1], 1),
 	new Course("EECS 140", "Introd to Digital Logic Design", [], ["MATH 104"], [1,0,1], 4),

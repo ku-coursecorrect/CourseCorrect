@@ -1,5 +1,5 @@
-# gradplan-graphic
-A visual tool for planning courses through to graduation. Available to use on [GitHub Pages here](https://eecs448-locked-in-coders.github.io/gradplan-graphic/).
+# CourseCorrect
+A visual tool for planning courses through to graduation. Built for the University of Kansas Computer Science Senior Design course (EECS 581 and EECS 582). Based on the [Gradplan Graphic](https://github.com/ku-coursecorrect/coursecorrect) project for Software Engineering (EECS 448).
 
 # Works cited
 - [Bootstrap 4](https://getbootstrap.com/) for layout and theme
