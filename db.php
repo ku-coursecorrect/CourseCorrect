@@ -1,6 +1,6 @@
 <?php
+	include_once('db_creds.php');
 	// MySQL
-	$DB_INFO = json_decode(file_get_contents("db_creds.json"), true);
 
 	// Start the session to keep track of who's logged in
 	session_start();
