@@ -37,21 +37,45 @@
 						</tr>
 					</thead>
 					<tbody>
-						<!--<tr>
-							<td>Reviewed <span class="badge badge-success">Approved</span></td><td>Computer Science 2018</td><td>Oct 28<sup>th</sup>, 2018</td><td>Oct 12<sup>th</sup>, 2021</td><td class="text-nowrap"><a href="../edit" class="text-dark"><i class="fas fa-edit"></i></a><i class="fas fa-trash ml-3"></i></td></tr>
-						</tr>
-						<tr>
-							<td>Sent to advisor <span class="badge badge-info">Pending</span></td><td>Computer Science 2018</td><td>Oct 28<sup>th</sup>, 2018</td><td>Oct 12<sup>th</sup>, 2021</td><td class="text-nowrap"><a href="../edit" class="text-dark"><i class="fas fa-edit"></i></a><i class="fas fa-trash ml-3"></i></td></tr>
-						</tr>-->
-						<tr>
-							<td>My official plan <span class="badge badge-warning">Warning</span></td><td>Computer Science 2018</td><td>Oct 28<sup>th</sup>, 2018</td><td>Oct 12<sup>th</sup>, 2021</td><td class="text-nowrap"><a href="../edit?plan=1" class="text-dark"><i class="fas fa-edit"></i></a><i class="fas fa-trash ml-3"></i></td></tr>
-						</tr>
-						<tr>
-							<td>Astronomy test <span class="badge badge-danger">Incomplete</span></td><td>IC Astronomy 2018</td><td>Mar 1<sup>st</sup>, 2020</td><td>Mar 23<sup>rd</sup>, 2020</td><td class="text-nowrap"><a href="../edit" class="text-dark"><i class="fas fa-edit"></i></a><i class="fas fa-trash ml-3"></i></td></tr>
-						</tr>
-						<tr>
-							<td>EECS 101 plan</td><td>Computer Science 2018</td><td>Oct 28<sup>th</sup>, 2018</td><td>Oct 31<sup>st</sup>, 2018</td><td class="text-nowrap"><a href="../edit" class="text-dark"><i class="fas fa-edit"></i></a><i class="fas fa-trash ml-3"></i></td></tr>
-						</tr>
+						<?php
+							//require_once "../db.php";
+							
+							// Status codes bit flags (TODO: put this in a shared PHP file somewhere)
+							abstract class PlanStatus {
+								const Complete = 1;
+								const Incomplete = 2;
+								const Warning = 4;
+								const Submitted = 8;
+								const Approved = 16;
+							}
+							define("DATE_FORMAT", "M jS, Y"); // Mar 15th, 2020
+							
+							// TODO: These will come from database queries
+							$plans = [
+								["id" => 1, "name" => "My official plan", "major" => "Computer Science 2018", "created" => "2018-10-28", "modified" => "2021-10-12", "status" => 4+16],
+								["id" => 2, "name" => "Astronomy test", "major" => "IC Astronomy 2018", "created" => "2020-03-01", "modified" => "2020-05-23", "status" => 2],
+								["id" => 3, "name" => "EECS 101 plan", "major" => "Computer Science 2018", "created" => "2018-10-18", "modified" => "2018-10-31", "status" => 1],
+							];
+							
+							foreach ($plans as $plan) {
+								$badges = "";
+								if ($plan["status"] & PlanStatus::Incomplete) $badges .= '<span class="badge badge-danger">Incomplete</span>';
+								if ($plan["status"] & PlanStatus::Warning) $badges .= '<span class="badge badge-warning">Warning</span>';
+								if ($plan["status"] & PlanStatus::Submitted) $badges .= '<span class="badge badge-info">Pending</span>';
+								if ($plan["status"] & PlanStatus::Approved) $badges .= '<span class="badge badge-success">Approved</span>';
+								
+								echo "<tr>";
+								echo "<td>" . $plan["name"] . $badges . "</td>";
+								echo "<td>" . $plan["major"] . "</td>";
+								echo "<td>" . date(DATE_FORMAT, strtotime($plan["created"])) . "</td>";
+								echo "<td>" . date(DATE_FORMAT, strtotime($plan["modified"])) . "</td>";
+								echo '<td class="text-nowrap">';
+								echo '<a href="../edit?plan=' . $plan["id"] . '" class="text-dark"><i class="fas fa-edit"></i></a>';
+								echo '<i class="fas fa-trash ml-3"></i>'; // TODO: Display a delete confirmation modal
+								echo "</td>";
+								echo "</tr>";
+							}
+						?>
 					</tbody>
 				</table>
 			</div>
