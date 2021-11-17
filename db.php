@@ -15,9 +15,15 @@
 		private $conn;
 		
 		public function __construct($dbInfo) {
-			// This line produces an uncaught PDOException if the connection to the database fails
-			$this->conn = new PDO($dbInfo["DB_TYPE"] . ":host=" . $dbInfo["HOST"] . ";dbname=" . $dbInfo["DB_NAME"], $dbInfo["USER"], $dbInfo["PASSWORD"]);
-			$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			try {
+				$this->conn = new PDO($dbInfo["DB_TYPE"] . ":host=" . $dbInfo["HOST"] . ";dbname=" . $dbInfo["DB_NAME"], $dbInfo["USER"], $dbInfo["PASSWORD"]);
+				$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			}
+			catch (PDOException $e) { // Database connection failed
+				header("Location: /error.html?code=20");
+				// TODO log the exception somewhere
+				die();
+			}
 		}
 		
 		public function query($query, $parameters = []) {
