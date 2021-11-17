@@ -174,8 +174,16 @@ class Executive {
 		//this.createTestPlan();
 		
 		// Automatically load first plan (TODO - TEMPORARY)
-		document.getElementById("planSelect").selectedIndex = "1";
-		document.getElementById("load-plan").click();
+		let plan = (new URLSearchParams(window.location.search).get("plan")) ?? "0";
+		if (plan == "0") {
+			//document.getElementById("majorSelect").selectedIndex = "1";
+			//document.getElementById("startSemesterSelect").selectedIndex = "1";
+			//document.getElementById("done").click();
+		}
+		else {
+			document.getElementById("planSelect").selectedIndex = plan;
+			document.getElementById("load-plan").click();
+		}
 	}
 
 	/**
