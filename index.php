@@ -28,13 +28,13 @@
 					<img src="images/logo.png" class="m-4 border">
 				</div>
 				<div class="text-center">
-					<a href="staff/index.html"><img src="images/kul_logon_button.png"></a>
+					<a href="staff"><img src="images/kul_logon_button.png"></a>
 				</div>
 				<div class="text-center my-3">
 					&mdash; OR &mdash;
 				</div>
 				<div class="text-center">
-					<a href="edit/index.html">
+					<a href="edit">
 						<input type="button" class="btn btn-outline-secondary" value="Continue as Guest">
 					</a>
 				</div>

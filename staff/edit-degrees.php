@@ -39,7 +39,7 @@
 					<tbody>
 						<tr>
 							<td>Computer Science</td><td>2021</td><td>May 28<sup>th</sup>, 2021</td><td>Jul 28<sup>th</sup>, 2021</td>
-							<td class="text-nowrap"><a href="edit-degree.html"><i class="fas fa-edit ml-3"></i></a><i class="fas fa-trash ml-3"></i></td>
+							<td class="text-nowrap"><a href="edit-degree.php"><i class="fas fa-edit ml-3"></i></a><i class="fas fa-trash ml-3"></i></td>
 						</tr>
 						<tr>
 							<!-- <i class="fas fa-clone"></i> -->
