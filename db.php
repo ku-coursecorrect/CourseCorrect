@@ -1,5 +1,5 @@
 <?php
-	include_once('db_creds.php');
+	require_once 'db_creds.php';
 	// MySQL
 
 	// Start the session to keep track of who's logged in
