@@ -1,12 +1,6 @@
 <?php
+	require_once 'db_creds.php';
 	// MySQL
-	$DB_INFO = [
-		"DB_TYPE" => "mysql",
-		"HOST" => "localhost",
-		"DB_NAME" => "TODO",
-		"USER" => "TODO",
-		"PASSWORD" => "TODO"
-	];
 
 	// Start the session to keep track of who's logged in
 	session_start();
