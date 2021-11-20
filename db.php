@@ -1,9 +1,5 @@
 <?php
 	require_once 'db_creds.php';
-	// MySQL
-
-	// Start the session to keep track of who's logged in
-	session_start();
 	
 	class DBConn {
 		private $conn;
@@ -32,6 +28,12 @@
 				return true;
 			}
 			catch (PDOException $e) { // Invalid SQL statement (at least that's usually the problem)
+				// Production code
+				//header("Location: /error.html?code=40");
+				// TODO log the exception somewhere
+				//die();
+			
+				// Dev/test code
 				echo "<div style='border: 4px dashed black; background: #faa; display: inline-block; font-size: 14px; text-shadow: none; color: black;'>";
 				echo "<h1 style='color: red; text-shadow: none;'>Something is probably wrong with this SQL statement.</h1>";
 

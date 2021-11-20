@@ -38,17 +38,7 @@
 					</thead>
 					<tbody>
 						<?php
-							//require_once "../db.php";
-							
-							// Status codes bit flags (TODO: put this in a shared PHP file somewhere)
-							abstract class PlanStatus {
-								const Complete = 1;
-								const Incomplete = 2;
-								const Warning = 4;
-								const Submitted = 8;
-								const Approved = 16;
-							}
-							define("DATE_FORMAT", "M jS, Y"); // Mar 15th, 2020
+							require_once "../common.php";
 							
 							// TODO: These will come from database queries
 							$plans = [
@@ -58,14 +48,8 @@
 							];
 							
 							foreach ($plans as $plan) {
-								$badges = "";
-								if ($plan["status"] & PlanStatus::Incomplete) $badges .= '<span class="badge badge-danger">Incomplete</span>';
-								if ($plan["status"] & PlanStatus::Warning) $badges .= '<span class="badge badge-warning">Warning</span>';
-								if ($plan["status"] & PlanStatus::Submitted) $badges .= '<span class="badge badge-info">Pending</span>';
-								if ($plan["status"] & PlanStatus::Approved) $badges .= '<span class="badge badge-success">Approved</span>';
-								
 								echo "<tr>";
-								echo "<td>" . $plan["name"] . $badges . "</td>";
+								echo "<td>" . $plan["name"] . planStatusToHTML($plan["status"]) . "</td>";
 								echo "<td>" . $plan["major"] . "</td>";
 								echo "<td>" . date(DATE_FORMAT, strtotime($plan["created"])) . "</td>";
 								echo "<td>" . date(DATE_FORMAT, strtotime($plan["modified"])) . "</td>";
