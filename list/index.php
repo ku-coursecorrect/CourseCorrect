@@ -5,12 +5,12 @@
     <meta charset="utf-8">
 	<link rel="icon" href="../favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="../libs/bootstrap.min.css">
 	<script src="../libs/jquery.slim.min.js"></script>
 	<script src="../libs/popper.min.js"></script>
 	<script src="../libs/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../libs/fontawesome.min.css">
+	<script src="../common.js"></script>
 </head>
 <body>
 	<nav class="navbar navbar-light bg-light mb-4">
@@ -84,30 +84,63 @@
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<div class="modal-body">
-					<form method="POST" action="create.php">
-						<div class="form-group">
-							<label for="name">Enter plan name:</label>
-							<input type="text" id="name" name="name" class="form-control" placeholder="My awesome graduation plan">
-						</div>
-						<div class="form-group">
-							<label for="year">Select handbook year:</label>
-							<select id="year" name="year" class="form-control" required>
-								<option>2018</option>
-							</select>
-						</div>
-						<div class="form-group">
-							<label for="major">Select major:</label>
-							<select id="major" name="major" class="form-control" required>
-								<option>Computer Science</option>
-							</select>
-						</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-					<button type="button" class="btn btn-success">Create</button>
-				</div>
+				<form method="POST" action="create.php">
+					<div class="modal-body">
+							<div class="form-group">
+								<label for="name">Enter plan name:</label>
+								<input type="text" id="name" name="name" class="form-control" placeholder="My awesome graduation plan">
+							</div>
+							<div class="form-group">
+								<label for="major">Select major:</label>
+								<select id="major" name="major" class="form-control" required>
+									<option disabled selected>Select a major...</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="year">Select handbook version:</label>
+								<select id="year" name="year" class="form-control" required>
+								</select>
+							</div>
+							<script>
+								const DEGREES = <?=json_encode([
+									["major" => "Computer Science", "year" => "2018"],
+									["major" => "Computer Science", "year" => "2019"],
+									["major" => "Electrical Engineering", "year" => "2019"]
+								])?>;
+								let majorSelect = document.getElementById("major");
+								let yearSelect = document.getElementById("year");
+								
+								// Create list of majors, e.g.: {"Computer Science": ["2018", "2019", ...], ...}
+								let majors = {};
+								for (let degree of DEGREES) {
+									if (degree["major"] in majors) {
+										majors[degree["major"]].push(degree["year"]);
+									}
+									else {
+										majors[degree["major"]] = [degree["year"]];
+									}
+								}
+								
+								for (let major in majors) {
+									makeElement("option", majorSelect, major, major);
+								}
+								
+								majorSelect.addEventListener("change", e => {
+									let major = majorSelect.value;
+									while (yearSelect.firstChild) yearSelect.removeChild(yearSelect.firstChild); // Clear year dropdown
+									for (let year of majors[major]) {
+										makeElement("option", yearSelect, "Fall " + year, year);
+									}
+								});
+								
+								console.log(majors);
+							</script>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-success">Create</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
