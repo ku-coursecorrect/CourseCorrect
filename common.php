@@ -21,6 +21,12 @@
 		return $badges;
 	}
 	
+	function crash($errorCode, $exception = null) {
+		header("Location: /error.html?code=20");
+		// TODO log the exception somewhere
+		die();
+	}
+	
 	// Start the session to keep track of who's logged in
 	session_start();
 ?>

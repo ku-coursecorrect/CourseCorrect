@@ -10,9 +10,7 @@
 				$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			}
 			catch (PDOException $e) { // Database connection failed
-				header("Location: /error.html?code=20");
-				// TODO log the exception somewhere
-				die();
+				crash(20, $e);
 			}
 		}
 		
@@ -29,9 +27,7 @@
 			}
 			catch (PDOException $e) { // Invalid SQL statement (at least that's usually the problem)
 				// Production code
-				//header("Location: /error.html?code=40");
-				// TODO log the exception somewhere
-				//die();
+				//crash(40, $e);
 			
 				// Dev/test code
 				echo "<div style='border: 4px dashed black; background: #faa; display: inline-block; font-size: 14px; text-shadow: none; color: black;'>";
