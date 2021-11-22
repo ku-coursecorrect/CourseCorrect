@@ -102,38 +102,29 @@
 								</select>
 							</div>
 							<script>
-								const DEGREES = <?=json_encode([
-									["major" => "Computer Science", "year" => "2018"],
-									["major" => "Computer Science", "year" => "2019"],
-									["major" => "Electrical Engineering", "year" => "2019"]
-								])?>;
-								let majorSelect = document.getElementById("major");
-								let yearSelect = document.getElementById("year");
+								const DEGREES = <?=json_encode($db->query("SELECT name AS major, year FROM degrees ORDER BY major, year DESC"))?>;
 								
 								// Create list of majors, e.g.: {"Computer Science": ["2018", "2019", ...], ...}
 								let majors = {};
-								for (let degree of DEGREES) {
-									if (degree["major"] in majors) {
-										majors[degree["major"]].push(degree["year"]);
-									}
-									else {
-										majors[degree["major"]] = [degree["year"]];
-									}
+								for (const degree of DEGREES) {
+									const key = degree["major"];
+									if (!(key in majors)) majors[key] = [];
+									majors[key].push(degree["year"]);
 								}
 								
-								for (let major in majors) {
-									makeElement("option", majorSelect, major, major);
+								const majorSelect = document.getElementById("major");
+								const yearSelect = document.getElementById("year");
+								
+								for (const major in majors) {
+									majorSelect.add(new Option(major, major));
 								}
 								
 								majorSelect.addEventListener("change", e => {
-									let major = majorSelect.value;
 									while (yearSelect.firstChild) yearSelect.removeChild(yearSelect.firstChild); // Clear year dropdown
-									for (let year of majors[major]) {
-										makeElement("option", yearSelect, "Fall " + year, year);
+									for (const year of majors[majorSelect.value]) {
+										yearSelect.add(new Option("Fall " + year, year));
 									}
 								});
-								
-								console.log(majors);
 							</script>
 					</div>
 					<div class="modal-footer">
