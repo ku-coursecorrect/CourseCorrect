@@ -28,7 +28,7 @@
 					<img src="images/logo.png" class="m-4 border">
 				</div>
 				<div class="text-center">
-					<a href="staff"><img src="images/kul_logon_button.png"></a>
+					<a href="login.php"><img src="images/kul_logon_button.png"></a>
 				</div>
 				<div class="text-center my-3">
 					&mdash; OR &mdash;

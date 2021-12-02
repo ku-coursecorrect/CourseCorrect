@@ -1,5 +1,5 @@
 <?php
-	require_once "../db.php";
+	require_once __DIR__ . "/db.php";
 	
 	define("DATE_FORMAT", "M jS, Y"); // Mar 15th, 2020
 	
@@ -22,7 +22,7 @@
 	}
 	
 	function crash($errorCode, $exception = null) {
-		header("Location: /error.html?code=20");
+		header("Location: /error.html?code=" . $errorCode);
 		// TODO log the exception somewhere
 		die();
 	}
