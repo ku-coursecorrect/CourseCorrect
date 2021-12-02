@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<?php
+	require_once "../common.php";
+?>
 <html lang="en">
 <head>
     <title>CourseCorrect</title>
@@ -13,16 +16,7 @@
 	<script src="../common.js"></script>
 </head>
 <body>
-	<nav class="navbar navbar-light bg-light mb-4">
-		<a class="navbar-brand" href="https://ku.edu">
-			<img src="../images/KUSig_Horz_Web_Blue.png" height="30" alt="">
-		</a>
-		<ul class="navbar-nav mr-auto">
-			<li class="nav-item">
-				<a class="nav-link" href="https://eecs.ku.edu">Electrical Engineering and Computer Science</a>
-			</li>
-		</ul>
-	</nav>
+	<?php display_navbar(); ?>
     <div class="container">
 		<div class="row">
 			<div class="col-lg-8">

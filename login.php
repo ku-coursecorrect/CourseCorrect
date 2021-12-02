@@ -2,7 +2,7 @@
 	require_once "common.php";
 	if (isset($_POST["kuid"])) {
 		$user = $db->query("SELECT id, kuid, permissions FROM users WHERE kuid = ?", [$_POST["kuid"]]);
-		if (count($user) < 1) crash(400);
+		if (count($user) < 1) crash(ErrorCode::LoginFailed);
 		$user = $user[0];
 		
 		$_SESSION["id"] = (int) $user["id"];

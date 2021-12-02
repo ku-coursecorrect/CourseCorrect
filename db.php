@@ -10,7 +10,7 @@
 				$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			}
 			catch (PDOException $e) { // Database connection failed
-				crash(20, $e);
+				crash(ErrorCode::DBConnectionFailed, $e);
 			}
 		}
 		
@@ -27,7 +27,7 @@
 			}
 			catch (PDOException $e) { // Invalid SQL statement (at least that's usually the problem)
 				// Production code
-				//crash(40, $e);
+				//crash(ErrorCode::DBQueryFailed, $e);
 			
 				// Dev/test code
 				echo "<div style='border: 4px dashed black; background: #faa; display: inline-block; font-size: 14px; text-shadow: none; color: black;'>";

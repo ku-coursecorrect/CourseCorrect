@@ -12,6 +12,6 @@
 		header("Location: ../edit?plan=" . $plan_id);
 	}
 	else { // Invalid degree
-		crash(120, [$_POST["major"], $_POST["year"]]);
+		crash(ErrorCode::InvalidDegree, [$_POST["major"], $_POST["year"]]);
 	}
 ?>
