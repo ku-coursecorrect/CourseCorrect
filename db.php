@@ -1,17 +1,17 @@
 <?php
 	require_once 'db_creds.php';
-	// MySQL
-
-	// Start the session to keep track of who's logged in
-	session_start();
 	
 	class DBConn {
 		private $conn;
 		
 		public function __construct($dbInfo) {
-			// This line produces an uncaught PDOException if the connection to the database fails
-			$this->conn = new PDO($dbInfo["DB_TYPE"] . ":host=" . $dbInfo["HOST"] . ";dbname=" . $dbInfo["DB_NAME"], $dbInfo["USER"], $dbInfo["PASSWORD"]);
-			$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			try {
+				$this->conn = new PDO($dbInfo["DB_TYPE"] . ":host=" . $dbInfo["HOST"] . ";dbname=" . $dbInfo["DB_NAME"], $dbInfo["USER"], $dbInfo["PASSWORD"]);
+				$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			}
+			catch (PDOException $e) { // Database connection failed
+				crash(ErrorCode::DBConnectionFailed, $e);
+			}
 		}
 		
 		public function query($query, $parameters = []) {
@@ -26,6 +26,10 @@
 				return true;
 			}
 			catch (PDOException $e) { // Invalid SQL statement (at least that's usually the problem)
+				// Production code
+				//crash(ErrorCode::DBQueryFailed, $e);
+			
+				// Dev/test code
 				echo "<div style='border: 4px dashed black; background: #faa; display: inline-block; font-size: 14px; text-shadow: none; color: black;'>";
 				echo "<h1 style='color: red; text-shadow: none;'>Something is probably wrong with this SQL statement.</h1>";
 

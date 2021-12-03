@@ -23,31 +23,27 @@
 	</nav>
     <div class="container">
 		<div class="row">
-			<div class="col-lg-8">
+			<div class="col-lg-12">
 				<div class="text-center">
 					<img src="images/logo.png" class="m-4 border">
 				</div>
 				<div class="text-center">
-					<a href="staff/index.html"><img src="images/kul_logon_button.png"></a>
+					<h1>Whoops!</h1>
 				</div>
 				<div class="text-center my-3">
-					&mdash; OR &mdash;
+					<p>
+						Something went wrong. Error code: 
+						<script>
+							// Only allow numbers in error code to prevent XSS attacks
+							document.write(new URLSearchParams(window.location.search).get("code").replace(/[^0-9]/g, ""));
+						</script>
+					</p>
 				</div>
 				<div class="text-center">
-					<a href="edit/index.html">
-						<input type="button" class="btn btn-outline-secondary" value="Continue as Guest">
+					<a href=".">
+						<input type="button" class="btn btn-primary" value="Return to login page">
 					</a>
 				</div>
-				<div class="text-center my-2">
-					<div class="alert alert-warning" role="alert">
-						<b>Warning:</b> Guests cannot save plans
-					</div>
-				</div>
-			</div>
-			<div class="col-lg-4">
-				<p class="mt-4">
-					This is a place that some help text could be included about what this application is and how students should use it. For example, links could be included to the handbook here.
-				</p>
 			</div>
 		</div>
 	</div>

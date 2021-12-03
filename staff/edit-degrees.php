@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<?php
+	require_once "../common.php";
+	require_staff();
+?>
 <html lang="en">
 <head>
     <title>Staff - CourseCorrect</title>
@@ -13,16 +17,7 @@
 	<link rel="stylesheet" href="../libs/fontawesome.min.css">
 </head>
 <body>
-	<nav class="navbar navbar-light bg-light mb-4">
-		<a class="navbar-brand" href="https://ku.edu">
-			<img src="../images/KUSig_Horz_Web_Blue.png" height="30" alt="">
-		</a>
-		<ul class="navbar-nav mr-auto">
-			<li class="nav-item">
-				<a class="nav-link" href="https://eecs.ku.edu">Electrical Engineering and Computer Science</a>
-			</li>
-		</ul>
-	</nav>
+	<?php display_navbar(); ?>
     <div class="container">
 		<div class="row">
 			<div class="col-lg-8">
@@ -39,7 +34,7 @@
 					<tbody>
 						<tr>
 							<td>Computer Science</td><td>2021</td><td>May 28<sup>th</sup>, 2021</td><td>Jul 28<sup>th</sup>, 2021</td>
-							<td class="text-nowrap"><a href="edit-degree.html"><i class="fas fa-edit ml-3"></i></a><i class="fas fa-trash ml-3"></i></td>
+							<td class="text-nowrap"><a href="edit-degree.php"><i class="fas fa-edit ml-3"></i></a><i class="fas fa-trash ml-3"></i></td>
 						</tr>
 						<tr>
 							<!-- <i class="fas fa-clone"></i> -->

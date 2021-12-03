@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<?php
+	require_once "../common.php";
+	require_staff();
+?>
 <html lang="en">
 <head>
     <title>Staff - CourseCorrect</title>
@@ -13,16 +17,7 @@
 	<link rel="stylesheet" href="../libs/fontawesome.min.css">
 </head>
 <body>
-	<nav class="navbar navbar-light bg-light">
-		<a class="navbar-brand" href="https://ku.edu">
-			<img src="../images/KUSig_Horz_Web_Blue.png" height="30" alt="">
-		</a>
-		<ul class="navbar-nav mr-auto">
-			<li class="nav-item">
-				<a class="nav-link" href="https://eecs.ku.edu">Electrical Engineering and Computer Science</a>
-			</li>
-		</ul>
-	</nav>
+	<?php display_navbar(); ?>
     <div class="container">
 		<div class="row">
 			<div class="col-lg-8">
@@ -30,15 +25,15 @@
 				<div class="card mb-3">
 					<div class="card-body">
 						<h2>Admin</h2>
-						<a href="edit-users.html"><button type="button" class="btn btn-primary"><i class="fas fa-user"></i> Edit staff users</button></a>
-						<a href="edit-degrees.html"><button type="button" class="btn btn-primary"><i class="fas fa-graduation-cap"></i> Edit degrees and courses</button></a>
-						<a href="edit-text.html"><button type="button" class="btn btn-secondary" disabled><i class="fas fa-question"></i> Edit text and links</button></a>
+						<a href="edit-users.php"><button type="button" class="btn btn-primary"><i class="fas fa-user"></i> Edit staff users</button></a>
+						<a href="edit-degrees.php"><button type="button" class="btn btn-primary"><i class="fas fa-graduation-cap"></i> Edit degrees and courses</button></a>
+						<a href="edit-text.php"><button type="button" class="btn btn-secondary" disabled><i class="fas fa-question"></i> Edit text and links</button></a>
 					</div>
 				</div>
 				<div class="card mb-3">
 					<div class="card-body">
 						<h2>Advisor</h2>
-						<form method="POST" action="search.html">
+						<form method="POST" action="search.php">
 							<div class="form-group">
 								<label>Student IDs</label>
 								<textarea class="form-control" placeholder="3011111, 3022222, 3033333, ..."></textarea>
@@ -54,7 +49,7 @@
 				<div class="card mb-3">
 					<div class="card-body">
 						<h2>Student</h2>
-						<a href="../list/index.html"><input type="button" class="btn btn-primary" value="Simulate student experience"></a>
+						<a href="../list"><input type="button" class="btn btn-primary" value="Simulate student experience"></a>
 					</div>
 				</div>
 			</div>
