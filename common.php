@@ -1,4 +1,7 @@
 <?php
+	// 1 for dev/test, 0 for production (maybe this should be in db_creds.php)
+	define("DEBUG", 1);
+
 	abstract class ErrorCode {
 		const DBConnectionFailed = 101;
 		const DBQueryFailed = 102;
@@ -12,8 +15,23 @@
 	}
 	
 	function crash($errorCode, $data = null) {
-		header("Location: /error.html?code=" . $errorCode);
-		// TODO log the data/exception somewhere
+		// Dev/test code
+		if (DEBUG) {
+			// Find the error name via reflection
+			$errorName = "unknown";
+			foreach ((new ReflectionClass("ErrorCode"))->getReflectionConstants() as $const) {
+				if ($const->getValue() == $errorCode) $errorName = $const->getName();
+			}
+			echo "<div style='border: 4px dashed black; background: #faa; display: inline-block; font-size: 14px; text-shadow: none; color: black;'>";
+			echo "<h1 style='color: red; text-shadow: none;'>Error $errorCode: $errorName</h1>";
+			var_dump($data);
+			echo "</div>";
+		}
+		else {
+			// Production code
+			header("Location: /error.html?code=" . $errorCode);
+			// TODO log the data/exception somewhere
+		}
 		die();
 	}
 	
@@ -40,10 +58,14 @@
 	require_once __DIR__ . "/db.php";
 	// Start the session to keep track of who's logged in
 	session_start();
-	
-	// Page requires staff permissions to access
-	function require_staff() {
+
+	function require_login() {
 		if (!isset($_SESSION["permissions"])) crash(ErrorCode::NotLoggedIn, $_SESSION);
+	}
+	
+	// Page requires staff permissions to access (TODO: specific permission levels)
+	function require_staff() {
+		require_login();
 		if ($_SESSION["permissions"] < 1) crash(ErrorCode::InsufficientPermission, $_SESSION);
 	}
 	
