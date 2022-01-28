@@ -16,13 +16,13 @@
 	<script type="text/javascript" src="../libs/redips-drag.min.js"></script>
 
 	<!-- Application code and style -->
-	<link rel="stylesheet" href="style.css">
-	<script type="text/javascript" src="Executive.js"></script>
-	<script type="text/javascript" src="ArrowRender.js"></script>
-	<script type="text/javascript" src="Plan.js"></script>
-	<script type="text/javascript" src="Semester.js"></script>
-	<script type="text/javascript" src="Course.js"></script>
-	<script type="text/javascript" src="Major.js"></script>
+	<link rel="stylesheet" href="edit/style.css">
+	<script type="text/javascript" src="edit/Executive.js"></script>
+	<script type="text/javascript" src="edit/ArrowRender.js"></script>
+	<script type="text/javascript" src="edit/Plan.js"></script>
+	<script type="text/javascript" src="edit/Semester.js"></script>
+	<script type="text/javascript" src="edit/Course.js"></script>
+	<script type="text/javascript" src="edit/Major.js"></script>
 	<script>
 		window.addEventListener('DOMContentLoaded', e => {
 			window.executive = new Executive();
