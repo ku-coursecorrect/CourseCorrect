@@ -12,6 +12,9 @@
 		const InsufficientPermission = 302;
 		
 		const InvalidDegree = 401;
+
+		const PlanNotExist = 501;
+		const NoPlanSpecified = 502;
 	}
 	
 	function crash($errorCode, $data = null) {
@@ -36,6 +39,11 @@
 	}
 	
 	define("DATE_FORMAT", "M jS, Y"); // Mar 15th, 2020
+
+	// Semester seasons
+	define("SPRING", 0);
+	define("SUMMER", 1);
+	define("FALL", 2);
 	
 	// Status codes bit flags
 	abstract class PlanStatus {
@@ -67,6 +75,12 @@
 	function require_staff() {
 		require_login();
 		if ($_SESSION["permissions"] < 1) crash(ErrorCode::InsufficientPermission, $_SESSION);
+	}
+
+	function find_degree_id($major, $year) {
+		$degree = $GLOBALS["db"]->query("SELECT degree_id FROM degree WHERE major = ? AND year = ?", [$major, $year]);
+		if (count($degree) == 1) return $degree[0]["degree_id"];
+		else crash(ErrorCode::InvalidDegree, [$_POST["major"], $_POST["year"]]);
 	}
 	
 	// TODO: Useful links, maybe different for student and staff

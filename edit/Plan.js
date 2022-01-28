@@ -14,12 +14,11 @@ class Plan {
 		@param start_year {number} year
 		@post All parameters are assigned to their respective member variables and the first 8 falls/springs after the start semester are added
 	*/
-	constructor(major_name, start_season, start_year) {
-		this.major = MAJORS.find(major => major.major_name == major_name);
+	constructor(plan, courses) {
+		/*this.major = MAJORS.find(major => major.major_name == major_name);
 		this.semesters = [];
 		this.course_bank = [];
 		this.transfer_bank = [];
-		this.fill_course_bank_w_req_classes();
 		for (var i = 0; i < 4; i++) {
 			//Makes 8 semester of fall/spring, flips between fall and spring
 			//ONLY WOKRS IF YOU START AT FALL/SPRING
@@ -27,10 +26,26 @@ class Plan {
 			if (start_season == FALL) start_year++;
 			this.semesters.push(new Semester(2-start_season, start_year, []));
 			if (start_season == SPRING) start_year++;
-		}
+		}*/
+
+		//this.major = MAJORS.find(major => major.major_name == plan.major);
+		this.course_bank = plan.course_bank.map(course_id => course_id_to_object(courses, course_id));
+		this.transfer_bank = plan.transfer_bank.map(course_id => course_id_to_object(courses, course_id));
+		this.semesters = plan.semesters.map(semester => new Semester(
+			semester.semester_season,
+			semester.semester_year,
+			semester.semester_courses.map(course_id => {
+				/*if (Array.isArray(course_code)) { // custom course - recreate it
+					let course = new Course(course_code[0], "Custom course", [], [], [1,1,1], course_code[1], true);
+					COURSES.push(course);
+					return course;
+				}
+				else*/ return course_id_to_object(courses, course_id)
+			}),
+		));
 	}
 
-	/**
+	/** TODO out of date
 		@post creates a temp plan, takes all the neccesary strings
 		@return {string}, the plan as a string
 	*/
@@ -53,39 +68,6 @@ class Plan {
 			})),
 		};
 		return JSON.stringify(plan);
-	}
-
-	/**
-		@param plan {string} JSON-encoded string to load into the plan object
-		@post This Plan object is populated with the contents of the plan string
-		@return {bool} If the string was parsed successfully (failure may leave Plan in a partially loaded state)
-	*/
-	string_to_plan(plan) {
-		try {
-			plan = JSON.parse(plan);
-			if (plan.version != 1) return false; // Unsupported version
-			this.major = MAJORS.find(major => major.major_name == plan.major);
-			this.course_bank = plan.course_bank.map(course_code => this.course_code_to_object(course_code));
-			this.transfer_bank = plan.transfer_bank.map(course_code => this.course_code_to_object(course_code));
-			this.semesters = plan.semesters.map(semester => new Semester(
-				semester.semester_season,
-				semester.semester_year,
-				semester.semester_courses.map(course_code => {
-					if (course_code == "") return undefined;
-					else if (Array.isArray(course_code)) { // custom course - recreate it
-						let course = new Course(course_code[0], "Custom course", [], [], [1,1,1], course_code[1], true);
-						COURSES.push(course);
-						return course;
-					}
-					else return this.course_code_to_object(course_code)
-				}),
-			));
-			return true; // Successful parse
-		} catch (e) {
-			// An error occured, most likely due an incorrectly formatted string
-			console.error(e);
-			return false;
-		}
 	}
 
 	/**
@@ -139,21 +121,6 @@ class Plan {
 		for (let semester of this.semesters) {
 			semester.remove_course(course);
 		}
-	}
-
-	/**
-		@param course_code {string} The code of the Course to find,
-		@return {Course} The Course object from COURSES matching the coures_code
-	*/
-	course_code_to_object(course_code) {
-		return COURSES.find(course => course.course_code == course_code);
-	}
-
-	/**
-		@post course_bank filled with the required classes for this.major
-	*/
-	fill_course_bank_w_req_classes() {
-		this.course_bank = this.major.req_class.map(req_class => this.course_code_to_object(req_class));
 	}
 
 	/**

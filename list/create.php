@@ -3,18 +3,26 @@
 	require_login();
 
 	$name = $_POST["name"];
-	$major = $_POST["major"];
-	$year = $_POST["year"];
+	$degree_id = find_degree_id($_POST["major"], $_POST["year"]);
+	
+	$semesters = [];
 
-	$degree = $db->query("SELECT id FROM degrees WHERE major = ? AND year = ?", [$major, $year]);
-	if (count($degree) == 1) { // Valid degree
-		$degree_id = $degree[0]["id"];
-		// TODO (maybe): Handle created/modified date columns
-		$db->query("INSERT INTO plans (user_id, degree_id, plan_title) VALUES (?, ?, ?)", [$_SESSION["id"], $degree_id, $name]);
-		$plan_id = $db->lastInsertId();
-		header("Location: ../edit?plan=" . $plan_id);
+	// Populate the plan JSON with empty semesters for the next 4 years
+	$startYear = intval($_POST["year"]);
+	$season = FALL;
+	for ($year = $startYear; $year <= $startYear + 4; $year++) {
+		while ($season <= FALL and count($semesters) < 8) {
+			$semesters[] = ["semester_year" => $year, "semester_season" => $season, "semester_courses" => []];
+			$season += 2;
+		}
+		$season = SPRING;
 	}
-	else { // Invalid degree
-		crash(ErrorCode::InvalidDegree, [$_POST["major"], $_POST["year"]]);
-	}
+
+	// TODO (maybe): Place to store custom courses
+	$json = json_encode(["semesters" => $semesters, "transfer_bank" => []]);
+	
+	$db->query("INSERT INTO plan (user_id, degree_id, plan_title, json) VALUES (?, ?, ?, ?)", [$_SESSION["user_id"], $degree_id, $name, $json]);
+	$plan_id = $db->lastInsertId();
+
+	header("Location: ../edit?plan=" . $plan_id);
 ?>

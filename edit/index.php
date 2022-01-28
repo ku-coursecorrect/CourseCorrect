@@ -1,4 +1,45 @@
 <!DOCTYPE html>
+<?php
+	require_once "../common.php";
+
+	if (isset($_GET["plan"])) { // Load a plan from the database
+		require_login();
+		// TODO: Join degree table for name/year - maybe shouldn't have two separate queries
+		if ($_SESSION["permissions"] > 0) { // Staff - all staff can view all student plans
+			$planQuery = $db->query("SELECT * FROM plan WHERE plan_id = ?", [$_GET["plan"]]);
+		}
+		else { // Student - students can only view their own plans
+			$planQuery = $db->query("SELECT * FROM plan WHERE plan_id = ? AND user_id = ?", [$_GET["plan"], $_SESSION["user_id"]]);
+		}
+		if (count($planQuery) != 1) crash(ErrorCode::PlanNotExist);
+		$planRow = $planQuery[0]; // Only one row
+
+		// Get the plan's semesters and transfer credits
+		$plan = json_decode($planRow["json"], true);
+
+		// Assemble plan data for use by JavaScript - TODO use plan_to_string format with additional field for ID (guest won't have)
+		$plan["plan_title"] = $planRow["plan_title"];
+		$plan["degree_id"] = $planRow["degree_id"];
+	}
+
+	else if (isset($_GET["major"]) && isset($_GET["year"])) { // Guest mode create an unsavable empty plan
+		// TODO create empty semesters
+		$plan = [];
+
+		$plan["plan_title"] = "Guest mode";
+		$plan["degree_id"] = find_degree_id($_GET["major"], $_GET["year"]);
+	}
+	else {
+		crash(ErrorCode::NoPlanSpecified);
+	}
+
+	$plan["degree_title"] = implode(" ", $db->query("SELECT major, year FROM degree WHERE degree_id = ?", [$plan["degree_id"]])[0]);
+
+	// Load all courses for this degree
+	// TODO: Prereqs and coreqs
+	$courses = $db->query("SELECT * FROM degree_join_course JOIN course USING (course_id) WHERE degree_id = ?", [$plan["degree_id"]]);
+	$plan["course_bank"] = array_column($courses, "course_id"); // TODO Only courses not already in plan
+?>
 <html>
 <head>
 	<meta charset="utf-8">
@@ -25,7 +66,7 @@
 	<script type="text/javascript" src="Major.js"></script>
 	<script>
 		window.addEventListener('DOMContentLoaded', e => {
-			window.executive = new Executive();
+			window.executive = new Executive(<?=json_encode($courses)?>, <?=json_encode($plan)?>);
 		});
 	</script>
 </head>
@@ -41,9 +82,9 @@
 			<div class="col-sm-4 text-right">
 				<!--Student info-->
 				<div class="d-inline-block text-left">
-					<span class="students_info">Drake Prebyl</span><br>
-					<span class="students_info" id="showMajor">Major: Computer Science</span><br>
-					<span class="students_info">Student ID: 2911111</span>
+					<span class="students_info">Name TODO</span><br>
+					<span class="students_info" id="degree_title"></span><br>
+					<span class="students_info"><?=isset($_SESSION["user_id"]) ? ("Student ID: " . $_SESSION["kuid"]) : "Not logged in"?></span>
 				</div>
 				<img src="../images/ku_jayhawk_2.jpg" class="profile_picture align-top no-print">
 			</div>
@@ -73,12 +114,13 @@
 		  	</ul>
 		</div>
 		<span class="float-right">
-			<span id="save-container" style="display: none">
-				<input type="text" id="save-name" class="form-control form-control-sm" placeholder="Plan name...">
+			<span id="save-container">
+				<!-- TODO: Decide if renaming should make a new plan (disabled for now) -->
+				<input type="text" id="plan_title" disabled class="form-control form-control-sm" placeholder="Plan name...">
 				<!--Save button-->
 				<a id="save-button" type="button" class="btn btn-light btn-sm">Save <i class="fa fa-save"></i></a>
 				<!--Export button-->
-				<a id="export-button" type="button" class="btn btn-light btn-sm">Share <i class="fa fa-share"></i></a>
+				<!--<a id="export-button" type="button" class="btn btn-light btn-sm">Share <i class="fa fa-share"></i></a>-->
 			</span>
 			<!--Print button-->
 			<a href="javascript:window.print()" type="button" class="btn btn-light btn-sm">Print <i class="fa fa-print"></i></a>
@@ -127,7 +169,7 @@
 					</table>
 				</div>
 				
-				<div class="mb-4" id="add_extra_course_box" style="display:none">
+				<div class="mb-4" id="add_extra_course_box">
 					<h3>Add Extra Course</h3>
 					<div class="row mr-2">
 						<label for="course_code" class="col-sm-5 col-form-label">Course Code:</label>
@@ -161,37 +203,6 @@
 					<div id="schedule-container" class="bg-light"> <!--Schedule-->
 						<div id="arrows"></div><!--Will contain the SVG with the arrows-->
 						<table id="course-grid" class="border"></table><!--Will contain the drag-and-droppable courses-->
-						<div id="welcome" class="border p-3">
-							<h1>Welcome!</h1>
-							<h4>Select your major and first semester at KU semester to begin.</h4>
-							<div class="input-group">
-								<select id="majorSelect" class="form-control"></select>
-								<select id="startSemesterSelect" class="form-control"></select>
-								<div class="input-group-append">
-									<button type="button" class="btn btn-primary" id="done">Start Planning</button>
-								</div>
-							</div>
-							<div style="display: none !important"><!--TODO TMP-->
-							<hr class="my-4">
-							<h5>Or load a plan saved in your browser:</h5>
-							<div class="input-group mb-2">
-								<select id="planSelect" class="form-control">
-									<option disabled selected value="-1">Choose a plan...</option>
-								</select>
-								<div class="input-group-append">
-									<button type="button" class="btn btn-primary" id="load-plan">Load Plan</button>
-									<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete-plan">Delete Plan</button>
-								</div>
-							</div>
-							<h5>Or import a previously exported plan:</h5>
-							<div class="input-group">
-								<textarea class="form-control" id="plan-to-import" placeholder='{"version":1,"timestamp":1604269786608,"major":"Computer Science","course_bank":["EECS 101","EECS 140"],"transfer_bank":[],"semesters":[{"semester_year":2020,"semester_season":2,"semester_courses":["EECS 168"]}]}'></textarea>
-								<div class="input-group-append">
-									<button type="button" class="btn btn-primary" id="import-plan">Import</button>
-								</div>
-							</div>
-							</div><!--TODO TMP-->
-						</div>
 					</div>
 				</div>
 				
@@ -199,7 +210,7 @@
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header">Delete Plan</div>
-							<div class="modal-body">Are you sure you wish to delete the selected plan?</div>
+							<div class="modal-body">Are you sure you wish to delete this plan?</div>
 							<div class="modal-footer">
 								<input type="button" class="btn btn-secondary" data-dismiss="modal" value="Cancel">
 								<input type="button" class="btn btn-danger" id="delete-plan" data-dismiss="modal" value="Delete">
@@ -208,7 +219,7 @@
 					</div>
 				</div>
 				
-				<div class="row mt-2 no-print" id="add-semester" style="display:none">
+				<div class="row mt-2 no-print" id="add-semester">
 					<div class="col-sm-6 offset-sm-3 border p-3 bg-light">
 						<div class="input-group">
 							<select id="addSemesterSelect" class="form-control">
@@ -247,7 +258,7 @@
 	</div>
 
 	<footer class="pt-2 my-2 border-top text-center">
-		<a href="https://github.com/ku-coursecorrect/coursecorrect">CourseCorrect</a> Copyright &copy; 2021: Drake Prebyl, James Kraijcek, Rafael Alaras, Reece Mathews, Tiger Ruan
+		<a href="https://github.com/ku-coursecorrect/coursecorrect">CourseCorrect</a> Copyright &copy; 2022: Drake Prebyl, James Kraijcek, Rafael Alaras, Reece Mathews, Tiger Ruan
 		<br>
 		View <a href="README.md">readme</a> for works cited | <a href="documentation/index.html">Documentation</a> | <a href="tests.html">Tests</a>
 	</footer>

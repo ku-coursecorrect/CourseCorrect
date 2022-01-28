@@ -97,7 +97,7 @@
 								</select>
 							</div>
 							<script>
-								const DEGREES = <?=json_encode($db->query("SELECT major, year FROM degrees ORDER BY major, year DESC"))?>;
+								const DEGREES = <?=json_encode($db->query("SELECT major, year FROM degree ORDER BY major, year DESC"))?>;
 								
 								// Create list of majors, e.g.: {"Computer Science": ["2018", "2019", ...], ...}
 								let majors = {};
@@ -114,6 +114,7 @@
 									majorSelect.add(new Option(major, major));
 								}
 								
+								// TODO: This also needs to run if browser remembers dropdown (maybe just make form autocomplete off)
 								majorSelect.addEventListener("change", e => {
 									while (yearSelect.firstChild) yearSelect.removeChild(yearSelect.firstChild); // Clear year dropdown
 									for (const year of majors[majorSelect.value]) {

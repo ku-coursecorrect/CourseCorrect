@@ -9,93 +9,47 @@ class Executive {
 	/**
 	* @post Dropdowns are populated and event listeners are set up on elements of the page the user can interact with
 	**/
-	constructor(test) {
-		// used for test suite
-		if (test) {
-			return;
-		}
+	constructor(courses = null, plan = null, test = false) {
+		if (test) return; // used for test suite (which is currently broken due to the paramters changing - TODO)
 		this.arrowRender = new ArrowRender();
+
+		this.courses = courses.map(course => new Course(course.course_id,
+														course.course_code, 
+														course.title, 
+														[], 
+														[], 
+														[course.f_spring, course.f_summer, course.f_fall], 
+														course.max_hours, 
+														false));
+
+		// Load plan
+		document.getElementById("plan_title").value = plan.plan_title;
+		document.getElementById("degree_title").innerText = plan.degree_title;
+		this.plan = new Plan(plan, this.courses);
+
+		this.update();
+
+		// The rest of this sets up event listeners for user interactions
 
 		// Add tooltips to courses
 		$('#redips-drag').tooltip({selector: '[data-toggle="tooltip"]'})
 
-		// Populate options for major
-		for (let major of MAJORS) {
-			this.makeElement("option", "majorSelect", major.major_name, major.major_name);
-		}
-
-		// Populate options for starting semester
-		let thisYear = new Date().getFullYear();
-		for (let year = thisYear; year >= thisYear-3; year--) {
-			for (let season of [FALL, SPRING]) {
-				this.makeElement("option", "startSemesterSelect", "Start in " + SEASON_NAMES[season] + " " + year, year + "-" + season);
-			}
-		}
-
-		// Initialize plan when done is clicked (arrow function used to preserve this)
-		document.getElementById("done").addEventListener("click", () => this.initPlan());
-
-		// Populate list of saved plans to load
-		for (let i = 0; i < localStorage.length; i++) {
-			let key = localStorage.key(i);
-			if (key.startsWith("gpg-1-")) {
-				let plan = localStorage.getItem(key);
-				try {
-					plan = JSON.parse(plan);
-					let date = new Date(plan.timestamp);
-					// Get the date the plan was last modified in YYYY-MM-DD format, correcting for time zone
-					let text = new Date(plan.timestamp - new Date().getTimezoneOffset()*60000).toISOString().split("T")[0] + ": " + key.substr(6);
-					this.makeElement("option", "planSelect", text, key);
-				}
-				catch (e) {
-					// Skip plans with formatting issues
-					console.log(e);
-				}
-			}
-		}
-
-		// Load existing plan on click
-		document.getElementById("load-plan").addEventListener("click", () => {
-			let key = document.getElementById("planSelect").value;
-			if (key == "-1") return; // Do nothing if dropdown not selected
-			// Read plan string before init. This is important when loading the autosave plan.
-			let plan_string = localStorage.getItem(key);
-			this.initPlan(); // Default plan will be overwritten if parse succeeds
-			this.plan.string_to_plan(plan_string);
-			this.update();
-			// Substr to remove the gpg-1-
-			document.getElementById("save-name").value = document.getElementById("planSelect").value.substr(6);
-		});
-
 		// Import plan
-		document.getElementById("import-plan").addEventListener("click", () => {
+		/*document.getElementById("import-plan").addEventListener("click", () => {
 			let plan_string = document.getElementById("plan-to-import").value;
 			this.initPlan(); // Default plan will be overwritten if parse succeeds
 			this.plan.string_to_plan(plan_string);
 			this.update();
-		});
-
-		// Delete saved plan
-		document.getElementById("delete-plan").addEventListener("click", () => {
-			let key = document.getElementById("planSelect").value;
-			if (key == "-1") return; // Do nothing if dropdown not selected
-			localStorage.removeItem(key);
-			// Remove plan from dropdown
-			document.getElementById("planSelect").remove(document.getElementById("planSelect").selectedIndex);
-			document.getElementById("planSelect").selectedIndex = 0;
-		});
+		});*/
 
 		// Plan save button
 		document.getElementById("save-button").addEventListener("click", () => {
-			let name = document.getElementById("save-name").value;
-			// Default name e.g. Computer Science Fall 2018
-			if (!name) name = this.plan.major.major_name + " " + this.plan.semesters[0].season_name() + " " + this.plan.semesters[0].semester_year;
-			name = name.replace(/[^\w\s]/g, ""); // Remove special characters from name
-			this.savePlan(name);
+			let name = document.getElementById("plan_title").value;
+			// TODO
 		});
 
 		// Plan export button
-		document.getElementById("export-button").addEventListener("click", () => {
+		/*document.getElementById("export-button").addEventListener("click", () => {
 			// Copy plan to clipboard
 			let textarea = document.createElement("textarea");
 			textarea.style.style = "position: absolute; left: -999px; top: -999px"; // display none prevents this from working
@@ -108,7 +62,7 @@ class Executive {
 			// Display alert that auto-closes
 			document.getElementById("plan-exported").style.display = "";
 			window.setTimeout(() => document.getElementById("plan-exported").style.display = "none", 5000);
-		});
+		});*/
 
 		// Initialize drag-and-drop to move courses
 		REDIPS.drag.dropMode = "single";
@@ -127,7 +81,7 @@ class Executive {
 			// Remove tutorial if present
 			$(".tutorial").remove();
 
-			let course = this.plan.course_code_to_object(targetCell.firstElementChild.dataset["course"]);
+			let course = course_id_to_object(this.courses, targetCell.firstElementChild.dataset["course"]);
 			this.plan.remove_course(course); // Remove course from wherever it is
 			if (targetCell.dataset["bank"] == "course") {
 				this.plan.course_bank.push(course);
@@ -155,7 +109,7 @@ class Executive {
 			this.update();
 		});
 
-		// Adding a custom course
+		// Adding a custom course - TODO reimplement
 		document.getElementById("course_add_submit").addEventListener("click", () => {
 			let t_course_code = document.getElementById("course_code").value;
 			let t_credit_hours = parseInt(document.getElementById("credit_hours").value);
@@ -169,21 +123,6 @@ class Executive {
 			document.getElementById("course_code").value = "";
 			document.getElementById("credit_hours").value = "";
 		});
-
-		// Test plan
-		//this.createTestPlan();
-		
-		// Automatically load first plan (TODO - TEMPORARY)
-		let plan = (new URLSearchParams(window.location.search).get("plan")) ?? "0";
-		if (plan == "0") {
-			//document.getElementById("majorSelect").selectedIndex = "1";
-			//document.getElementById("startSemesterSelect").selectedIndex = "1";
-			//document.getElementById("done").click();
-		}
-		else {
-			document.getElementById("planSelect").selectedIndex = plan;
-			document.getElementById("load-plan").click();
-		}
 	}
 
 	/**
@@ -191,13 +130,9 @@ class Executive {
 	* @post The welcome screen is hidden and an 8-semester plan is initialized with all courses for the selected major in the course bank
 	**/
 	initPlan() {
-		let [year, season] = document.getElementById("startSemesterSelect").value.split('-').map(Number);
-		let major = document.getElementById("majorSelect").value;
-		document.getElementById("showMajor").innerHTML = "Major: " + major;
+		//let [year, season] = document.getElementById("startSemesterSelect").value.split('-').map(Number);
+		//let major = document.getElementById("majorSelect").value;
 
-		document.getElementById("welcome").style.display = "none";
-		document.getElementById("add-semester").style.display = "";
-		document.getElementById("add_extra_course_box").style.display = "";
 		document.getElementById("save-container").style.display = "";
 		this.plan = new Plan(major, season, year);
 		this.update();
@@ -265,10 +200,11 @@ class Executive {
 				document.getElementById("course-grid").rows[arrow.yOut].cells[arrow.xOut+1].firstElementChild.classList.add("error");
 			}
 		}
-		this.checkULE();
 
-		// Autosave plan
-		this.savePlan("autosave");
+		// TODO: reimplement ULE
+		//this.checkULE();
+
+		// Autosave plan TODO
 	}
 
 	/**
@@ -402,23 +338,6 @@ class Executive {
 	}
 
 	/**
-	* @param name {string} The name the saved plan will have
-	* @post The current this.plan is saved to the browser's local storage with a name prefix specific to this applicaion
-	**/
-	savePlan(name) {
-		// 1 is for version number
-		localStorage.setItem("gpg-1-" + name, this.plan.plan_to_string());
-	}
-
-	/**
-	* @param name {string} The name of the plan saved in the user's browser (must exist)
-	* @post The plan matching the name is retrieved from the browser's local storage and used to populate this.plan
-	**/
-	loadPlan(name) {
-		this.plan.string_to_plan(localStorage.getItem("gpg-1-" + name));
-	}
-
-	/**
 	* @brief This is a helper method used to reduce the repetitiveness of this code as creating elements is done in several places
 	* @param type {string} The type of the DOM element to create
 	* @param parentId {string} The HTML id of the existing DOM element to append the new element to (optional)
@@ -431,22 +350,5 @@ class Executive {
 		if (text) el.appendChild(document.createTextNode(text));
 		if (parentId) document.getElementById(parentId).appendChild(el);
 		return el;
-	}
-
-	/**
-	* @post An example plan is created to test arrow rendering and other aspects of the code
-	**/
-	createTestPlan() {
-		document.getElementById("welcome").style.display = "none";
-		this.plan = new Plan("Computer Science", FALL, 2018);
-		this.plan.add_course(0, 1, this.plan.course_code_to_object("EECS 168"));
-		this.plan.add_course(0, 2, this.plan.course_code_to_object("EECS 140"));
-		this.plan.add_course(1, 1, this.plan.course_code_to_object("MATH 125"));
-		this.plan.add_course(1, 3, this.plan.course_code_to_object("GE 2.2"));
-		this.plan.add_course(2, 0, this.plan.course_code_to_object("EECS 268"));
-		this.plan.add_course(2, 1, this.plan.course_code_to_object("PHSX 210"));
-		this.plan.add_course(2, 2, this.plan.course_code_to_object("EECS 388"));
-		this.plan.add_course(2, 3, this.plan.course_code_to_object("PHSX 216"));
-		this.update();
 	}
 }

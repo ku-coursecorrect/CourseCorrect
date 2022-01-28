@@ -4,15 +4,17 @@
 **/
 class Course {
 	/**
+	* @param course_id {string} The primary key of the course in the database
 	* @param course_code {string} The code of this course (e.g. EECS 448)
 	* @param title {string} A name/short description of the course
 	* @param prereq {[string]} A list of course codes that are prerequisites of this course
 	* @param coreq {[string]}  A list of course codes that are corequisites of this course
-	* @param course_semester {[bool,bool,bool]} Whether the course is offered in SPRING, SUMMER, and FALL (constants are array indicies)
+	* @param course_semester {[boolean,boolean,boolean]} Whether the course is offered in SPRING, SUMMER, and FALL (constants are array indicies)
 	* @param credit_hour {number} The number of credit hours the course is
-	* @param is_custom {bool} Whether the course was created by the user, default false
+	* @param is_custom {boolean} Whether the course was created by the user, default false
 	*/
-	constructor(course_code, title, prereq, coreq, course_semester, credit_hour, is_custom = false) {
+	constructor(course_id, course_code, title, prereq, coreq, course_semester, credit_hour, is_custom = false) {
+		this.course_id = course_id;
 		this.course_code = course_code;
 		this.title = title;
 		this.prereq = prereq;
@@ -26,7 +28,7 @@ class Course {
 	* @return {string} The HTML for a draggable div representing this course
 	**/
 	to_html() {
-		return '<div class="redips-drag" data-toggle="tooltip" title="' + this.title + '" data-course="' + this.course_code + '" onmouseover="hover(this)" onmouseout="unhover(this)">' + this.course_code + "<br>(" + this.credit_hour + ")</div>";
+		return '<div class="redips-drag" data-toggle="tooltip" title="' + this.title + '" data-course="' + this.course_id + '" onmouseover="hover(this)" onmouseout="unhover(this)">' + this.course_code + "<br>(" + this.credit_hour + ")</div>";
 	}
 }
 
@@ -51,6 +53,16 @@ function unhover(course) {
 	}
 }
 
+// TODO: This should be a method of major which should contain course list
+/**
+	@param course_id {string} The id of the Course to find,
+	@return {Course} The Course object from COURSES matching the coures_code
+*/
+function course_id_to_object(courses, course_id) {
+	return courses.find(course => course.course_id == course_id);
+}
+
+/*
 COURSES = [
 	new Course("EECS 101", "New Student Seminar", [], ["MATH 104"], [0,0,1], 1),
 	new Course("EECS 140", "Introd to Digital Logic Design", [], ["MATH 104"], [1,0,1], 4),
@@ -166,3 +178,4 @@ COURSES = [
 ];
 
 ULE_EXCECPTIONS = ["EECS 312","EECS 361","EECS 368","EECS 388"];
+*/
