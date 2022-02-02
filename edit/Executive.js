@@ -34,17 +34,12 @@ class Executive {
 		// Plan save button
 		if (this.plan.plan_id) {
 			document.getElementById("save-button").addEventListener("click", () => {
-				fetch("save.php", {
-					"method": "POST",
-					"headers": {
-						"Content-Type": "application/json"
-					},
-					"body": JSON.stringify({
-						"plan_id": this.plan.plan_id,
-						"plan_title": document.getElementById("plan_title").value,
-						"json": this.plan.save_json()
-					})
-				}).then(response => {
+				let data = new FormData();
+				data.append("plan_id", this.plan.plan_id);
+				data.append("plan_title", document.getElementById("plan_title").value);
+				data.append("json", this.plan.save_json());
+
+				fetch("save.php", {"method": "POST", "body": data}).then(response => {
 					if (response.ok) {
 						console.log(response);
 						this.displayAlert("success", "Plan saved", 5000);
@@ -53,6 +48,7 @@ class Executive {
 						console.error(response);
 						this.displayAlert("danger", "Error saving plan", 5000);
 					}
+					response.text().then(text => console.log(text));
 				});
 			});
 		}

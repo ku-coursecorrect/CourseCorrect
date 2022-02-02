@@ -19,8 +19,8 @@ class Course {
 		this.title = title;
 		this.prereq = prereq;
 		this.coreq = coreq;
-		this.course_semester = course_semester;
-		this.credit_hour = credit_hour;
+		this.course_semester = course_semester.map(sem => sem == 1);
+		this.credit_hour = parseInt(credit_hour);
 		this.is_custom = is_custom; // Used when saving plans to strings
 	}
 

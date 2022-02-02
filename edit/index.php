@@ -14,7 +14,7 @@
 		else { // Student - students can only view their own plans
 			$planQuery = $db->query("SELECT * FROM plan WHERE plan_id = ? AND user_id = ?", [$plan_id, $_SESSION["user_id"]]);
 		}
-		if (count($planQuery) != 1) crash(ErrorCode::PlanNotExist);
+		if (count($planQuery) != 1) crash(ErrorCode::PlanNotExist, [$plan_id, $_SESSION["user_id"]]);
 		$planRow = $planQuery[0]; // Only one row
 
 		// Get the plan's semesters and transfer credits
@@ -82,7 +82,7 @@
 				<a href="https://ku.edu/"><img src="../images/KUSig_Horz_Web_Blue.png" class="KU_image pt-2 ml-2"></a>
 			</div>
 			<div class="col-sm-4 text-sm-center KU_color_text">
-				<h1>CourseCorrect</h1>
+				<h1><a href="../list">CourseCorrect</a></h1>
 			</div>
 			<div class="col-sm-4 text-right">
 				<!--Student info-->

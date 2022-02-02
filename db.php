@@ -20,8 +20,12 @@
 				$stmt->execute($parameters);
 				$stmt->setFetchMode(PDO::FETCH_ASSOC);
 
-				if (strtoupper(explode(' ',trim($query))[0]) == "SELECT") {
+				$operation = strtoupper(explode(' ',trim($query))[0]);
+				if ($operation == "SELECT") {
 					return $stmt->fetchAll(); // Return results for select statements
+				}
+				elseif ($operation == "INSERT" || $operation == "UPDATE" || $operation == "DELETE") {
+					return $stmt->rowCount(); // Return number of rows affected
 				}
 				return true;
 			}

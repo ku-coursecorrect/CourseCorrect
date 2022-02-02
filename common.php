@@ -15,11 +15,14 @@
 
 		const PlanNotExist = 501;
 		const NoPlanSpecified = 502;
+
+		const PlanSaveFailed = 601;
 	}
 	
 	function crash($errorCode, $data = null) {
 		// Dev/test code
 		if (DEBUG) {
+			http_response_code(500);
 			// Find the error name via reflection
 			$errorName = "unknown";
 			foreach ((new ReflectionClass("ErrorCode"))->getReflectionConstants() as $const) {
@@ -32,7 +35,7 @@
 		}
 		else {
 			// Production code
-			header("Location: /error.html?code=" . $errorCode);
+			header("Location: /error.php?code=" . $errorCode);
 			// TODO log the data/exception somewhere
 		}
 		die();
