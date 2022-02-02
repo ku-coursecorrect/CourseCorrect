@@ -41,7 +41,6 @@
 	// Load all courses for this degree
 	// TODO: Prereqs and coreqs
 	$courses = $db->query("SELECT * FROM degree_join_course JOIN course USING (course_id) WHERE degree_id = ?", [$plan["degree_id"]]);
-	$plan["course_bank"] = array_column($courses, "course_id"); // TODO Only courses not already in plan
 ?>
 <html>
 <head>

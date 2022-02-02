@@ -25,7 +25,6 @@ class Plan {
 		}*/
 
 		this.plan_id = plan.plan_id;
-		this.course_bank = plan.course_bank.map(course_id => course_id_to_object(courses, course_id));
 		this.transfer_bank = plan.transfer_bank.map(course_id => course_id_to_object(courses, course_id));
 		this.semesters = plan.semesters.map(semester => new Semester(
 			semester.semester_season,
@@ -39,6 +38,10 @@ class Plan {
 				else*/ return course_id_to_object(courses, course_id)
 			}),
 		));
+
+		// Populate course bank with courses that aren't in a semester or the transfer bank
+		let placed_courses = this.transfer_bank.concat(...this.semesters.map(semester => semester.semester_courses));
+		this.course_bank = courses.filter(course => !placed_courses.includes(course));
 	}
 
 	/**
@@ -51,10 +54,9 @@ class Plan {
 				"semester_year": semester.semester_year,
 				"semester_season": semester.semester_season,
 				"semester_courses": semester.semester_courses.map(course => {
-					// TODO: handle custom courses
-					/*if (course == undefined) return "";
-					else if (course.is_custom) return [course.course_code, course.credit_hour];
-					else*/ return course.course_id;
+					if (course == undefined) return "";
+					//else if (course.is_custom) return [course.course_code, course.credit_hour]; // TODO: handle custom courses
+					else return course.course_id;
 				}),
 			})),
 		}
