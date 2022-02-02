@@ -15,11 +15,7 @@ class Plan {
 		@post All parameters are assigned to their respective member variables and the first 8 falls/springs after the start semester are added
 	*/
 	constructor(plan, courses) {
-		/*this.major = MAJORS.find(major => major.major_name == major_name);
-		this.semesters = [];
-		this.course_bank = [];
-		this.transfer_bank = [];
-		for (var i = 0; i < 4; i++) {
+		/*for (var i = 0; i < 4; i++) {
 			//Makes 8 semester of fall/spring, flips between fall and spring
 			//ONLY WOKRS IF YOU START AT FALL/SPRING
 			this.semesters.push(new Semester(start_season, start_year, []));
@@ -28,7 +24,7 @@ class Plan {
 			if (start_season == SPRING) start_year++;
 		}*/
 
-		//this.major = MAJORS.find(major => major.major_name == plan.major);
+		this.plan_id = plan.plan_id;
 		this.course_bank = plan.course_bank.map(course_id => course_id_to_object(courses, course_id));
 		this.transfer_bank = plan.transfer_bank.map(course_id => course_id_to_object(courses, course_id));
 		this.semesters = plan.semesters.map(semester => new Semester(
@@ -45,28 +41,23 @@ class Plan {
 		));
 	}
 
-	/** TODO out of date
-		@post creates a temp plan, takes all the neccesary strings
-		@return {string}, the plan as a string
+	/**
+		@return {string}, a JSON string containing the plan's name and semesters to send to the database
 	*/
-	plan_to_string() {
-		// Version exists to allows this format to be modified in future versions
+	save_json() {
 		let plan = {
-			"version": 1,
-			"timestamp": Date.now(),
-			"major": this.major.major_name,
-			"course_bank": this.course_bank.map(course => course.course_code),
-			"transfer_bank": this.transfer_bank.map(course => course.course_code),
+			"transfer_bank": this.transfer_bank.map(course => course.course_id),
 			"semesters": this.semesters.map(semester => ({
 				"semester_year": semester.semester_year,
 				"semester_season": semester.semester_season,
 				"semester_courses": semester.semester_courses.map(course => {
-					if (course == undefined) return "";
+					// TODO: handle custom courses
+					/*if (course == undefined) return "";
 					else if (course.is_custom) return [course.course_code, course.credit_hour];
-					else return course.course_code;
+					else*/ return course.course_id;
 				}),
 			})),
-		};
+		}
 		return JSON.stringify(plan);
 	}
 

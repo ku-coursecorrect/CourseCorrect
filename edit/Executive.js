@@ -23,7 +23,7 @@ class Executive {
 														false));
 
 		// Load plan
-		document.getElementById("plan_title").value = plan.plan_title;
+		document.getElementById("plan_title").value = plan.plan_title; // TODO: If user edits plan title, update plan object - or maybe it would be good to have save and save as
 		document.getElementById("degree_title").innerText = plan.degree_title;
 		this.plan = new Plan(plan, this.courses);
 
@@ -31,38 +31,37 @@ class Executive {
 
 		// The rest of this sets up event listeners for user interactions
 
+		// Plan save button
+		if (this.plan.plan_id) {
+			document.getElementById("save-button").addEventListener("click", () => {
+				fetch("save.php", {
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": JSON.stringify({
+						"plan_id": this.plan.plan_id,
+						"plan_title": document.getElementById("plan_title").value,
+						"json": this.plan.save_json()
+					})
+				}).then(response => {
+					if (response.ok) {
+						console.log(response);
+						this.displayAlert("success", "Plan saved", 5000);
+					}
+					else {
+						console.error(response);
+						this.displayAlert("danger", "Error saving plan", 5000);
+					}
+				});
+			});
+		}
+		else {
+			document.getElementById("save-button").style.display = "none";
+		}
+
 		// Add tooltips to courses
 		$('#redips-drag').tooltip({selector: '[data-toggle="tooltip"]'})
-
-		// Import plan
-		/*document.getElementById("import-plan").addEventListener("click", () => {
-			let plan_string = document.getElementById("plan-to-import").value;
-			this.initPlan(); // Default plan will be overwritten if parse succeeds
-			this.plan.string_to_plan(plan_string);
-			this.update();
-		});*/
-
-		// Plan save button
-		document.getElementById("save-button").addEventListener("click", () => {
-			let name = document.getElementById("plan_title").value;
-			// TODO
-		});
-
-		// Plan export button
-		/*document.getElementById("export-button").addEventListener("click", () => {
-			// Copy plan to clipboard
-			let textarea = document.createElement("textarea");
-			textarea.style.style = "position: absolute; left: -999px; top: -999px"; // display none prevents this from working
-			document.body.appendChild(textarea);
-			textarea.value = this.plan.plan_to_string();
-			textarea.select();
-			document.execCommand("copy");
-			document.body.removeChild(textarea);
-
-			// Display alert that auto-closes
-			document.getElementById("plan-exported").style.display = "";
-			window.setTimeout(() => document.getElementById("plan-exported").style.display = "none", 5000);
-		});*/
 
 		// Initialize drag-and-drop to move courses
 		REDIPS.drag.dropMode = "single";
@@ -123,6 +122,17 @@ class Executive {
 			document.getElementById("course_code").value = "";
 			document.getElementById("credit_hours").value = "";
 		});
+	}
+
+	alertCount = 0;
+	displayAlert(type, message, timeout) {
+		let alertId = "alert-" + this.alertCount;
+		document.getElementById("alert_holder").innerHTML += `<div id="${alertId}" class="alert alert-${type} alert-dismissable mb-4 fade show" id="alert">
+			<button type="button" class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+			${message}
+		</div>`;
+		if (timeout) setTimeout(() => $("#" + alertId).alert("close"), timeout);
+		this.alertCount++;
 	}
 
 	/**

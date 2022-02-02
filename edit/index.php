@@ -2,14 +2,17 @@
 <?php
 	require_once "../common.php";
 
+	// Assemble plan data for use by JavaScript
+
 	if (isset($_GET["plan"])) { // Load a plan from the database
 		require_login();
+		$plan_id = (int) $_GET["plan"];
 		// TODO: Join degree table for name/year - maybe shouldn't have two separate queries
 		if ($_SESSION["permissions"] > 0) { // Staff - all staff can view all student plans
-			$planQuery = $db->query("SELECT * FROM plan WHERE plan_id = ?", [$_GET["plan"]]);
+			$planQuery = $db->query("SELECT * FROM plan WHERE plan_id = ?", [$plan_id]);
 		}
 		else { // Student - students can only view their own plans
-			$planQuery = $db->query("SELECT * FROM plan WHERE plan_id = ? AND user_id = ?", [$_GET["plan"], $_SESSION["user_id"]]);
+			$planQuery = $db->query("SELECT * FROM plan WHERE plan_id = ? AND user_id = ?", [$plan_id, $_SESSION["user_id"]]);
 		}
 		if (count($planQuery) != 1) crash(ErrorCode::PlanNotExist);
 		$planRow = $planQuery[0]; // Only one row
@@ -17,7 +20,7 @@
 		// Get the plan's semesters and transfer credits
 		$plan = json_decode($planRow["json"], true);
 
-		// Assemble plan data for use by JavaScript - TODO use plan_to_string format with additional field for ID (guest won't have)
+		$plan["plan_id"] = $plan_id;
 		$plan["plan_title"] = $planRow["plan_title"];
 		$plan["degree_id"] = $planRow["degree_id"];
 	}
@@ -71,6 +74,8 @@
 	</script>
 </head>
 <body>
+	<div id="alert_holder"></div>
+
 	<header class="container-fluid py-3">
 		<div class="row">
 			<div class="col-sm-4">
@@ -116,7 +121,7 @@
 		<span class="float-right">
 			<span id="save-container">
 				<!-- TODO: Decide if renaming should make a new plan (disabled for now) -->
-				<input type="text" id="plan_title" disabled class="form-control form-control-sm" placeholder="Plan name...">
+				<input type="text" id="plan_title" class="form-control form-control-sm" placeholder="Plan name...">
 				<!--Save button-->
 				<a id="save-button" type="button" class="btn btn-light btn-sm">Save <i class="fa fa-save"></i></a>
 				<!--Export button-->
@@ -148,11 +153,6 @@
 	
 	<!--Content-->
 	<div class="container">
-		<div class="alert alert-success mt-4" id="plan-exported" style="display:none">
-			<button type="button" class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-			Plan data copied to clipboard. You can share this with others or reimport it later.
-		</div>
-	
 		<div id="redips-drag" class="row">
 			<div class="col-lg-4 no-print">
 				<div class="my-4">
