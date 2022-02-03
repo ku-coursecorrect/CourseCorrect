@@ -23,7 +23,7 @@
 	Select a user:
 	<select name="kuid">
 		<?php
-			$users = $db->query("SELECT id, kuid, permissions FROM users");
+			$users = $db->query("SELECT user_id, kuid, permissions FROM user");
 			foreach ($users as $user) {
 				echo "<option value='" . $user["kuid"] . "'>" . json_encode($user) . "</option>";
 			}
