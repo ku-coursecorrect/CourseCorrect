@@ -4,16 +4,15 @@
 **/
 class Course {
 	/**
-	* @param course_id {string} The primary key of the course in the database
+	* @param course_id {string} The primary key of the course in the database, null for custom courses
 	* @param course_code {string} The code of this course (e.g. EECS 448)
 	* @param title {string} A name/short description of the course
 	* @param prereq {[string]} A list of course codes that are prerequisites of this course
 	* @param coreq {[string]}  A list of course codes that are corequisites of this course
 	* @param course_semester {[boolean,boolean,boolean]} Whether the course is offered in SPRING, SUMMER, and FALL (constants are array indicies)
 	* @param credit_hour {number} The number of credit hours the course is
-	* @param is_custom {boolean} Whether the course was created by the user, default false
 	*/
-	constructor(course_id, course_code, title, prereq, coreq, course_semester, credit_hour, is_custom = false) {
+	constructor(course_id, course_code, title, prereq, coreq, course_semester, credit_hour) {
 		this.course_id = course_id;
 		this.course_code = course_code;
 		this.title = title;
@@ -21,7 +20,6 @@ class Course {
 		this.coreq = coreq;
 		this.course_semester = course_semester.map(sem => sem == 1);
 		this.credit_hour = parseInt(credit_hour);
-		this.is_custom = is_custom; // Used when saving plans to strings
 	}
 
 	/**

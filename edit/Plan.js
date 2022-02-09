@@ -20,13 +20,14 @@ class Plan {
 		this.semesters = plan.semesters.map(semester => new Semester(
 			semester.season,
 			semester.year,
-			semester.courses.map(course_id => {
-				/*if (Array.isArray(course_code)) { // custom course - recreate it
-					let course = new Course(course_code[0], "Custom course", [], [], [1,1,1], course_code[1], true);
-					COURSES.push(course);
-					return course;
+			semester.courses.map(course => {
+				if (!course) return;
+				if (typeof course == "object") { // custom course - recreate it
+					let course_obj = new Course("custom_" + course.course_code, course.course_code, "Custom course", [], [], [1,1,1], course.credit_hours);
+					courses.push(course_obj);
+					return course_obj;
 				}
-				else*/ return course_id_to_object(courses, course_id)
+				else return course_id_to_object(courses, course)
 			}),
 		));
 
@@ -45,9 +46,9 @@ class Plan {
 				"year": semester.year,
 				"season": semester.season,
 				"courses": semester.courses.map(course => {
-					if (course == undefined) return "";
-					//else if (course.is_custom) return [course.course_code, course.credit_hour]; // TODO: handle custom courses
-					else return course.course_id;
+					if (course == undefined) return ""; // Empty slot in semester
+					if (!(course.course_id > 0)) return {"course_code": course.course_code, "credit_hours": course.credit_hour}; // Custom course
+					return course.course_id;
 				}),
 			})),
 		}

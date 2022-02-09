@@ -13,7 +13,6 @@
 		$semesters[] = ["year" => $year+1, "season" => SPRING, "courses" => []];
 	}
 
-	// TODO (maybe): Place to store custom courses
 	$json = json_encode(["semesters" => $semesters, "transfer_bank" => []]);
 	
 	$db->query("INSERT INTO plan (user_id, degree_id, plan_title, json) VALUES (?, ?, ?, ?)", [$_SESSION["user_id"], $degree_id, $name, $json]);

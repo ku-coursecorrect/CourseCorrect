@@ -104,17 +104,17 @@ class Executive {
 			this.update();
 		});
 
-		// Adding a custom course - TODO reimplement
+		// Adding a custom course
 		document.getElementById("course_add_submit").addEventListener("click", () => {
 			let t_course_code = document.getElementById("course_code").value;
 			let t_credit_hours = parseInt(document.getElementById("credit_hours").value);
 			if (t_course_code == "" || isNaN(t_credit_hours)) return; // Both inputs not filled out
-			if (this.plan.course_code_to_object(t_course_code) == undefined) {
-				let temp = new Course(t_course_code, "Custom course", [], [], [1,1,1], t_credit_hours, true);
-				COURSES.push(temp);
-				this.plan.course_bank.push(temp);
-				this.update();
-			}
+
+			let course = new Course("custom_" + t_course_code, t_course_code, "Custom course", [], [], [1,1,1], t_credit_hours, true);
+			this.courses.push(course);
+			this.plan.course_bank.push(course);
+			this.update();
+
 			document.getElementById("course_code").value = "";
 			document.getElementById("credit_hours").value = "";
 		});
