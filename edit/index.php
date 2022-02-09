@@ -36,7 +36,9 @@
 		crash(ErrorCode::NoPlanSpecified);
 	}
 
-	$plan["degree_title"] = implode(" ", $db->query("SELECT major, year FROM degree WHERE degree_id = ?", [$plan["degree_id"]])[0]);
+	$degree = $db->query("SELECT major, year FROM degree WHERE degree_id = ?", [$plan["degree_id"]])[0];
+	$plan["degree_major"] = $degree["major"];
+	$plan["degree_year"] = $degree["year"];
 
 	// Load all courses for this degree
 	// TODO: Prereqs and coreqs
@@ -65,7 +67,6 @@
 	<script type="text/javascript" src="Plan.js"></script>
 	<script type="text/javascript" src="Semester.js"></script>
 	<script type="text/javascript" src="Course.js"></script>
-	<script type="text/javascript" src="Major.js"></script>
 	<script>
 		window.addEventListener('DOMContentLoaded', e => {
 			window.executive = new Executive(<?=json_encode($courses)?>, <?=json_encode($plan)?>);
@@ -123,8 +124,6 @@
 				<input type="text" id="plan_title" class="form-control form-control-sm" placeholder="Plan name...">
 				<!--Save button-->
 				<a id="save-button" type="button" class="btn btn-light btn-sm">Save <i class="fa fa-save"></i></a>
-				<!--Export button-->
-				<!--<a id="export-button" type="button" class="btn btn-light btn-sm">Share <i class="fa fa-share"></i></a>-->
 			</span>
 			<!--Print button-->
 			<a href="javascript:window.print()" type="button" class="btn btn-light btn-sm">Print <i class="fa fa-print"></i></a>

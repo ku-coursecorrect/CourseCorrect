@@ -27,9 +27,9 @@ class Plan {
 		this.plan_id = plan.plan_id;
 		this.transfer_bank = plan.transfer_bank.map(course_id => course_id_to_object(courses, course_id));
 		this.semesters = plan.semesters.map(semester => new Semester(
-			semester.semester_season,
-			semester.semester_year,
-			semester.semester_courses.map(course_id => {
+			semester.season,
+			semester.year,
+			semester.courses.map(course_id => {
 				/*if (Array.isArray(course_code)) { // custom course - recreate it
 					let course = new Course(course_code[0], "Custom course", [], [], [1,1,1], course_code[1], true);
 					COURSES.push(course);
@@ -40,7 +40,7 @@ class Plan {
 		));
 
 		// Populate course bank with courses that aren't in a semester or the transfer bank
-		let placed_courses = this.transfer_bank.concat(...this.semesters.map(semester => semester.semester_courses));
+		let placed_courses = this.transfer_bank.concat(...this.semesters.map(semester => semester.courses));
 		this.course_bank = courses.filter(course => !placed_courses.includes(course));
 	}
 
@@ -51,9 +51,9 @@ class Plan {
 		let plan = {
 			"transfer_bank": this.transfer_bank.map(course => course.course_id),
 			"semesters": this.semesters.map(semester => ({
-				"semester_year": semester.semester_year,
-				"semester_season": semester.semester_season,
-				"semester_courses": semester.semester_courses.map(course => {
+				"year": semester.year,
+				"season": semester.season,
+				"courses": semester.courses.map(course => {
 					if (course == undefined) return "";
 					//else if (course.is_custom) return [course.course_code, course.credit_hour]; // TODO: handle custom courses
 					else return course.course_id;
@@ -69,7 +69,7 @@ class Plan {
 		@return course at column in the semsester
 	*/
 	get_course(semester, col) {
-		return this.semesters[semester].semester_courses[col];
+		return this.semesters[semester].courses[col];
 	}
 
 	/**
@@ -79,7 +79,7 @@ class Plan {
 	find_course(course_code) {
 		let coords;
 		this.semesters.forEach((semester, y) => {
-			semester.semester_courses.forEach((course, x) => {
+			semester.courses.forEach((course, x) => {
 				if (course != undefined && course_code == course.course_code) coords = [y, x];
 			});
 		});
@@ -116,43 +116,32 @@ class Plan {
 		}
 	}
 
-	/**
-		@param season {number} number 0-2, represents spring, summer, or fall
-		@param year {number}
-		@post creates a semester of season and year, which is added in the array
-	*/
-	add_semester(season, year) {
-		let new_order = year*3 + season;
-		
-		// Edge case: Adding semester directly before first semester
-		if (new_order < this.semesters[0].semester_year*3 + this.semesters[0].semester_season) {
-			this.semesters.splice(0, 0, new Semester(season, year, []));
-			return;
-		}
-		
-		for (let i = 0; i < this.semesters.length; i++) {
-			let old_order = this.semesters[i].semester_year*3 + this.semesters[i].semester_season;
-			if (old_order+1 == new_order) {
-				this.semesters.splice(i+1, 0, new Semester(season, year, []));
-				return; // Important for preventing infinite loops
-			}
-		}
-		
-		// Add semester at end if location is not in middle
-		this.semesters.splice(this.semesters.length, 0, new Semester(season, year, []));
+
+	find_semester([year, season]) {
+		return this.semesters.find(semester => semester.year == year && semester.season == season);
 	}
 
 	/**
+	    @param year {number}
+		@param season {number} number 0-2, represents spring, summer, or fall
+		@post creates a semester of season and year, which is added in the array
+	*/
+	add_semester(year, season) {
+		this.semesters.push(new Semester(season, year, []));
+		this.semesters.sort((sem1, sem2) => (sem1.year*3+sem1.season) - (sem2.year*3+sem2.season));
+	}
+
+	/**
+	    @param year {number}
 		@param season {number}
-		@param year {number}
 		@post semester at season and year index is deleted
 	*/
-	remove_semester(season, year) {
+	remove_semester(year, season) {
 		// Find the requested semester object
-		let i = this.semesters.findIndex(semester => season == semester.semester_season && year == semester.semester_year);
+		let i = this.semesters.findIndex(semester => season == semester.season && year == semester.year);
 
 		// Prevent removing semesters containing courses
-		if (this.semesters[i].semester_courses.find(course => course != undefined)) return;
+		if (this.semesters[i].courses.find(course => course != undefined)) return;
 		this.semesters.splice(i, 1);
 	}
 
@@ -161,7 +150,7 @@ class Plan {
 	*/
 	get_longest() {
 		// Traverse through semesters, updating longest with the length of the longest semester found so far
-		return this.semesters.reduce((longest, semester) => Math.max(semester.semester_courses.length, longest), MIN_COLS);
+		return this.semesters.reduce((longest, semester) => Math.max(semester.courses.length, longest), MIN_COLS);
 	}
 
 	/**
@@ -172,7 +161,7 @@ class Plan {
 		var arr_arrows = [];
 
 		this.semesters.forEach((semester, y) => {
-			semester.semester_courses.forEach((course, x) => {
+			semester.courses.forEach((course, x) => {
 				if (course != undefined) {
 					for (let reqs of [course.prereq, course.coreq]) {
 						for (let req of reqs) {

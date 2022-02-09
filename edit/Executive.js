@@ -16,18 +16,23 @@ class Executive {
 		this.courses = courses.map(course => new Course(course.course_id,
 														course.course_code, 
 														course.title, 
-														[], 
-														[], 
+														[], // TODO prereqs
+														[], // TODO coreqs
 														[course.f_spring, course.f_summer, course.f_fall], 
 														course.max_hours, 
 														false));
 
 		// Load plan
-		document.getElementById("plan_title").value = plan.plan_title; // TODO: If user edits plan title, update plan object - or maybe it would be good to have save and save as
-		document.getElementById("degree_title").innerText = plan.degree_title;
+		document.getElementById("plan_title").value = plan.plan_title;
+		document.getElementById("degree_title").innerText = plan.degree_major + " " + plan.degree_year;
 		this.plan = new Plan(plan, this.courses);
 
 		this.update();
+
+		// Add help text in the first cell
+		if (this.plan.semesters.length >= 1 && this.plan.semesters[0].courses.length < 1) {
+			document.getElementById("course-grid").rows[0].cells[1].innerHTML = "<div class='tutorial'>Drag-and-drop a course here..</div>";
+		}
 
 		// The rest of this sets up event listeners for user interactions
 
@@ -53,7 +58,7 @@ class Executive {
 			});
 		}
 		else {
-			document.getElementById("save-button").style.display = "none";
+			document.getElementById("save-container").style.display = "none";
 		}
 
 		// Add tooltips to courses
@@ -95,12 +100,7 @@ class Executive {
 			let semester = document.getElementById("addSemesterSelect").value;
 			if (semester == "-1") return; // Do nothing if dropdown not selected
 			let [year, season] = semester.split('-').map(Number);
-
-			// Remove semester from dropdown
-			document.getElementById("addSemesterSelect").remove(document.getElementById("addSemesterSelect").selectedIndex);
-			document.getElementById("addSemesterSelect").selectedIndex = 0;
-
-			this.plan.add_semester(season, year);
+			this.plan.add_semester(year, season);
 			this.update();
 		});
 
@@ -132,38 +132,6 @@ class Executive {
 	}
 
 	/**
-	* @pre The values of the starting semester and major dropdowns are valid
-	* @post The welcome screen is hidden and an 8-semester plan is initialized with all courses for the selected major in the course bank
-	**/
-	initPlan() {
-		//let [year, season] = document.getElementById("startSemesterSelect").value.split('-').map(Number);
-		//let major = document.getElementById("majorSelect").value;
-
-		document.getElementById("save-container").style.display = "";
-		this.plan = new Plan(major, season, year);
-		this.update();
-		// Add help text in the first cell
-		document.getElementById("course-grid").rows[0].cells[1].innerHTML = "<div class='tutorial'>Drag-and-drop a course here..</div>";
-
-		// Set up adding semesters - add the summers between the automatic semesters
-		for (let tmpYear = year; tmpYear < year+4; tmpYear++) {
-			this.makeElement("option", "addSemesterSelect", SEASON_NAMES[SUMMER] + " " + tmpYear, tmpYear + "-" + SUMMER);
-		}
-
-		// Option to add the next few semsters
-		year += season == FALL ? 4 : 3;
-		season = 2-season;
-		for (let semester = 1; semester <= 9; semester++) {
-			season++;
-			if (season >= 3) {
-				season -= 3;
-				year++;
-			}
-			this.makeElement("option", "addSemesterSelect", SEASON_NAMES[season] + " " + year, year + "-" + season);
-		}
-	}
-
-	/**
 	* @post All aspects of the plan are updated: Course locations, arrows, credit hours per semester, errors/warnings, etc.
 	**/
 	update() {
@@ -179,14 +147,45 @@ class Executive {
 		this.arrowRender.renderArrows(arrows);
 		REDIPS.drag.init(); // Updates which elements have drag-and-drop
 
+		// Clear add semester dropdown
+		let addSemesterSelect = document.getElementById("addSemesterSelect");
+		while (addSemesterSelect.firstChild) addSemesterSelect.removeChild(addSemesterSelect.firstChild);
+
+		if (this.plan.semesters.length < 1) {
+			// TODO - should probably just not let people remove every semester
+		}
+
+		// TODO: Change all this to use a Semester.toNum method which is year*3+season so math works easily
+
+		// Increment a [year, season] semester representation
+		const incSemester = ([year, season], inc = 1) => { 
+			season += inc; 
+			while (season >= 3) { season -= 3; year++; } 
+			while (season < 0) { season += 3; year--; }
+			return [year, season];
+		};
+
+		// Populate add semester dropdown with three semesters before and after current plan and any removed ones in-between
+		for (
+			let semester = incSemester(this.plan.semesters[0].year_season(), -3);
+			semester < incSemester(this.plan.semesters[this.plan.semesters.length-1].year_season(), 4);
+			semester = incSemester(semester)
+		) {
+			console.log(this.plan.find_semester(semester), semester);
+			if (!this.plan.find_semester(semester)) {
+				let [year, season] = semester;
+				this.makeElement("option", "addSemesterSelect", SEASON_NAMES[season] + " " + year, year + "-" + season);
+			}
+		}
+
 		// Update the credit hour displays and the Upper level eligibility
 		for (let semester of this.plan.semesters) {
 			let credit_hours = semester.get_credit_hour();
-			document.getElementById("ch" + semester.semester_year + "-" + semester.semester_season).innerText = credit_hours + " credit hours";
+			document.getElementById("ch" + semester.year + "-" + semester.season).innerText = credit_hours + " credit hours";
 			if (credit_hours > MAX_HOURS) { // Add excessive hour warnings
-				this.add_error("EXCESS HOURS: " + semester.season_name() + " " + semester.semester_year + ": You are taking more than " + MAX_HOURS +
+				this.add_error("EXCESS HOURS: " + semester.season_name() + " " + semester.year + ": You are taking more than " + MAX_HOURS +
 					" credit hours. You will need to fill out a waiver.\n");
-				document.getElementById("ch" + semester.semester_year + "-" + semester.semester_season).classList.add("error");
+				document.getElementById("ch" + semester.year + "-" + semester.season).classList.add("error");
 			}
 		}
 
@@ -253,18 +252,16 @@ class Executive {
 
 			let th = document.createElement("th");
 			th.className = "redips-mark";
-			th.innerHTML = semester.semester_year + " " + semester.season_name() + "<br><span class='ch' id='ch"+semester.semester_year+"-"+semester.semester_season+"'>0 credit hours</span>";
+			th.innerHTML = semester.year + " " + semester.season_name() + "<br><span class='ch' id='ch"+semester.year+"-"+semester.season+"'>0 credit hours</span>";
 			tr.appendChild(th);
 
 			// Delete button
-			if (semester.semester_courses.length == 0) {
+			if (semester.courses.length == 0) {
 				let dele = document.createElement("button");
 				dele.className = "btn btn-sm btn-danger delete-semester";
 				dele.innerHTML = '<i class="fa fa-trash"></i>';
 				dele.addEventListener("click", e => {
-					this.plan.remove_semester(semester.semester_season, semester.semester_year);
-					// Add semester to dropdown so it can be re-added
-					this.makeElement("option", "addSemesterSelect", semester.season_name() + " " + semester.semester_year, semester.semester_year + "-" + semester.semester_season);
+					this.plan.remove_semester(semester.year, semester.season);
 					this.update();
 				});
 				th.appendChild(dele);
@@ -272,12 +269,12 @@ class Executive {
 
 			for (let j = 0; j < cols; j++) {
 				let td = document.createElement("td"); // Create a table cell.
-				if (semester.semester_courses[j] != undefined) {
-					let course = semester.semester_courses[j];
+				if (semester.courses[j] != undefined) {
+					let course = semester.courses[j];
 					td.innerHTML = course.to_html(); // Formats the contents of the table cell.
 
 					// If the course that is being loaded into the table cell is not offered in the current semester's season.
-					if (course.course_semester[semester.semester_season] != 1) { 
+					if (course.course_semester[semester.season] != 1) { 
 						td.firstElementChild.classList.add("error"); // Stylize the cell to be red
 						this.add_error(course.course_code + " is not offered in the " + semester.season_name()); // Display an error message
 					}
@@ -308,8 +305,8 @@ class Executive {
 		}
 		for (let semester of this.plan.semesters) {
 			if (ule_req_count < this.plan.major.ule.length) {
-				if (semester.semester_courses.length > 0) {
-					for (let courses of semester.semester_courses) {
+				if (semester.courses.length > 0) {
+					for (let courses of semester.courses) {
 						if (courses != undefined) {
 							if (this.plan.major.ule.find(course => {if (course != undefined) if (course == courses.course_code) return course;}) == undefined) {
 								let code = courses.course_code.split(" ");

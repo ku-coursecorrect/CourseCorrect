@@ -12,7 +12,7 @@
 	$season = FALL;
 	for ($year = $startYear; $year <= $startYear + 4; $year++) {
 		while ($season <= FALL and count($semesters) < 8) {
-			$semesters[] = ["semester_year" => $year, "semester_season" => $season, "semester_courses" => []];
+			$semesters[] = ["year" => $year, "season" => $season, "courses" => []];
 			$season += 2;
 		}
 		$season = SPRING;
