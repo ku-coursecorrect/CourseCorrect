@@ -49,6 +49,11 @@
 	// Load all courses for this degree
 	// TODO: Prereqs and coreqs
 	$courses = $db->query("SELECT * FROM degree_join_course JOIN course USING (course_id) WHERE degree_id = ?", [$plan["degree_id"]]);
+	foreach ($courses as &$course) {
+		// TODO: prereq/coreq should be a single column and semester ranges for when reqs are valid
+		$course["prereq"] = array_column($db->query("SELECT dependent_id FROM requisite WHERE course_id = ? AND pre_req = 1", [$course["course_id"]]), "dependent_id");
+		$course["coreq"] = array_column($db->query("SELECT dependent_id FROM requisite WHERE course_id = ? AND co_req = 1", [$course["course_id"]]), "dependent_id");
+	}
 ?>
 <html>
 <head>

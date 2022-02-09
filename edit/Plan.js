@@ -64,14 +64,14 @@ class Plan {
 	}
 
 	/**
-		@param course_code {string} The code of the course to find
+		@param course_id {string} The id of the course to find
 		@return {[number,number]} The semsester and column where the Course is at in the Plan
 	*/
-	find_course(course_code) {
+	find_course(course_id) {
 		let coords;
 		this.semesters.forEach((semester, y) => {
 			semester.courses.forEach((course, x) => {
-				if (course != undefined && course_code == course.course_code) coords = [y, x];
+				if (course != undefined && course_id == course.course_id) coords = [y, x];
 			});
 		});
 		return coords;

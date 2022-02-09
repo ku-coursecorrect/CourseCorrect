@@ -16,8 +16,8 @@ class Executive {
 		this.courses = courses.map(course => new Course(course.course_id,
 														course.course_code, 
 														course.title, 
-														[], // TODO prereqs
-														[], // TODO coreqs
+														course.prereq,
+														course.coreq,
 														[course.f_spring, course.f_summer, course.f_fall], 
 														course.max_hours, 
 														false));
@@ -313,7 +313,7 @@ class Executive {
 								if ((code[0] == "EECS" && parseInt(code[1]) > 300) || (code[0] == "Sen")) {
 									if (ULE_EXCECPTIONS.find(course => course == courses.course_code) == undefined) {
 										this.add_error("WAIVER REQUIRED: " + courses.course_code + " needs Upper Level Eligibility. \n");
-										let coord = this.plan.find_course(courses.course_code);
+										let coord = this.plan.find_course(courses.course_id);
 										document.getElementById("course-grid").rows[coord[0]].cells[coord[1]+1].firstElementChild.classList.add("warning");
 									}
 								}
