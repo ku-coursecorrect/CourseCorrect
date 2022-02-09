@@ -15,15 +15,6 @@ class Plan {
 		@post All parameters are assigned to their respective member variables and the first 8 falls/springs after the start semester are added
 	*/
 	constructor(plan, courses) {
-		/*for (var i = 0; i < 4; i++) {
-			//Makes 8 semester of fall/spring, flips between fall and spring
-			//ONLY WOKRS IF YOU START AT FALL/SPRING
-			this.semesters.push(new Semester(start_season, start_year, []));
-			if (start_season == FALL) start_year++;
-			this.semesters.push(new Semester(2-start_season, start_year, []));
-			if (start_season == SPRING) start_year++;
-		}*/
-
 		this.plan_id = plan.plan_id;
 		this.transfer_bank = plan.transfer_bank.map(course_id => course_id_to_object(courses, course_id));
 		this.semesters = plan.semesters.map(semester => new Semester(

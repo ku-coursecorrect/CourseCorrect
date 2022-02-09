@@ -26,8 +26,14 @@
 	}
 
 	else if (isset($_GET["major"]) && isset($_GET["year"])) { // Guest mode create an unsavable empty plan
-		// TODO create empty semesters
-		$plan = [];
+		// Populate the plan with empty semesters for the next 4 years
+		$semesters = [];
+		$startYear = intval($_GET["year"]);
+		for ($year = $startYear; $year < $startYear + 4; $year++) {
+			$semesters[] = ["year" => $year, "season" => FALL, "courses" => []];
+			$semesters[] = ["year" => $year+1, "season" => SPRING, "courses" => []];
+		}
+		$plan = ["semesters" => $semesters, "transfer_bank" => []];
 
 		$plan["plan_title"] = "Guest mode";
 		$plan["degree_id"] = find_degree_id($_GET["major"], $_GET["year"]);

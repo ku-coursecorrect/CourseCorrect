@@ -5,17 +5,12 @@
 	$name = $_POST["name"];
 	$degree_id = find_degree_id($_POST["major"], $_POST["year"]);
 	
+	// Populate the plan with empty semesters for the next 4 years
 	$semesters = [];
-
-	// Populate the plan JSON with empty semesters for the next 4 years
 	$startYear = intval($_POST["year"]);
-	$season = FALL;
-	for ($year = $startYear; $year <= $startYear + 4; $year++) {
-		while ($season <= FALL and count($semesters) < 8) {
-			$semesters[] = ["year" => $year, "season" => $season, "courses" => []];
-			$season += 2;
-		}
-		$season = SPRING;
+	for ($year = $startYear; $year < $startYear + 4; $year++) {
+		$semesters[] = ["year" => $year, "season" => FALL, "courses" => []];
+		$semesters[] = ["year" => $year+1, "season" => SPRING, "courses" => []];
 	}
 
 	// TODO (maybe): Place to store custom courses
