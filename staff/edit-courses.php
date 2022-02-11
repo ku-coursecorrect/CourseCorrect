@@ -16,6 +16,16 @@
 	<script src="../libs/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../libs/fontawesome.min.css">
 	<script>
+		let timeout = null;
+
+		function waitFilter(val) {
+			if (timeout) {  
+				clearTimeout(timeout);
+			}
+			timeout = setTimeout(function() {
+				filterTable();
+			}, 150);
+		}
 		function filterTable() {
 			let input = document.getElementById("filterTableInput");
 			let filter = input.value.toUpperCase();
@@ -64,9 +74,9 @@
 				<div class="input-group-prepend">
 					<span class="input-group-text" id="basic-addon1"><i class="fas fa-filter"></i></span>
 				</div>
-				<input type="text" id="filterTableInput" oninput="filterTable()" class="form-control" placeholder="Filter Courses" aria-label="filter" aria-describedby="basic-addon1">
+				<input type="text" id="filterTableInput" oninput="waitFilter()" class="form-control" placeholder="Filter Courses" aria-label="filter" aria-describedby="basic-addon1">
 				<span class="input-group-append">
-				<button class="btn bg-transparent" type="button" style="margin-left: -40px; z-index: 100;" onclick="let input = document.getElementById('filterTableInput'); input.value = ''; filterTable(); input.focus();">
+				<button class="btn bg-transparent" type="button" style="margin-left: -40px; z-index: 100;" onclick="let input = document.getElementById('filterTableInput'); input.value = ''; waitFilter(); input.focus();">
 					<i class="fa fa-times"></i>
 				</button>
 				</span>	
