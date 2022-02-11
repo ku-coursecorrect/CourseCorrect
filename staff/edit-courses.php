@@ -34,14 +34,19 @@
 
 			for (let row of rows)
 			{
-				if (row.cells[0].nodeName == "TH") {
+				if (row.cells[0].tagName == "TH") {
 					continue;
 				}
 				for (let column of row.cells) {
-					column.innerHTML = column.innerText; // Clean old highlights first
+					if (column.className == '') { // Exclude final column with buttons
+						column.innerHTML = column.innerText; // Clean old highlights first
+					}
 				}
 				let found = false;
 				for (let column of row.cells) {
+					if (column.className != '') { // Exclude final column with buttons
+						continue;
+					}
 					let pos = column.innerText.toUpperCase().indexOf(filter);
 					if (pos != -1) {
 						highlightWord(column, pos, pos+filter.length);
