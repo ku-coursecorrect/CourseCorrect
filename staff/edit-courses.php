@@ -15,6 +15,41 @@
 	<script src="../libs/popper.min.js"></script>
 	<script src="../libs/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../libs/fontawesome.min.css">
+	<script>
+		function filterTable() {
+			let input = document.getElementById("filterTableInput");
+			let filter = input.value.toUpperCase();
+			let table = document.getElementById("classTable");
+			let rows = table.getElementsByTagName("tr");
+
+			for (let row of rows)
+			{
+				if (row.cells[0].nodeName == "TH") {
+					continue;
+				}
+				for (let column of row.cells) {
+					column.innerHTML = column.innerText; // Clean old highlights first
+				}
+				let found = false;
+				for (let column of row.cells) {
+					let pos = column.innerText.toUpperCase().indexOf(filter);
+					if (pos != -1) {
+						highlightWord(column, pos, pos+filter.length);
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					row.style.display = "none";
+				} else {
+					row.style.display = "";
+				}
+			}
+			function highlightWord(column, startPos, endPos) {
+				column.innerHTML = column.innerHTML.slice(0, startPos) + "<span style='background-color:yellow;'>" + column.innerHTML.slice(startPos, endPos) + "</span>" + column.innerHTML.slice(endPos);
+			}
+		}
+	</script>
 </head>
 <body>
 	<?php display_navbar(); ?>
@@ -25,7 +60,18 @@
 					Edit Courses
 					<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#create-course"><i class="fas fa-plus"></i> Add new course</button>
 				</h1>
-				<table class="table table-striped">
+				<div class="input-group mb-3">
+				<div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon1"><i class="fas fa-filter"></i></span>
+				</div>
+				<input type="text" id="filterTableInput" oninput="filterTable()" class="form-control" placeholder="Filter Courses" aria-label="filter" aria-describedby="basic-addon1">
+				<span class="input-group-append">
+				<button class="btn bg-transparent" type="button" style="margin-left: -40px; z-index: 100;" onclick="let input = document.getElementById('filterTableInput'); input.value = ''; filterTable(); input.focus();">
+					<i class="fa fa-times"></i>
+				</button>
+				</span>	
+				</div>
+				<table class="table table-striped" id="classTable">
 					<?php
 						$TABLE_FORMAT = [
 							"Course Number" => fn($course) => $course["course_code"],
