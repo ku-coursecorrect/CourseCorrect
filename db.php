@@ -59,4 +59,5 @@
 	
 	$db = new DBConn($DB_INFO);
 	if (!isset($GLOBALS["db"])) $GLOBALS["db"] = $db;
+	if (!isset($GLOBALS["db_name"])) $GLOBALS["db_name"] = $DB_INFO["DB_NAME"];
 ?>
