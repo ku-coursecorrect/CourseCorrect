@@ -56,7 +56,7 @@
 							"Description" => function($course) {
 								$MINLEN = 40;
 								$desc = $course["description"];
-								$descSanitized = addslashes($desc);
+								$descSanitized = filter_var($desc, FILTER_SANITIZE_STRING);
 								echo "<span class=expand onclick='expandText(event, \"$descSanitized\", true)' style='font-style:italic;'>" . substr($desc, 0, $MINLEN) . "...</span>";
 							},
 							"Credit Hours" => function($course) {
