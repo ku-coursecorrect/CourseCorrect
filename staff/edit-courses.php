@@ -57,7 +57,7 @@
 								$MINLEN = 40;
 								$desc = $course["description"];
 								$descSanitized = addslashes($desc);
-								echo "<span onclick='expandText(event, \"$descSanitized\", true)' style='display:flex; font-style:italic;'>" . substr($desc, 0, $MINLEN) . "...</span>";
+								echo "<span class=expand onclick='expandText(event, \"$descSanitized\", true)' style='font-style:italic;'>" . substr($desc, 0, $MINLEN) . "...</span>";
 							},
 							"Credit Hours" => function($course) {
 								if ($course["min_hours"] == $course["max_hours"])

@@ -5,7 +5,7 @@ let SUFFIX = "...";
 let expand_timer = null;
 let expand = true;
 
-function expandText(e, full_text, click) {
+function expandText(e, full_text, click, delta=DELTA, expand_=null) {
     if (expand_timer) {  
         clearTimeout(expand_timer);
     }
@@ -20,19 +20,27 @@ function expandText(e, full_text, click) {
     if (click) {
         expand = current_len != target_len;
     }
+    if (expand_ !== null) {
+        expand = expand_;
+    }
 
+    // Get bigger
     if (expand && current_len < target_len) {
-        let i = DELTA;
+        e.target.style = "";
+        let i = delta;
         while (e.target.innerText.length == current_len) { // Keep adding chars until the length changes since spaces get trimmed immediately
             e.target.innerText = full_text.substring(0, current_len + i);
-            i += DELTA;
+            i += delta;
         }
         if (e.target.innerText.length == target_len) {
             return;
         }
     }
+
+    // Get smaller
     else if (!expand && current_len > MINLEN) {
-        e.target.innerText = full_text.substring(0, current_len - DELTA);
+        e.target.style = "font-style:italic";
+        e.target.innerText = full_text.substring(0, current_len - delta);
         if (e.target.innerText.length <= MINLEN) {
             e.target.innerText = full_text.substring(0, MINLEN) + SUFFIX;
             return;
@@ -46,6 +54,13 @@ function expandText(e, full_text, click) {
 
 let timeout = null;
 let HIGHLIGHT = ["<span style=\"background-color:yellow;\">", "</span>"]; // ' are converted to " in HTML
+
+function getFullText(ele) {
+    let text_html = ele.attributes.onclick.nodeValue;
+    let start = text_html.indexOf("\"");
+    let end = text_html.lastIndexOf("\"");
+    return text_html.substring(start + 1, end);
+}
 
 function waitFilter() {
     if (timeout) {  
@@ -76,10 +91,23 @@ function filterTable() {
         }
         let found = false;
         for (let column of row.cells) {
-            let posText = column.innerText.toUpperCase().indexOf(filter);
-            let posHTML = column.innerHTML.toUpperCase().indexOf(filter);
+            let expand = true;
+            let ele = column.querySelector('.expand');
+            if (ele === null) {
+                ele = column;
+                expand = false;
+            }
+            let posText = ele.innerText.toUpperCase().indexOf(filter);
+            let posHTML = ele.innerHTML.toUpperCase().indexOf(filter);
             if (posText != -1 && posHTML != -1) {
-                highlightWord(column, posHTML, posHTML+filter.length);
+                if (expand) {
+                    let full_text = getFullText(ele);
+                    let e = {target: ele};
+                    expandText(e, full_text, true, 1000000, true);
+                    highlightWord(ele, posHTML, posHTML+filter.length);
+                } else {
+                    highlightWord(ele, posHTML, posHTML+filter.length);
+                }
                 found = true;
                 break;
             }
