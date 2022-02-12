@@ -15,56 +15,20 @@
 	<script src="../libs/popper.min.js"></script>
 	<script src="../libs/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../libs/fontawesome.min.css">
-	<script>
-		let timeout = null;
+	<script src="filterTable.js"></script>
+	<style>
 
-		function waitFilter(val) {
-			if (timeout) {  
-				clearTimeout(timeout);
-			}
-			timeout = setTimeout(function() {
-				filterTable();
-			}, 150);
-		}
-		function filterTable() {
-			let input = document.getElementById("filterTableInput");
-			let filter = input.value.toUpperCase();
-			let table = document.getElementById("classTable");
-			let rows = table.getElementsByTagName("tr");
+	span.full-text{
+		display:none;
+	}
+	.text-preview:hover span.preview-text{
+		display:none;
+	}
+	.text-preview:hover span.full-text{
+		display:block;
+	}
 
-			for (let row of rows)
-			{
-				if (row.cells[0].tagName == "TH") {
-					continue;
-				}
-				for (let column of row.cells) {
-					if (column.className == '') { // Exclude final column with buttons
-						column.innerHTML = column.innerText; // Clean old highlights first
-					}
-				}
-				let found = false;
-				for (let column of row.cells) {
-					if (column.className != '') { // Exclude final column with buttons
-						continue;
-					}
-					let pos = column.innerText.toUpperCase().indexOf(filter);
-					if (pos != -1) {
-						highlightWord(column, pos, pos+filter.length);
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					row.style.display = "none";
-				} else {
-					row.style.display = "";
-				}
-			}
-			function highlightWord(column, startPos, endPos) {
-				column.innerHTML = column.innerHTML.slice(0, startPos) + "<span style='background-color:yellow;'>" + column.innerHTML.slice(startPos, endPos) + "</span>" + column.innerHTML.slice(endPos);
-			}
-		}
-	</script>
+	</style>
 </head>
 <body>
 	<?php display_navbar(); ?>
@@ -88,10 +52,25 @@
 				</div>
 				<table class="table table-striped" id="classTable">
 					<?php
+						$course_codes = [];
 						$TABLE_FORMAT = [
 							"Course Number" => fn($course) => $course["course_code"],
 							"Title" => fn($course) => $course["title"],
-							"Description" => fn($course) => $course["description"],
+							"Requisites" => function($course) {
+								global $course_codes;
+								if (isset($course["requisites"])) {
+									$req_codes = [];
+									foreach ($course["requisites"] as $req) {
+										array_push($req_codes, ($req["co_req"] ? "Coreq: " : "Prereq: ") . $course_codes[$req["dependent_id"]]);
+									}
+									echo implode(", ", $req_codes);
+								}
+							},
+							"Description" => function($course) {
+								$MAXLEN = 30;
+								$desc = $course["description"];
+								echo "<span data-toggle='tooltip' data-placement='auto' title='$desc' data-html='true'>" . substr($desc, 0, $MAXLEN) . (strlen($desc) > $MAXLEN ? "..." : "") . "</span>";
+							},
 							"Credit Hours" => function($course) {
 								if ($course["min_hours"] == $course["max_hours"])
 								{
@@ -123,7 +102,21 @@
 						echo '</tr><tbody>';
 
 						$courses = $db->query("SELECT * FROM course;");
+
+						// Obtain and group requisites by course
+						$reqs_array = $db->query("SELECT * FROM requisite;");
+						$requisites = [];
+						foreach($reqs_array as $req) {
+							if (!array_key_exists($req["course_id"], $reqs_array)) {
+								$requisites[$req["course_id"]] = [];
+							}
+							array_push($requisites[$req["course_id"]], $req);
+						}
+						
 						foreach($courses as $course){
+							$course["requisites"] = $requisites[$course["course_id"]];
+							$course_codes[$course["course_id"]] = $course["course_code"];
+
 							echo '<tr>';
 							foreach($TABLE_FORMAT as $field_format) {
 								echo '<td>', $field_format($course), '</td>';
