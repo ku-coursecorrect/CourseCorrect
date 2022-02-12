@@ -15,20 +15,7 @@
 	<script src="../libs/popper.min.js"></script>
 	<script src="../libs/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../libs/fontawesome.min.css">
-	<script src="filterTable.js"></script>
-	<style>
-
-	span.full-text{
-		display:none;
-	}
-	.text-preview:hover span.preview-text{
-		display:none;
-	}
-	.text-preview:hover span.full-text{
-		display:block;
-	}
-
-	</style>
+	<script src="edit-course.js"></script>
 </head>
 <body>
 	<?php display_navbar(); ?>
@@ -67,9 +54,10 @@
 								}
 							},
 							"Description" => function($course) {
-								$MAXLEN = 30;
+								$MINLEN = 40;
 								$desc = $course["description"];
-								echo "<span data-toggle='tooltip' data-placement='auto' title='$desc' data-html='true'>" . substr($desc, 0, $MAXLEN) . (strlen($desc) > $MAXLEN ? "..." : "") . "</span>";
+								$descSanitized = addslashes($desc);
+								echo "<span onclick='expandText(event, \"$descSanitized\", true)' style='display:flex; font-style:italic;'>" . substr($desc, 0, $MINLEN) . "...</span>";
 							},
 							"Credit Hours" => function($course) {
 								if ($course["min_hours"] == $course["max_hours"])

@@ -1,3 +1,49 @@
+let MINLEN = 40;
+let DELTA = 20;
+let SUFFIX = "...";
+
+let expand_timer = null;
+let expand = true;
+
+function expandText(e, full_text, click) {
+    if (expand_timer) {  
+        clearTimeout(expand_timer);
+    }
+    if (e.target.innerText.endsWith(SUFFIX))
+    {
+        e.target.innerText = e.target.innerText.substring(0, e.target.innerText.length-3);
+    }
+
+    let current_len = e.target.innerText.length;
+    let target_len = full_text.trim().length;
+
+    if (click) {
+        expand = current_len != target_len;
+    }
+
+    if (expand && current_len < target_len) {
+        let i = DELTA;
+        while (e.target.innerText.length == current_len) { // Keep adding chars until the length changes since spaces get trimmed immediately
+            e.target.innerText = full_text.substring(0, current_len + i);
+            i += DELTA;
+        }
+        if (e.target.innerText.length == target_len) {
+            return;
+        }
+    }
+    else if (!expand && current_len > MINLEN) {
+        e.target.innerText = full_text.substring(0, current_len - DELTA);
+        if (e.target.innerText.length <= MINLEN) {
+            e.target.innerText = full_text.substring(0, MINLEN) + SUFFIX;
+            return;
+        }
+    }
+
+    expand_timer = setTimeout(function() {
+        expandText(e, full_text, false);
+    }, 2);
+}
+
 let timeout = null;
 let HIGHLIGHT = ["<span style=\"background-color:yellow;\">", "</span>"]; // ' are converted to " in HTML
 
