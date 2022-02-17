@@ -122,3 +122,35 @@ function filterTable() {
         column.innerHTML = column.innerHTML.slice(0, startPos) + HIGHLIGHT[0] + column.innerHTML.slice(startPos, endPos) + HIGHLIGHT[1] + column.innerHTML.slice(endPos);
     }
 }
+
+function toggleCredits(btn) {
+    timeout = setTimeout(function(btn) {
+        if (btn.ariaPressed === 'true') { // Apparently this isn't set immediately. Timeout works
+            document.getElementById("credits_max_separator").style.display = ""; 
+            document.getElementById("credits_max").style.display = ""; 
+        } else {
+            document.getElementById("credits_max_separator").style.display = "none"; 
+            document.getElementById("credits_max").style.display = "none"; 
+        }
+    }, 1, btn);
+}
+
+function dropdownSelect(selection) {
+    timeout = setTimeout(function(selection) {
+        let drop = selection.parentNode.previousElementSibling;
+        let choiceValue = selection.attributes.value.nodeValue;
+        let choiceText = selection.text;
+        drop.value = choiceValue;
+        drop.innerText = choiceText;
+    }, 1, selection);
+}
+
+function addReq() {
+    let table = document.getElementById("reqs-table");
+    let row = table.insertRow();
+    row.innerHTML = table.rows[1].innerHTML; // TODO: Actually add new rows instead of duping
+}
+
+function removeReq(row) {
+    // TODO
+}
