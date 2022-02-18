@@ -135,6 +135,8 @@ class Executive {
 	**/
 	update() {
 		// Update course bank and transfer credits
+		this.plan.course_bank.sort((a, b) => (a.course_code > b.course_code ? 1 : -1));
+		this.plan.transfer_bank.sort((a, b) => (a.course_code > b.course_code ? 1 : -1));
 		this.renderBank("course-bank", this.plan.course_bank);
 		this.renderBank("transfer-bank", this.plan.transfer_bank);
 		document.getElementById("print-course-bank").innerText = this.plan.course_bank.map(course => course.course_code).join(", ") || "None";
@@ -150,10 +152,6 @@ class Executive {
 		let addSemesterSelect = document.getElementById("addSemesterSelect");
 		while (addSemesterSelect.firstChild) addSemesterSelect.removeChild(addSemesterSelect.firstChild);
 
-		if (this.plan.semesters.length < 1) {
-			// TODO - should probably just not let people remove every semester
-		}
-
 		// Populate add semester dropdown with three semesters before and after current plan and any removed ones in-between
 		for (let id = this.plan.semesters[0].id - 3; id < this.plan.semesters[this.plan.semesters.length-1].id + 4; id++) {
 			if (!this.plan.find_semester(id)) {
@@ -166,7 +164,7 @@ class Executive {
 			let credit_hours = semester.get_credit_hour();
 			document.getElementById("ch" + semester.id).innerText = credit_hours + " credit hours";
 			if (credit_hours > MAX_HOURS) { // Add excessive hour warnings
-				this.add_error(`EXCESS HOURS: You are taking more than ${MAX_HOURS} credit hours in ${semester} (waiver required).`);
+				this.add_error(`<b>EXCESS HOURS:</b> More than ${MAX_HOURS} credit hours in ${semester} (waiver required)`, "warning");
 				document.getElementById("ch" + semester.id).classList.add("error");
 			}
 		}
@@ -174,14 +172,14 @@ class Executive {
 		// Check for invalid placements
 		for (let arrow of arrows) {
 			if (!arrow.fromSide && arrow.yIn >= arrow.yOut) { // Invalid prerequisite
-				this.add_error("INVALID COURSE: " + this.plan.get_course(arrow.yIn, arrow.xIn).course_code
+				this.add_error("<b>PREREQUISITE ERROR:</b> " + this.plan.get_course(arrow.yIn, arrow.xIn).course_code
 					+ " is a prerequisite of " + this.plan.get_course(arrow.yOut, arrow.xOut).course_code + "\n");
 				// Add error class to course. +1 on the x is to account for the semester name column.
 				document.getElementById("course-grid").rows[arrow.yOut].cells[arrow.xOut+1].firstElementChild.classList.add("error");
 				// TODO: Make arrow red (will require moving renderArrows call to after this loop)
 			}
 			else if (arrow.fromSide && arrow.yIn > arrow.yOut) { // Invalid corequisite
-				this.add_error("INVALID COURSE: " + this.plan.get_course(arrow.yIn, arrow.xIn).course_code
+				this.add_error("<b>COREQUISITE ERROR:</b> " + this.plan.get_course(arrow.yIn, arrow.xIn).course_code
 					+ " is a corequisite of " + this.plan.get_course(arrow.yOut, arrow.xOut).course_code + "\n");
 				// Add error class to course. +1 on the x is to account for the semester name column.
 				document.getElementById("course-grid").rows[arrow.yOut].cells[arrow.xOut+1].firstElementChild.classList.add("error");
@@ -209,7 +207,7 @@ class Executive {
 			if (semester.id == lastUleRequirementSemesterId) {
 				for (let course of semester.courses) {
 					if (course?.ule == ULE.RequiresCompletion) {
-						this.add_error("WAIVER REQUIRED: " + course.course_code + " needs Upper Level Eligibility.\n");
+						this.add_error(`<b>UPPER-LEVEL ELIGIBILITY:</b> ${course.course_code} placed before ULE requirements completed (waiver required)`, "warning");
 						document.querySelector(`[data-course="${course.course_id}"`).classList.add("warning");
 					}
 				}
@@ -218,7 +216,7 @@ class Executive {
 			// Semesters before ULE is complete
 			for (let course of semester.courses) {
 				if (course?.ule == ULE.LastSemesterException || course?.ule == ULE.RequiresCompletion) {
-					this.add_error("WAIVER REQUIRED: " + course.course_code + " needs Upper Level Eligibility.\n");
+					this.add_error(`<b>UPPER-LEVEL ELIGIBILITY:</b> ${course.course_code} placed before ULE requirements completed (waiver required)`, "warning");
 					document.querySelector(`[data-course="${course.course_id}"`).classList.add("warning");
 				}
 			}
@@ -270,8 +268,8 @@ class Executive {
 			th.innerHTML = semester.toString() + "<br><span class='ch' id='ch"+semester.id+"'>0 credit hours</span>";
 			tr.appendChild(th);
 
-			// Delete button
-			if (semester.courses.length == 0) {
+			// Delete button (don't show if only one semester)
+			if (this.plan.semesters.length > 1 && semester.courses.length == 0) {
 				let dele = document.createElement("button");
 				dele.className = "btn btn-sm btn-danger delete-semester";
 				dele.innerHTML = '<i class="fa fa-trash"></i>';
@@ -310,10 +308,9 @@ class Executive {
 	* @param msg {string} The error message about the plan to display to the user
 	* @post The message is added to the elements on the page and print layoutt
 	**/
-	add_error(msg) {
-		for (let id of ["notifications", "print-notifications"]) {
-			this.makeElement("li", id, msg);
-		}
+	add_error(msg, type="danger") {
+		this.makeElement("li", "print-notifications", msg);
+		document.getElementById("notifications").innerHTML += `<div class="alert alert-${type} mt-2 mb-0">${msg}</div>`;
 	}
 
 	/**

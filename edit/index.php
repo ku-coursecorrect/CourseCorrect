@@ -27,7 +27,7 @@
 
 	else if (isset($_GET["major"]) && isset($_GET["year"])) { // Guest mode create an unsavable empty plan
 		$plan = new_plan_json(intval($_GET["year"]));
-		
+
 		$plan["plan_title"] = "Guest mode";
 		$plan["degree_id"] = find_degree_id($_GET["major"], $_GET["year"]);
 	}
@@ -154,6 +154,7 @@
 	
 	<!--Content-->
 	<div class="container">
+		<div id="notifications" class="col-12"></div>
 		<div id="redips-drag" class="row">
 			<div class="col-lg-4 no-print">
 				<div class="my-4">
@@ -170,31 +171,36 @@
 					</table>
 				</div>
 				
-				<div class="mb-4" id="add_extra_course_box">
+				<div class="mb-4 mr-4" id="add_extra_course_box">
 					<h3>Add Extra Course</h3>
-					<div class="row mr-2">
-						<label for="course_code" class="col-sm-5 col-form-label">Course Code:</label>
-						<div class="col-sm-7">
-							<input type="text" class="form-control" id="course_code">
-						</div>
-					</div>
-					<div class="row mr-2">
-						<label for="credit_hours" class="col-sm-5 col-form-label">Credit Hours:</label>
-						<div class="col-sm-7">
-							<div class="input-group">
-								<input type="number" class="form-control" id="credit_hours" name="credit_hours" min="0">
-								<div class="input-group-append">
-									<button type="submit" class="btn btn-primary" id="course_add_submit">Add</button>
+					<table>
+						<tr>
+							<td class="text-nowrap pr-2">Course Code:</td>
+							<td><input type="text" class="form-control" id="course_code"></td>
+						</tr>
+						<tr>
+							<td class="text-nowrap pr-2">Credit Hours:</td>
+							<td>
+								<div class="input-group">
+									<input type="number" class="form-control" id="credit_hours" name="credit_hours" min="0">
+									<div class="input-group-append">
+										<button type="submit" class="btn btn-primary" id="course_add_submit">Add</button>
+									</div>
 								</div>
-							</div>
-						</div>
-					</div>
+							</td>
+						</tr>
+					</table>
 				</div>
 
-				<div class="mb-4"> <!--Errors and notifications-->
-					<h3>Notifications</h3>
-					<div class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border scrollable_box">
-						<ul id="notifications"></ul>
+				<div class="mb-4 mr-4 no-print">
+					<h3>Add Semester</h3>
+					<div class="input-group">
+						<select id="addSemesterSelect" class="form-control">
+							<option disabled selected value="-1">Choose a semester...</option>
+						</select>
+						<div class="input-group-append">
+							<button type="button" class="btn btn-primary" id="add-semester-btn">Add</button>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -204,32 +210,6 @@
 					<div id="schedule-container" class="bg-light"> <!--Schedule-->
 						<div id="arrows"></div><!--Will contain the SVG with the arrows-->
 						<table id="course-grid" class="border"></table><!--Will contain the drag-and-droppable courses-->
-					</div>
-				</div>
-				
-				<div class="modal fade" id="confirm-delete-plan">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">Delete Plan</div>
-							<div class="modal-body">Are you sure you wish to delete this plan?</div>
-							<div class="modal-footer">
-								<input type="button" class="btn btn-secondary" data-dismiss="modal" value="Cancel">
-								<input type="button" class="btn btn-danger" id="delete-plan" data-dismiss="modal" value="Delete">
-							</div>
-						</div>
-					</div>
-				</div>
-				
-				<div class="row mt-2 no-print" id="add-semester">
-					<div class="col-sm-6 offset-sm-3 border p-3 bg-light">
-						<div class="input-group">
-							<select id="addSemesterSelect" class="form-control">
-								<option disabled selected value="-1">Choose a semester...</option>
-							</select>
-							<div class="input-group-append">
-								<button type="button" class="btn btn-primary" id="add-semester-btn">Add semester</button>
-							</div>
-						</div>
 					</div>
 				</div>
 
