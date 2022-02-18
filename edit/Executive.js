@@ -150,10 +150,6 @@ class Executive {
 		let addSemesterSelect = document.getElementById("addSemesterSelect");
 		while (addSemesterSelect.firstChild) addSemesterSelect.removeChild(addSemesterSelect.firstChild);
 
-		if (this.plan.semesters.length < 1) {
-			// TODO - should probably just not let people remove every semester
-		}
-
 		// Populate add semester dropdown with three semesters before and after current plan and any removed ones in-between
 		for (let id = this.plan.semesters[0].id - 3; id < this.plan.semesters[this.plan.semesters.length-1].id + 4; id++) {
 			if (!this.plan.find_semester(id)) {
@@ -270,8 +266,8 @@ class Executive {
 			th.innerHTML = semester.toString() + "<br><span class='ch' id='ch"+semester.id+"'>0 credit hours</span>";
 			tr.appendChild(th);
 
-			// Delete button
-			if (semester.courses.length == 0) {
+			// Delete button (don't show if only one semester)
+			if (this.plan.semesters.length > 1 && semester.courses.length == 0) {
 				let dele = document.createElement("button");
 				dele.className = "btn btn-sm btn-danger delete-semester";
 				dele.innerHTML = '<i class="fa fa-trash"></i>';
