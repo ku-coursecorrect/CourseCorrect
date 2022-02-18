@@ -147,10 +147,39 @@ function dropdownSelect(selection) {
 
 function addReq() {
     let table = document.getElementById("reqs-table");
-    let row = table.insertRow();
-    row.innerHTML = table.rows[1].innerHTML; // TODO: Actually add new rows instead of duping
+    table.insertRow();
+    let rowTemplate = document.getElementById("req-row");
+    table.rows[table.rows.length -1].outerHTML = rowTemplate.content.children[0].outerHTML;
+    table.rows[table.rows.length -1].id = 'req-' + table.rows.length;
 }
 
-function removeReq(row) {
-    // TODO
+function removeReq(btn) {
+    let row = btn.parentNode.parentNode;
+    row.parentNode.removeChild(row);
 }
+
+function populateModal(btn) {
+    let course_code = "";
+    
+    if (btn.innerText.trim() === "Add new course") {
+        course_code = "New";
+    } else {
+        let course_row = btn.parentNode.parentNode;
+        course_code = course_row.children[0].innerText;
+    }
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("edit-course").innerHTML = this.responseText;
+        }
+      };
+    xhttp.open("GET", "get-course.php?q="+course_code, true);
+    xhttp.send();
+    
+    // TODO: Do query here to get course info?
+}
+
+// TODO: How to submit form and update courses from JS without risking SQL injection?
+// Process with Ajax and forward to PHP? https://stackoverflow.com/a/5610430/7587147
+
