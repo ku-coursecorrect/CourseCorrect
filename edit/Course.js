@@ -1,3 +1,18 @@
+// Possible values for upper level eligibility requirements
+const ULE = {
+	// Courses that you can take whenever you want and have nothing to do with ULE, e.g. MATH 526
+	Unaffected: 0,
+
+	// Coureses that you are required to take to earn ULE, e.g. EECS 168, MATH 125
+	Requirement: 1,
+
+	// Courses that can be taken in the same semester the last required courses are being completed, e.g. EECS 368
+	LastSemesterException: 2,
+
+	// Courses that require ULE to be completed (or a waiver) to take, e.g. EECS 448
+	RequiresCompletion: 3
+}
+
 /**
 * @class
 * @description This object is used to represent a single course which can be taken and all information about it
@@ -11,8 +26,9 @@ class Course {
 	* @param coreq {[string]}  A list of course codes that are corequisites of this course
 	* @param course_semester {[boolean,boolean,boolean]} Whether the course is offered in SPRING, SUMMER, and FALL (constants are array indicies)
 	* @param credit_hour {number} The number of credit hours the course is
+	* @param ule {number} The upper level eligibility value of the course, from the above "enum"
 	*/
-	constructor(course_id, course_code, title, prereq, coreq, course_semester, credit_hour) {
+	constructor(course_id, course_code, title, prereq, coreq, course_semester, credit_hour, ule) {
 		this.course_id = course_id;
 		this.course_code = course_code;
 		this.title = title;
@@ -20,6 +36,7 @@ class Course {
 		this.coreq = coreq;
 		this.course_semester = course_semester.map(sem => sem == 1);
 		this.credit_hour = parseInt(credit_hour);
+		this.ule = parseInt(ule);
 	}
 
 	/**

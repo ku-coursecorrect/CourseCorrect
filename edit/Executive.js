@@ -20,7 +20,7 @@ class Executive {
 														course.coreq,
 														[course.f_spring, course.f_summer, course.f_fall], 
 														course.max_hours, 
-														false));
+														course.f_ule));
 
 		// Load plan
 		document.getElementById("plan_title").value = plan.plan_title;
@@ -206,8 +206,43 @@ class Executive {
 			}
 		}
 
-		// TODO: reimplement ULE
-		//this.checkULE();
+		// Find the semester the last ULE.Requirement course is taken
+		let lastUleRequirementSemester = 0;
+		for (let semester of this.plan.semesters) {
+			for (let course of semester.courses) {
+				if (course?.ule == ULE.Requirement) {
+					lastUleRequirementSemester = semester.year * 3 + semester.season; // TODO semester IDs
+				}
+			}
+		}
+		for (let course of this.plan.course_bank) {
+			if (course.ule == ULE.Requirement) {
+				// Course in course bank still
+				lastUleRequirementSemester = 99999; // Hacky way to make it in the future
+			}
+		}
+		console.log("ULE TEST", lastUleRequirementSemester);
+
+		// Check for any ULE errors
+		for (let semester of this.plan.semesters) {
+			// Semester ULE gets completed
+			if (semester.year * 3 + semester.season == lastUleRequirementSemester) { // TODO semester IDs
+				for (let course of semester.courses) {
+					if (course?.ule == ULE.RequiresCompletion) {
+						this.add_error("WAIVER REQUIRED: " + course.course_code + " needs Upper Level Eligibility.\n");
+						document.querySelector(`[data-course="${course.course_id}"`).classList.add("warning");
+					}
+				}
+				break;
+			}
+			// Semesters before ULE is complete
+			for (let course of semester.courses) {
+				if (course?.ule == ULE.LastSemesterException || course?.ule == ULE.RequiresCompletion) {
+					this.add_error("WAIVER REQUIRED: " + course.course_code + " needs Upper Level Eligibility.\n");
+					document.querySelector(`[data-course="${course.course_id}"`).classList.add("warning");
+				}
+			}
+		}
 
 		// Autosave plan TODO
 	}
@@ -289,45 +324,6 @@ class Executive {
 		}
 
 		this.arrowRender.resize(this.plan.semesters.length, cols);
-	}
-
-	/**
-	* @brief checks for upper level eligibility
-	* @post adds a notification if a course needs upper level eligibility
-	* @returns a bool of whether there is upper level eligibility
-	**/
-	checkULE() {
-		let ule_req_count = 0;
-		for (let courses of this.plan.major.ule) {
-			if (this.plan.transfer_bank.find(course => {if (course != undefined) if (course.course_code == courses) return course;}) != undefined) {
-				ule_req_count++;
-			}
-		}
-		for (let semester of this.plan.semesters) {
-			if (ule_req_count < this.plan.major.ule.length) {
-				if (semester.courses.length > 0) {
-					for (let courses of semester.courses) {
-						if (courses != undefined) {
-							if (this.plan.major.ule.find(course => {if (course != undefined) if (course == courses.course_code) return course;}) == undefined) {
-								let code = courses.course_code.split(" ");
-								if ((code[0] == "EECS" && parseInt(code[1]) > 300) || (code[0] == "Sen")) {
-									if (ULE_EXCECPTIONS.find(course => course == courses.course_code) == undefined) {
-										this.add_error("WAIVER REQUIRED: " + courses.course_code + " needs Upper Level Eligibility. \n");
-										let coord = this.plan.find_course(courses.course_id);
-										document.getElementById("course-grid").rows[coord[0]].cells[coord[1]+1].firstElementChild.classList.add("warning");
-									}
-								}
-							} else {
-								ule_req_count++;
-							}
-						}
-					}
-				}
-			} else {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
