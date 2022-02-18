@@ -135,6 +135,8 @@ class Executive {
 	**/
 	update() {
 		// Update course bank and transfer credits
+		this.plan.course_bank.sort((a, b) => (a.course_code > b.course_code ? 1 : -1));
+		this.plan.transfer_bank.sort((a, b) => (a.course_code > b.course_code ? 1 : -1));
 		this.renderBank("course-bank", this.plan.course_bank);
 		this.renderBank("transfer-bank", this.plan.transfer_bank);
 		document.getElementById("print-course-bank").innerText = this.plan.course_bank.map(course => course.course_code).join(", ") || "None";
