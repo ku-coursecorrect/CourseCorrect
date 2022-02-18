@@ -9,106 +9,60 @@ class Executive {
 	/**
 	* @post Dropdowns are populated and event listeners are set up on elements of the page the user can interact with
 	**/
-	constructor(test) {
-		// used for test suite
-		if (test) {
-			return;
-		}
+	constructor(courses = null, plan = null, test = false) {
+		if (test) return; // used for test suite (which is currently broken due to the paramters changing - TODO)
 		this.arrowRender = new ArrowRender();
+
+		this.courses = courses.map(course => new Course(course.course_id,
+														course.course_code, 
+														course.title, 
+														course.prereq,
+														course.coreq,
+														[course.f_spring, course.f_summer, course.f_fall], 
+														course.max_hours, 
+														course.f_ule));
+
+		// Load plan
+		document.getElementById("plan_title").value = plan.plan_title;
+		document.getElementById("degree_title").innerText = plan.degree_major + " " + plan.degree_year;
+		this.plan = new Plan(plan, this.courses);
+
+		this.update();
+
+		// Add help text in the first cell
+		if (this.plan.semesters.length >= 1 && this.plan.semesters[0].courses.length < 1) {
+			document.getElementById("course-grid").rows[0].cells[1].innerHTML = "<div class='tutorial'>Drag-and-drop a course here..</div>";
+		}
+
+		// The rest of this sets up event listeners for user interactions
+
+		// Plan save button
+		if (this.plan.plan_id) {
+			document.getElementById("save-button").addEventListener("click", () => {
+				let data = new FormData();
+				data.append("plan_id", this.plan.plan_id);
+				data.append("plan_title", document.getElementById("plan_title").value);
+				data.append("json", this.plan.save_json());
+
+				fetch("save.php", {"method": "POST", "body": data}).then(response => {
+					if (response.ok) {
+						console.log(response);
+						this.displayAlert("success", "Plan saved", 5000);
+					}
+					else {
+						console.error(response);
+						this.displayAlert("danger", "Error saving plan", 5000);
+					}
+					response.text().then(text => console.log(text));
+				});
+			});
+		}
+		else {
+			document.getElementById("save-container").style.display = "none";
+		}
 
 		// Add tooltips to courses
 		$('#redips-drag').tooltip({selector: '[data-toggle="tooltip"]'})
-
-		// Populate options for major
-		for (let major of MAJORS) {
-			this.makeElement("option", "majorSelect", major.major_name, major.major_name);
-		}
-
-		// Populate options for starting semester
-		let thisYear = new Date().getFullYear();
-		for (let year = thisYear; year >= thisYear-3; year--) {
-			for (let season of [FALL, SPRING]) {
-				this.makeElement("option", "startSemesterSelect", "Start in " + SEASON_NAMES[season] + " " + year, year + "-" + season);
-			}
-		}
-
-		// Initialize plan when done is clicked (arrow function used to preserve this)
-		document.getElementById("done").addEventListener("click", () => this.initPlan());
-
-		// Populate list of saved plans to load
-		for (let i = 0; i < localStorage.length; i++) {
-			let key = localStorage.key(i);
-			if (key.startsWith("gpg-1-")) {
-				let plan = localStorage.getItem(key);
-				try {
-					plan = JSON.parse(plan);
-					let date = new Date(plan.timestamp);
-					// Get the date the plan was last modified in YYYY-MM-DD format, correcting for time zone
-					let text = new Date(plan.timestamp - new Date().getTimezoneOffset()*60000).toISOString().split("T")[0] + ": " + key.substr(6);
-					this.makeElement("option", "planSelect", text, key);
-				}
-				catch (e) {
-					// Skip plans with formatting issues
-					console.log(e);
-				}
-			}
-		}
-
-		// Load existing plan on click
-		document.getElementById("load-plan").addEventListener("click", () => {
-			let key = document.getElementById("planSelect").value;
-			if (key == "-1") return; // Do nothing if dropdown not selected
-			// Read plan string before init. This is important when loading the autosave plan.
-			let plan_string = localStorage.getItem(key);
-			this.initPlan(); // Default plan will be overwritten if parse succeeds
-			this.plan.string_to_plan(plan_string);
-			this.update();
-			// Substr to remove the gpg-1-
-			document.getElementById("save-name").value = document.getElementById("planSelect").value.substr(6);
-		});
-
-		// Import plan
-		document.getElementById("import-plan").addEventListener("click", () => {
-			let plan_string = document.getElementById("plan-to-import").value;
-			this.initPlan(); // Default plan will be overwritten if parse succeeds
-			this.plan.string_to_plan(plan_string);
-			this.update();
-		});
-
-		// Delete saved plan
-		document.getElementById("delete-plan").addEventListener("click", () => {
-			let key = document.getElementById("planSelect").value;
-			if (key == "-1") return; // Do nothing if dropdown not selected
-			localStorage.removeItem(key);
-			// Remove plan from dropdown
-			document.getElementById("planSelect").remove(document.getElementById("planSelect").selectedIndex);
-			document.getElementById("planSelect").selectedIndex = 0;
-		});
-
-		// Plan save button
-		document.getElementById("save-button").addEventListener("click", () => {
-			let name = document.getElementById("save-name").value;
-			// Default name e.g. Computer Science Fall 2018
-			if (!name) name = this.plan.major.major_name + " " + this.plan.semesters[0].season_name() + " " + this.plan.semesters[0].semester_year;
-			name = name.replace(/[^\w\s]/g, ""); // Remove special characters from name
-			this.savePlan(name);
-		});
-
-		// Plan export button
-		document.getElementById("export-button").addEventListener("click", () => {
-			// Copy plan to clipboard
-			let textarea = document.createElement("textarea");
-			textarea.style.style = "position: absolute; left: -999px; top: -999px"; // display none prevents this from working
-			document.body.appendChild(textarea);
-			textarea.value = this.plan.plan_to_string();
-			textarea.select();
-			document.execCommand("copy");
-			document.body.removeChild(textarea);
-
-			// Display alert that auto-closes
-			document.getElementById("plan-exported").style.display = "";
-			window.setTimeout(() => document.getElementById("plan-exported").style.display = "none", 5000);
-		});
 
 		// Initialize drag-and-drop to move courses
 		REDIPS.drag.dropMode = "single";
@@ -127,7 +81,7 @@ class Executive {
 			// Remove tutorial if present
 			$(".tutorial").remove();
 
-			let course = this.plan.course_code_to_object(targetCell.firstElementChild.dataset["course"]);
+			let course = course_id_to_object(this.courses, targetCell.firstElementChild.dataset["course"]);
 			this.plan.remove_course(course); // Remove course from wherever it is
 			if (targetCell.dataset["bank"] == "course") {
 				this.plan.course_bank.push(course);
@@ -143,15 +97,9 @@ class Executive {
 
 		// Adding a semester
 		document.getElementById('add-semester-btn').addEventListener('click', () => {
-			let semester = document.getElementById("addSemesterSelect").value;
-			if (semester == "-1") return; // Do nothing if dropdown not selected
-			let [year, season] = semester.split('-').map(Number);
-
-			// Remove semester from dropdown
-			document.getElementById("addSemesterSelect").remove(document.getElementById("addSemesterSelect").selectedIndex);
-			document.getElementById("addSemesterSelect").selectedIndex = 0;
-
-			this.plan.add_semester(season, year);
+			let id = document.getElementById("addSemesterSelect").value;
+			if (id == "-1") return; // Do nothing if dropdown not selected
+			this.plan.add_semester(id);
 			this.update();
 		});
 
@@ -160,66 +108,26 @@ class Executive {
 			let t_course_code = document.getElementById("course_code").value;
 			let t_credit_hours = parseInt(document.getElementById("credit_hours").value);
 			if (t_course_code == "" || isNaN(t_credit_hours)) return; // Both inputs not filled out
-			if (this.plan.course_code_to_object(t_course_code) == undefined) {
-				let temp = new Course(t_course_code, "Custom course", [], [], [1,1,1], t_credit_hours, true);
-				COURSES.push(temp);
-				this.plan.course_bank.push(temp);
-				this.update();
-			}
+
+			let course = new Course("custom_" + t_course_code, t_course_code, "Custom course", [], [], [1,1,1], t_credit_hours, true);
+			this.courses.push(course);
+			this.plan.course_bank.push(course);
+			this.update();
+
 			document.getElementById("course_code").value = "";
 			document.getElementById("credit_hours").value = "";
 		});
-
-		// Test plan
-		//this.createTestPlan();
-		
-		// Automatically load first plan (TODO - TEMPORARY)
-		let plan = (new URLSearchParams(window.location.search).get("plan")) ?? "0";
-		if (plan == "0") {
-			//document.getElementById("majorSelect").selectedIndex = "1";
-			//document.getElementById("startSemesterSelect").selectedIndex = "1";
-			//document.getElementById("done").click();
-		}
-		else {
-			document.getElementById("planSelect").selectedIndex = plan;
-			document.getElementById("load-plan").click();
-		}
 	}
 
-	/**
-	* @pre The values of the starting semester and major dropdowns are valid
-	* @post The welcome screen is hidden and an 8-semester plan is initialized with all courses for the selected major in the course bank
-	**/
-	initPlan() {
-		let [year, season] = document.getElementById("startSemesterSelect").value.split('-').map(Number);
-		let major = document.getElementById("majorSelect").value;
-		document.getElementById("showMajor").innerHTML = "Major: " + major;
-
-		document.getElementById("welcome").style.display = "none";
-		document.getElementById("add-semester").style.display = "";
-		document.getElementById("add_extra_course_box").style.display = "";
-		document.getElementById("save-container").style.display = "";
-		this.plan = new Plan(major, season, year);
-		this.update();
-		// Add help text in the first cell
-		document.getElementById("course-grid").rows[0].cells[1].innerHTML = "<div class='tutorial'>Drag-and-drop a course here..</div>";
-
-		// Set up adding semesters - add the summers between the automatic semesters
-		for (let tmpYear = year; tmpYear < year+4; tmpYear++) {
-			this.makeElement("option", "addSemesterSelect", SEASON_NAMES[SUMMER] + " " + tmpYear, tmpYear + "-" + SUMMER);
-		}
-
-		// Option to add the next few semsters
-		year += season == FALL ? 4 : 3;
-		season = 2-season;
-		for (let semester = 1; semester <= 9; semester++) {
-			season++;
-			if (season >= 3) {
-				season -= 3;
-				year++;
-			}
-			this.makeElement("option", "addSemesterSelect", SEASON_NAMES[season] + " " + year, year + "-" + season);
-		}
+	alertCount = 0;
+	displayAlert(type, message, timeout) {
+		let alertId = "alert-" + this.alertCount;
+		document.getElementById("alert_holder").innerHTML += `<div id="${alertId}" class="alert alert-${type} alert-dismissable mb-4 fade show" id="alert">
+			<button type="button" class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+			${message}
+		</div>`;
+		if (timeout) setTimeout(() => $("#" + alertId).alert("close"), timeout);
+		this.alertCount++;
 	}
 
 	/**
@@ -238,14 +146,28 @@ class Executive {
 		this.arrowRender.renderArrows(arrows);
 		REDIPS.drag.init(); // Updates which elements have drag-and-drop
 
+		// Clear add semester dropdown
+		let addSemesterSelect = document.getElementById("addSemesterSelect");
+		while (addSemesterSelect.firstChild) addSemesterSelect.removeChild(addSemesterSelect.firstChild);
+
+		if (this.plan.semesters.length < 1) {
+			// TODO - should probably just not let people remove every semester
+		}
+
+		// Populate add semester dropdown with three semesters before and after current plan and any removed ones in-between
+		for (let id = this.plan.semesters[0].id - 3; id < this.plan.semesters[this.plan.semesters.length-1].id + 4; id++) {
+			if (!this.plan.find_semester(id)) {
+				this.makeElement("option", "addSemesterSelect", (new Semester(id)).toString(), id);
+			}
+		}
+
 		// Update the credit hour displays and the Upper level eligibility
 		for (let semester of this.plan.semesters) {
 			let credit_hours = semester.get_credit_hour();
-			document.getElementById("ch" + semester.semester_year + "-" + semester.semester_season).innerText = credit_hours + " credit hours";
+			document.getElementById("ch" + semester.id).innerText = credit_hours + " credit hours";
 			if (credit_hours > MAX_HOURS) { // Add excessive hour warnings
-				this.add_error("EXCESS HOURS: " + semester.season_name() + " " + semester.semester_year + ": You are taking more than " + MAX_HOURS +
-					" credit hours. You will need to fill out a waiver.\n");
-				document.getElementById("ch" + semester.semester_year + "-" + semester.semester_season).classList.add("error");
+				this.add_error(`EXCESS HOURS: You are taking more than ${MAX_HOURS} credit hours in ${semester} (waiver required).`);
+				document.getElementById("ch" + semester.id).classList.add("error");
 			}
 		}
 
@@ -265,10 +187,44 @@ class Executive {
 				document.getElementById("course-grid").rows[arrow.yOut].cells[arrow.xOut+1].firstElementChild.classList.add("error");
 			}
 		}
-		this.checkULE();
 
-		// Autosave plan
-		this.savePlan("autosave");
+		// Find the semester the last ULE.Requirement course is taken
+		let lastUleRequirementSemesterId = 0;
+		for (let semester of this.plan.semesters) {
+			for (let course of semester.courses) {
+				if (course?.ule == ULE.Requirement) {
+					lastUleRequirementSemesterId = semester.id;
+				}
+			}
+		}
+		for (let course of this.plan.course_bank) {
+			if (course.ule == ULE.Requirement) { // Course in course bank still
+				lastUleRequirementSemesterId = 99999; // Hacky way to make it in the future
+			}
+		}
+
+		// Check for any ULE errors
+		for (let semester of this.plan.semesters) {
+			// Semester ULE gets completed
+			if (semester.id == lastUleRequirementSemesterId) {
+				for (let course of semester.courses) {
+					if (course?.ule == ULE.RequiresCompletion) {
+						this.add_error("WAIVER REQUIRED: " + course.course_code + " needs Upper Level Eligibility.\n");
+						document.querySelector(`[data-course="${course.course_id}"`).classList.add("warning");
+					}
+				}
+				break;
+			}
+			// Semesters before ULE is complete
+			for (let course of semester.courses) {
+				if (course?.ule == ULE.LastSemesterException || course?.ule == ULE.RequiresCompletion) {
+					this.add_error("WAIVER REQUIRED: " + course.course_code + " needs Upper Level Eligibility.\n");
+					document.querySelector(`[data-course="${course.course_id}"`).classList.add("warning");
+				}
+			}
+		}
+
+		// Autosave plan TODO
 	}
 
 	/**
@@ -311,18 +267,16 @@ class Executive {
 
 			let th = document.createElement("th");
 			th.className = "redips-mark";
-			th.innerHTML = semester.semester_year + " " + semester.season_name() + "<br><span class='ch' id='ch"+semester.semester_year+"-"+semester.semester_season+"'>0 credit hours</span>";
+			th.innerHTML = semester.toString() + "<br><span class='ch' id='ch"+semester.id+"'>0 credit hours</span>";
 			tr.appendChild(th);
 
 			// Delete button
-			if (semester.semester_courses.length == 0) {
+			if (semester.courses.length == 0) {
 				let dele = document.createElement("button");
 				dele.className = "btn btn-sm btn-danger delete-semester";
 				dele.innerHTML = '<i class="fa fa-trash"></i>';
 				dele.addEventListener("click", e => {
-					this.plan.remove_semester(semester.semester_season, semester.semester_year);
-					// Add semester to dropdown so it can be re-added
-					this.makeElement("option", "addSemesterSelect", semester.season_name() + " " + semester.semester_year, semester.semester_year + "-" + semester.semester_season);
+					this.plan.remove_semester(semester.id);
 					this.update();
 				});
 				th.appendChild(dele);
@@ -330,12 +284,12 @@ class Executive {
 
 			for (let j = 0; j < cols; j++) {
 				let td = document.createElement("td"); // Create a table cell.
-				if (semester.semester_courses[j] != undefined) {
-					let course = semester.semester_courses[j];
+				if (semester.courses[j] != undefined) {
+					let course = semester.courses[j];
 					td.innerHTML = course.to_html(); // Formats the contents of the table cell.
 
 					// If the course that is being loaded into the table cell is not offered in the current semester's season.
-					if (course.course_semester[semester.semester_season] != 1) { 
+					if (course.course_semester[semester.season()] != 1) { 
 						td.firstElementChild.classList.add("error"); // Stylize the cell to be red
 						this.add_error(course.course_code + " is not offered in the " + semester.season_name()); // Display an error message
 					}
@@ -353,45 +307,6 @@ class Executive {
 	}
 
 	/**
-	* @brief checks for upper level eligibility
-	* @post adds a notification if a course needs upper level eligibility
-	* @returns a bool of whether there is upper level eligibility
-	**/
-	checkULE() {
-		let ule_req_count = 0;
-		for (let courses of this.plan.major.ule) {
-			if (this.plan.transfer_bank.find(course => {if (course != undefined) if (course.course_code == courses) return course;}) != undefined) {
-				ule_req_count++;
-			}
-		}
-		for (let semester of this.plan.semesters) {
-			if (ule_req_count < this.plan.major.ule.length) {
-				if (semester.semester_courses.length > 0) {
-					for (let courses of semester.semester_courses) {
-						if (courses != undefined) {
-							if (this.plan.major.ule.find(course => {if (course != undefined) if (course == courses.course_code) return course;}) == undefined) {
-								let code = courses.course_code.split(" ");
-								if ((code[0] == "EECS" && parseInt(code[1]) > 300) || (code[0] == "Sen")) {
-									if (ULE_EXCECPTIONS.find(course => course == courses.course_code) == undefined) {
-										this.add_error("WAIVER REQUIRED: " + courses.course_code + " needs Upper Level Eligibility. \n");
-										let coord = this.plan.find_course(courses.course_code);
-										document.getElementById("course-grid").rows[coord[0]].cells[coord[1]+1].firstElementChild.classList.add("warning");
-									}
-								}
-							} else {
-								ule_req_count++;
-							}
-						}
-					}
-				}
-			} else {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	* @param msg {string} The error message about the plan to display to the user
 	* @post The message is added to the elements on the page and print layoutt
 	**/
@@ -399,23 +314,6 @@ class Executive {
 		for (let id of ["notifications", "print-notifications"]) {
 			this.makeElement("li", id, msg);
 		}
-	}
-
-	/**
-	* @param name {string} The name the saved plan will have
-	* @post The current this.plan is saved to the browser's local storage with a name prefix specific to this applicaion
-	**/
-	savePlan(name) {
-		// 1 is for version number
-		localStorage.setItem("gpg-1-" + name, this.plan.plan_to_string());
-	}
-
-	/**
-	* @param name {string} The name of the plan saved in the user's browser (must exist)
-	* @post The plan matching the name is retrieved from the browser's local storage and used to populate this.plan
-	**/
-	loadPlan(name) {
-		this.plan.string_to_plan(localStorage.getItem("gpg-1-" + name));
 	}
 
 	/**
@@ -431,22 +329,5 @@ class Executive {
 		if (text) el.appendChild(document.createTextNode(text));
 		if (parentId) document.getElementById(parentId).appendChild(el);
 		return el;
-	}
-
-	/**
-	* @post An example plan is created to test arrow rendering and other aspects of the code
-	**/
-	createTestPlan() {
-		document.getElementById("welcome").style.display = "none";
-		this.plan = new Plan("Computer Science", FALL, 2018);
-		this.plan.add_course(0, 1, this.plan.course_code_to_object("EECS 168"));
-		this.plan.add_course(0, 2, this.plan.course_code_to_object("EECS 140"));
-		this.plan.add_course(1, 1, this.plan.course_code_to_object("MATH 125"));
-		this.plan.add_course(1, 3, this.plan.course_code_to_object("GE 2.2"));
-		this.plan.add_course(2, 0, this.plan.course_code_to_object("EECS 268"));
-		this.plan.add_course(2, 1, this.plan.course_code_to_object("PHSX 210"));
-		this.plan.add_course(2, 2, this.plan.course_code_to_object("EECS 388"));
-		this.plan.add_course(2, 3, this.plan.course_code_to_object("PHSX 216"));
-		this.update();
 	}
 }
