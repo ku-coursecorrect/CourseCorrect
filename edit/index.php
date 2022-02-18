@@ -171,25 +171,25 @@
 					</table>
 				</div>
 				
-				<div class="mb-4" id="add_extra_course_box">
+				<div class="mb-4 mr-4" id="add_extra_course_box">
 					<h3>Add Extra Course</h3>
-					<div class="row mr-2">
-						<label for="course_code" class="col-sm-5 col-form-label">Course Code:</label>
-						<div class="col-sm-7">
-							<input type="text" class="form-control" id="course_code">
-						</div>
-					</div>
-					<div class="row mr-2">
-						<label for="credit_hours" class="col-sm-5 col-form-label">Credit Hours:</label>
-						<div class="col-sm-7">
-							<div class="input-group">
-								<input type="number" class="form-control" id="credit_hours" name="credit_hours" min="0">
-								<div class="input-group-append">
-									<button type="submit" class="btn btn-primary" id="course_add_submit">Add</button>
+					<table>
+						<tr>
+							<td class="text-nowrap pr-2">Course Code:</td>
+							<td><input type="text" class="form-control" id="course_code"></td>
+						</tr>
+						<tr>
+							<td class="text-nowrap pr-2">Credit Hours:</td>
+							<td>
+								<div class="input-group">
+									<input type="number" class="form-control" id="credit_hours" name="credit_hours" min="0">
+									<div class="input-group-append">
+										<button type="submit" class="btn btn-primary" id="course_add_submit">Add</button>
+									</div>
 								</div>
-							</div>
-						</div>
-					</div>
+							</td>
+						</tr>
+					</table>
 				</div>
 
 				<div class="mb-4 mr-4 no-print">
