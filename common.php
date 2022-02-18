@@ -47,6 +47,22 @@
 	define("SPRING", 0);
 	define("SUMMER", 1);
 	define("FALL", 2);
+
+	function semester_id($year, $season) {
+		return $year * 3 + $season;
+	}
+
+	// Populate a new plan with empty semesters for the next 4 years
+	// Fall of start year, spring and fall of next 3 years, then spring of the year after that
+	function new_plan_json($startYear) {
+		$semesters = [];
+		for ($year = $startYear; $year < $startYear + 4; $year++) {
+			$semesters[] = ["id" => semester_id($year, FALL), "courses" => []];
+			$semesters[] = ["id" => semester_id($year+1, SPRING), "courses" => []];
+		}
+		$json = json_encode(["semesters" => $semesters, "transfer_bank" => []]);
+		return $json;
+	}
 	
 	// Status codes bit flags
 	abstract class PlanStatus {

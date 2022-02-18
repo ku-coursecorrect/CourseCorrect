@@ -15,27 +15,18 @@ class Plan {
 		@post All parameters are assigned to their respective member variables and the first 8 falls/springs after the start semester are added
 	*/
 	constructor(plan, courses) {
-		/*for (var i = 0; i < 4; i++) {
-			//Makes 8 semester of fall/spring, flips between fall and spring
-			//ONLY WOKRS IF YOU START AT FALL/SPRING
-			this.semesters.push(new Semester(start_season, start_year, []));
-			if (start_season == FALL) start_year++;
-			this.semesters.push(new Semester(2-start_season, start_year, []));
-			if (start_season == SPRING) start_year++;
-		}*/
-
 		this.plan_id = plan.plan_id;
 		this.transfer_bank = plan.transfer_bank.map(course_id => course_id_to_object(courses, course_id));
 		this.semesters = plan.semesters.map(semester => new Semester(
-			semester.season,
-			semester.year,
-			semester.courses.map(course_id => {
-				/*if (Array.isArray(course_code)) { // custom course - recreate it
-					let course = new Course(course_code[0], "Custom course", [], [], [1,1,1], course_code[1], true);
-					COURSES.push(course);
-					return course;
+			semester.id,
+			semester.courses.map(course => {
+				if (!course) return;
+				if (typeof course == "object") { // custom course - recreate it
+					let course_obj = new Course("custom_" + course.course_code, course.course_code, "Custom course", [], [], [1,1,1], course.credit_hours);
+					courses.push(course_obj);
+					return course_obj;
 				}
-				else*/ return course_id_to_object(courses, course_id)
+				else return course_id_to_object(courses, course)
 			}),
 		));
 
@@ -51,12 +42,11 @@ class Plan {
 		let plan = {
 			"transfer_bank": this.transfer_bank.map(course => course.course_id),
 			"semesters": this.semesters.map(semester => ({
-				"year": semester.year,
-				"season": semester.season,
+				"id": semester.id,
 				"courses": semester.courses.map(course => {
-					if (course == undefined) return "";
-					//else if (course.is_custom) return [course.course_code, course.credit_hour]; // TODO: handle custom courses
-					else return course.course_id;
+					if (course == undefined) return ""; // Empty slot in semester
+					if (!(course.course_id > 0)) return {"course_code": course.course_code, "credit_hours": course.credit_hour}; // Custom course
+					return course.course_id;
 				}),
 			})),
 		}
@@ -73,14 +63,14 @@ class Plan {
 	}
 
 	/**
-		@param course_code {string} The code of the course to find
+		@param course_id {string} The id of the course to find
 		@return {[number,number]} The semsester and column where the Course is at in the Plan
 	*/
-	find_course(course_code) {
+	find_course(course_id) {
 		let coords;
 		this.semesters.forEach((semester, y) => {
 			semester.courses.forEach((course, x) => {
-				if (course != undefined && course_code == course.course_code) coords = [y, x];
+				if (course != undefined && course_id == course.course_id) coords = [y, x];
 			});
 		});
 		return coords;
@@ -117,28 +107,26 @@ class Plan {
 	}
 
 
-	find_semester([year, season]) {
-		return this.semesters.find(semester => semester.year == year && semester.season == season);
+	find_semester(id) {
+		return this.semesters.find(semester => semester.id == id);
 	}
 
 	/**
-	    @param year {number}
-		@param season {number} number 0-2, represents spring, summer, or fall
+	    @param id {number}
 		@post creates a semester of season and year, which is added in the array
 	*/
-	add_semester(year, season) {
-		this.semesters.push(new Semester(season, year, []));
-		this.semesters.sort((sem1, sem2) => (sem1.year*3+sem1.season) - (sem2.year*3+sem2.season));
+	add_semester(id) {
+		this.semesters.push(new Semester(id, []));
+		this.semesters.sort((sem1, sem2) => sem1.id - sem2.id);
 	}
 
 	/**
-	    @param year {number}
-		@param season {number}
+	    @param id {number}
 		@post semester at season and year index is deleted
 	*/
-	remove_semester(year, season) {
+	remove_semester(id) {
 		// Find the requested semester object
-		let i = this.semesters.findIndex(semester => season == semester.season && year == semester.year);
+		let i = this.semesters.findIndex(semester => id == semester.id);
 
 		// Prevent removing semesters containing courses
 		if (this.semesters[i].courses.find(course => course != undefined)) return;
