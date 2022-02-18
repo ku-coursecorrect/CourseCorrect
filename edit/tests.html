@@ -185,21 +185,21 @@
 				startSection("Executive class"); // ===========================
 				
 				runTest("Executive.renderBank properly populates course bank", () => {
-					let exec = new Executive(true);
+					let exec = new Executive(null, true);
 					exec.renderBank("course-bank", [new Course("TEST 101", "desc", [], [], [1,1,1], 3)]);
 					let td = document.getElementById("course-bank").firstChild.firstChild;
 					return (td.dataset["bank"] === "course" && td.firstChild.dataset["course"] === "TEST 101");
 				});
 				
 				runTest("Executive.renderBank properly populates transfer bank", () => {
-					let exec = new Executive(true);
+					let exec = new Executive(null, true);
 					exec.renderBank("transfer-bank", [new Course("TEST 101", "desc", [], [], [1,1,1], 3)]);
 					let td = document.getElementById("transfer-bank").firstChild.firstChild;
 					return (td.dataset["bank"] === "transfer" && td.firstChild.dataset["course"] === "TEST 101");
 				});
 				
 				runTest("Executive.renderCourseGrid properly renders course grid", () => {
-					let exec = new Executive(true);
+					let exec = new Executive(null, true);
 					exec.arrowRender = new ArrowRender();
 					exec.plan = new Plan("Computer Science", FALL, 2018);
 					exec.plan.add_course(2, 3, new Course("TEST 101", "desc", [], [], [1,1,1], 3));
@@ -208,7 +208,7 @@
 				});
 				
 				runTest("Executive.checkULE returns true on plan meeting ULE", () => {
-					let exec = new Executive(true);
+					let exec = new Executive(null, true);
 					exec.plan = new Plan("Computer Science", FALL, 2018);
 					exec.plan.add_course(0, 1, exec.plan.course_code_to_object("EECS 168"));
 					exec.plan.add_course(0, 2, exec.plan.course_code_to_object("EECS 140"));
@@ -229,7 +229,7 @@
 				});
 
 				runTest("Executive.checkULE returns false on plan not meeting ULE", () => {
-					let exec = new Executive(true);
+					let exec = new Executive(null, true);
 					exec.plan = new Plan("Interdisciplinary Computing (Geography)", SPRING, 2019);
 					exec.plan.add_course(0, 1, exec.plan.course_code_to_object("EECS 168"));
 					exec.plan.add_course(0, 2, exec.plan.course_code_to_object("EECS 140"));
@@ -247,25 +247,8 @@
 					return !exec.checkULE();
 				});
 
-				runTest("Tests if savePlan() saves to local", () => {
-					let exec = new Executive(true);
-					exec.plan = new Plan("Computer Science", FALL, 2018);
-					exec.savePlan("Test");
-					let local_string = localStorage.getItem("gpg-1-Test");
-					return (exec.plan.plan_to_string().length == local_string.length);
-				});
-
-				runTest("Tests if loadPlan() loads from local", () => {
-					let exec = new Executive(true);
-					exec.plan = new Plan("Computer Science", FALL, 2018);
-					exec.savePlan("Test");
-					let local_string = localStorage.getItem("gpg-1-Test");
-					exec.loadPlan("Test");
-					return (exec.plan.plan_to_string().length == local_string.length);
-				});
-
 				runTest("Tests if add_error() is created", () => {
-					let exec = new Executive(true);
+					let exec = new Executive(null, true);
 					exec.plan = new Plan("Computer Science", FALL, 2018);
 					exec.add_error("Test String Error");
 					console.log(document.getElementById("notifications").firstChild.innerHTML);
@@ -273,7 +256,7 @@
 				});
 
 				runTest("Tests makeElement() is created", () => {
-					let exec = new Executive(true);
+					let exec = new Executive(null, true);
 					exec.plan = new Plan("Computer Science", FALL, 2018);
 					exec.makeElement("li", "make-tester", "Test Make", 1);
 					return ("Test Make" == document.getElementById("make-tester").firstChild.innerHTML);
