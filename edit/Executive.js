@@ -97,10 +97,9 @@ class Executive {
 
 		// Adding a semester
 		document.getElementById('add-semester-btn').addEventListener('click', () => {
-			let semester = document.getElementById("addSemesterSelect").value;
-			if (semester == "-1") return; // Do nothing if dropdown not selected
-			let [year, season] = semester.split('-').map(Number);
-			this.plan.add_semester(year, season);
+			let id = document.getElementById("addSemesterSelect").value;
+			if (id == "-1") return; // Do nothing if dropdown not selected
+			this.plan.add_semester(id);
 			this.update();
 		});
 
@@ -155,37 +154,20 @@ class Executive {
 			// TODO - should probably just not let people remove every semester
 		}
 
-		// TODO: Change all this to use a Semester.toNum method which is year*3+season so math works easily
-
-		// Increment a [year, season] semester representation
-		const incSemester = ([year, season], inc = 1) => { 
-			season += inc; 
-			while (season >= 3) { season -= 3; year++; } 
-			while (season < 0) { season += 3; year--; }
-			return [year, season];
-		};
-
 		// Populate add semester dropdown with three semesters before and after current plan and any removed ones in-between
-		for (
-			let semester = incSemester(this.plan.semesters[0].year_season(), -3);
-			semester < incSemester(this.plan.semesters[this.plan.semesters.length-1].year_season(), 4);
-			semester = incSemester(semester)
-		) {
-			console.log(this.plan.find_semester(semester), semester);
-			if (!this.plan.find_semester(semester)) {
-				let [year, season] = semester;
-				this.makeElement("option", "addSemesterSelect", SEASON_NAMES[season] + " " + year, year + "-" + season);
+		for (let id = this.plan.semesters[0].id - 3; id < this.plan.semesters[this.plan.semesters.length-1].id + 4; id++) {
+			if (!this.plan.find_semester(id)) {
+				this.makeElement("option", "addSemesterSelect", (new Semester(id)).toString(), id);
 			}
 		}
 
 		// Update the credit hour displays and the Upper level eligibility
 		for (let semester of this.plan.semesters) {
 			let credit_hours = semester.get_credit_hour();
-			document.getElementById("ch" + semester.year + "-" + semester.season).innerText = credit_hours + " credit hours";
+			document.getElementById("ch" + semester.id).innerText = credit_hours + " credit hours";
 			if (credit_hours > MAX_HOURS) { // Add excessive hour warnings
-				this.add_error("EXCESS HOURS: " + semester.season_name() + " " + semester.year + ": You are taking more than " + MAX_HOURS +
-					" credit hours. You will need to fill out a waiver.\n");
-				document.getElementById("ch" + semester.year + "-" + semester.season).classList.add("error");
+				this.add_error(`EXCESS HOURS: You are taking more than ${MAX_HOURS} credit hours in ${semester} (waiver required).`);
+				document.getElementById("ch" + semester.id).classList.add("error");
 			}
 		}
 
@@ -207,26 +189,24 @@ class Executive {
 		}
 
 		// Find the semester the last ULE.Requirement course is taken
-		let lastUleRequirementSemester = 0;
+		let lastUleRequirementSemesterId = 0;
 		for (let semester of this.plan.semesters) {
 			for (let course of semester.courses) {
 				if (course?.ule == ULE.Requirement) {
-					lastUleRequirementSemester = semester.year * 3 + semester.season; // TODO semester IDs
+					lastUleRequirementSemesterId = semester.id;
 				}
 			}
 		}
 		for (let course of this.plan.course_bank) {
-			if (course.ule == ULE.Requirement) {
-				// Course in course bank still
-				lastUleRequirementSemester = 99999; // Hacky way to make it in the future
+			if (course.ule == ULE.Requirement) { // Course in course bank still
+				lastUleRequirementSemesterId = 99999; // Hacky way to make it in the future
 			}
 		}
-		console.log("ULE TEST", lastUleRequirementSemester);
 
 		// Check for any ULE errors
 		for (let semester of this.plan.semesters) {
 			// Semester ULE gets completed
-			if (semester.year * 3 + semester.season == lastUleRequirementSemester) { // TODO semester IDs
+			if (semester.id == lastUleRequirementSemesterId) {
 				for (let course of semester.courses) {
 					if (course?.ule == ULE.RequiresCompletion) {
 						this.add_error("WAIVER REQUIRED: " + course.course_code + " needs Upper Level Eligibility.\n");
@@ -287,7 +267,7 @@ class Executive {
 
 			let th = document.createElement("th");
 			th.className = "redips-mark";
-			th.innerHTML = semester.year + " " + semester.season_name() + "<br><span class='ch' id='ch"+semester.year+"-"+semester.season+"'>0 credit hours</span>";
+			th.innerHTML = semester.toString() + "<br><span class='ch' id='ch"+semester.id+"'>0 credit hours</span>";
 			tr.appendChild(th);
 
 			// Delete button
@@ -296,7 +276,7 @@ class Executive {
 				dele.className = "btn btn-sm btn-danger delete-semester";
 				dele.innerHTML = '<i class="fa fa-trash"></i>';
 				dele.addEventListener("click", e => {
-					this.plan.remove_semester(semester.year, semester.season);
+					this.plan.remove_semester(semester.id);
 					this.update();
 				});
 				th.appendChild(dele);
@@ -309,7 +289,7 @@ class Executive {
 					td.innerHTML = course.to_html(); // Formats the contents of the table cell.
 
 					// If the course that is being loaded into the table cell is not offered in the current semester's season.
-					if (course.course_semester[semester.season] != 1) { 
+					if (course.course_semester[semester.season()] != 1) { 
 						td.firstElementChild.classList.add("error"); // Stylize the cell to be red
 						this.add_error(course.course_code + " is not offered in the " + semester.season_name()); // Display an error message
 					}

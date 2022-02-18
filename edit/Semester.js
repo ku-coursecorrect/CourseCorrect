@@ -9,27 +9,20 @@ const SEASON_NAMES = ["Spring", "Summer", "Fall"];
 class Semester {
 
 	/**
-		@param season {number} FALL, SUMMER, or SPRING constant
-		@param year {number} year
+		@param id {number} Encodes the years and season (FALL, SUMMER, or SPRING constant) as year*3+season
 		@param courses = {Course[]} An array of Course objects to initialize the semester with
 		@post All parameters are assigned to their respective member variables
 	*/
-	constructor(season, year, courses) { // TODO reorder year and season
-		this.season = season;
-		this.year = year;
+	constructor(id, courses = []) {
+		this.id = id;
 		this.courses = courses;
 	}
 
-	year_season() {
-		return [this.year, this.season];
-	}
 
-	/**
-		@return String from the string array Season names, 0=Spring, 1=Summer, 2=Fall
-	*/
-	season_name() {
-		return SEASON_NAMES[this.season];
-	}
+	year() { return parseInt(this.id / 3); }
+	season() { return this.id % 3; }
+	season_name() { return SEASON_NAMES[this.season()]; }
+	toString() { return this.season_name() + " " + this.year(); }
 
 	/**
 		@return the sum of the credit hours in the semester
