@@ -45,6 +45,9 @@
 					<span class="students_info" id="showMajor">Major: Computer Science</span><br>
 					<span class="students_info">Student ID: 2911111</span>
 				</div>
+
+				<button class="help-button align-top no-print">Help</button>
+
 				<img src="../images/ku_jayhawk_2.jpg" class="profile_picture align-top no-print">
 			</div>
 		</div>
@@ -103,14 +106,14 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<!--Content-->
 	<div class="container">
 		<div class="alert alert-success mt-4" id="plan-exported" style="display:none">
 			<button type="button" class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
 			Plan data copied to clipboard. You can share this with others or reimport it later.
 		</div>
-	
+
 		<div id="redips-drag" class="row">
 			<div class="col-lg-4 no-print">
 				<div class="my-4">
@@ -119,14 +122,14 @@
 						<tr><td></td></tr>
 					</table>
 				</div>
-				
+
 				<div class="mb-4">
 					<h3>Transfer Credits</h3>
 					<table id="transfer-bank" class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border" style="min-width: 250px; min-height: 60px;">
 						<tr><td></td></tr>
 					</table>
 				</div>
-				
+
 				<div class="mb-4" id="add_extra_course_box" style="display:none">
 					<h3>Add Extra Course</h3>
 					<div class="row mr-2">
@@ -194,7 +197,7 @@
 						</div>
 					</div>
 				</div>
-				
+
 				<div class="modal fade" id="confirm-delete-plan">
 					<div class="modal-dialog">
 						<div class="modal-content">
@@ -207,7 +210,7 @@
 						</div>
 					</div>
 				</div>
-				
+
 				<div class="row mt-2 no-print" id="add-semester" style="display:none">
 					<div class="col-sm-6 offset-sm-3 border p-3 bg-light">
 						<div class="input-group">

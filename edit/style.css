@@ -48,6 +48,26 @@ header {
 	top: 1px;
 }
 
+.help-button {
+	border: none;
+	color: grey;
+	background-color: white;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	cursor:pointer;
+}
+
+.help-button:hover {
+	border: none;
+	color: grey;
+	background-color: red;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	cursor:pointer;
+}
+
 .scrollable_box {
 	max-width: 800px;
 	max-height: 200px;
@@ -118,7 +138,7 @@ ul {
 	line-height: 1;
 }
 
-.redips-drag:hover { 
+.redips-drag:hover {
 	background: yellow;
 	border-color: red;
 }
@@ -151,7 +171,7 @@ ul {
 	.KU_image {
 		filter: grayscale(100%) brightness(0%);
 	}
-	
+
 	.students_info input {
 		padding: 0;
 		border: 0;
@@ -177,7 +197,7 @@ ul {
 		margin-left: auto;
 		margin-right: auto;
 	}
-	
+
 	/* Hide empty column when printing*/
 	#course-grid tr td:last-child {
 		display: none;
