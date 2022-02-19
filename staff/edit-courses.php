@@ -17,6 +17,21 @@
 	<script src="../libs/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../libs/fontawesome.min.css">
 	<script src="edit-course.js"></script>
+	<style>
+		/* Make placeholder text more visually distinguishable as per https://github.com/twbs/bootstrap/issues/21624#issuecomment-274438794 */
+		.form-control::-webkit-input-placeholder {
+		color: #999;
+		}
+		.form-control::-moz-placeholder {
+		color: #999;
+		}
+		.form-control:-ms-input-placeholder {
+		color: #999;
+		}
+		.form-control::placeholder {
+		color: #999;
+		}
+	</style>
 </head>
 <body>
 	<?php display_navbar(); ?>
@@ -51,11 +66,11 @@
 									foreach ($course["requisites"] as $req) {
 										array_push($req_codes, ($req["co_req"] ? "Coreq: " : "Prereq: ") . $course_codes[$req["dependent_id"]]);
 									}
-									echo implode(", ", $req_codes);
+									echo implode("<br>", $req_codes);
 								}
 							},
 							"Description" => function($course) {
-								$MINLEN = 40;
+								$MINLEN = 20;
 								$desc = $course["description"];
 								$descSanitized = filter_var($desc, FILTER_SANITIZE_STRING);
 								echo "<span class=expand data-toggle=tooltip data-placement=auto title='Click to expand' onclick='expandText(event, \"$descSanitized\", true)' style='font-style:italic;'>" . substr($desc, 0, $MINLEN) . "...</span>";

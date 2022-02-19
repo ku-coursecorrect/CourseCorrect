@@ -1,4 +1,4 @@
-let MINLEN = 40;
+let MINLEN = 20;
 let DELTA = 20;
 let SUFFIX = "...";
 
@@ -142,15 +142,31 @@ function dropdownSelect(selection) {
         let choiceText = selection.text;
         drop.value = choiceValue;
         drop.innerText = choiceText;
+
+        // Hide or show year box if altering a requisite semester
+        if (drop.id == "req-sem") {
+            if (drop.value == 'none') {
+                drop.nextElementSibling.nextElementSibling.style.display='none';
+            } else {
+                drop.nextElementSibling.nextElementSibling.style.display='';
+            }
+        }
+
     }, 1, selection);
 }
 
 function addReq() {
     let table = document.getElementById("reqs-table");
     table.insertRow();
-    let rowTemplate = document.getElementById("req-row");
-    table.rows[table.rows.length -1].outerHTML = rowTemplate.content.children[0].outerHTML;
-    table.rows[table.rows.length -1].id = 'req-' + table.rows.length;
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            table.rows[table.rows.length -1].innerHTML = this.responseText;
+        }
+      };
+    xhttp.open("GET", "requisite.php", true);
+    xhttp.send();
 }
 
 function removeReq(btn) {
@@ -174,12 +190,11 @@ function populateModal(btn) {
             document.getElementById("edit-course").innerHTML = this.responseText;
         }
       };
-    xhttp.open("GET", "get-course.php?q="+course_code, true);
+    xhttp.open("GET", "edit-course.php?q="+course_code, true);
     xhttp.send();
-    
-    // TODO: Do query here to get course info?
 }
 
-// TODO: How to submit form and update courses from JS without risking SQL injection?
-// Process with Ajax and forward to PHP? https://stackoverflow.com/a/5610430/7587147
+function editCourse() {
+    
 
+}

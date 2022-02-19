@@ -12,7 +12,7 @@ function getReqs($reqs_array=NULL) {
 
     $requisites = [];
     foreach($reqs_array as $req) {
-        if (!array_key_exists($req["course_id"], $reqs_array)) {
+        if (!array_key_exists($req["course_id"], $requisites)) {
             $requisites[$req["course_id"]] = [];
         }
         array_push($requisites[$req["course_id"]], $req);
