@@ -1,17 +1,13 @@
 <?php
 	require_once "../common.php";
-	$name = $_POST["name"];
-	$major = $_POST["major"];
-	$year = $_POST["year"];
+	require_login();
 
-	$degree = $db->query("SELECT id FROM majors WHERE major = ? AND year = ?", $major, $year);
-	if (count($degree) > 1) { // Valid degree
-		$degree_id = $degree[0]["id"];
-		$db->query("INSERT INTO plans (user_id, degree_id, name) VALUES (?, ?, ?)", [$user_id, $degree_id, $year]);
-		// TODO: Get the plan id somehow
-		header("Location: ../edit?plan=" . $plan_id);
-	}
-	else { // Invalid degree
-		crash(ErrorCode::InvalidDegree, [$_POST["major"], $_POST["year"]]);
-	}
+	$name = $_POST["name"];
+	$degree_id = find_degree_id($_POST["major"], $_POST["year"]);
+	$json = new_plan_json(intval($_POST["year"]));
+	
+	$db->query("INSERT INTO plan (user_id, degree_id, plan_title, json) VALUES (?, ?, ?, ?)", [$_SESSION["user_id"], $degree_id, $name, $json]);
+	$plan_id = $db->lastInsertId();
+
+	header("Location: ../edit?plan=" . $plan_id);
 ?>

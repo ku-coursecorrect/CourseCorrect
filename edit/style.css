@@ -1,4 +1,4 @@
-@media screen{
+@media screen {
 	.only_print {
 		display: none;
 	}
@@ -6,6 +6,20 @@
 
 body {
 	font-family: Raleway, sans-serif;
+}
+
+#alert_holder {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 1000;
+	padding: 20px 30px;
+	pointer-events: none;
+}
+
+#alert_holder * {
+	pointer-events: auto;
 }
 
 header {
@@ -41,7 +55,7 @@ header {
 	border: 1px solid #ced4da;
 }
 
-#save-name {
+#plan_title {
 	display: inline;
 	width: 16em;
 	position: relative;
