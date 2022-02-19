@@ -59,7 +59,7 @@
 				<div class='container'><div class='row'>
 					<div class='col-md-auto'>
 						<label for='credits' style='padding-right:25px'><b>Credit Hours</b></label> 
-						<button type='button' class='btn btn-outline-secondary<?=$course_info['variable'] ? ' active' : ''?>' data-toggle='button' aria-pressed='<?=$course_info['variable'] ? 'true' : 'false'?>' autocomplete='off' onclick='toggleCredits(this)'>Variable Credits</button>
+						<button type='button' class='btn btn-outline-secondary<?=$course_info['variable'] ? ' active' : ''?>' data-toggle='button' aria-pressed='<?=$course_info['variable'] ? 'true' : 'false'?>' autocomplete='off' onclick='toggleCredits(this)'  data-toggle=tooltip data-placement=auto title='Enable a min and max range of credit hours for special topics, projects, etc.'>Variable Credits</button>
 						<div class='input-group' id='credits'>
 							<input type='number' id='credits_min' name='credits_min' class='form-control' placeholder='<?=$placeholder_info['min_hours']?>' value='<?=$course_info['min_hours']?>' max=1000 min='-1000'/>
 							<span class='input-group-text' id='credits_max_separator' style='display:<?=$course_info['variable'] ? '' : 'none'?>'>-</span>
@@ -84,7 +84,7 @@
 					<table class='table table-striped' id='reqs-table'>
 						<thead>
 							<tr>
-								<th>Course Code</th><th>Requisite</th><th>Start Semester</th><th>End Semester</th><th></th>
+								<th>Course Code</th><th>Type</th><th  data-toggle=tooltip data-placement=auto title='The first semester for which this requisite is in effect for this course'>Start Semester</th><th  data-toggle=tooltip data-placement=auto title='The final semester for which this requisite is in effect for this course'>End Semester</th><th></th>
 							</tr>
 						</thead>
 						<tbody>

@@ -1,4 +1,5 @@
 <?php
+    // Requisite information can come from Ajax via _GETs or from PHP via $req
     $req['course_code'] = $_GET['course_code'] ?? $req['course_code'] ?? ''; // Null coalesce (pick B if A is null)
     $req['co_req'] = $_GET['co_req'] ?? $req['co_req'] ?? 'false';
     $req['start_season'] = $_GET['start_season'] ?? $req['start_season'] ?? 'None';
@@ -22,7 +23,7 @@
         </div>
     </td>
     <td>
-        <div class='input-group'  data-toggle=tooltip data-placement=auto title='The first semester for which this requisite is in effect for this course'>
+        <div class='input-group' data-toggle=tooltip data-placement=auto title='The first semester for which this requisite is in effect for this course'>
             <button id='req-sem' class='btn btn-outline-secondary dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' value='<?=strtolower($req['start_season'])?>' id='startSem'><?=$req['start_season']?></button>
             <div class='dropdown-menu'>
                 <a class='dropdown-item' <?=$req['start_season']=='None' ? 'selected' : ''?> value='none' onclick='dropdownSelect(this)'>None</a>
