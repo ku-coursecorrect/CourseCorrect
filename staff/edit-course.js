@@ -163,7 +163,7 @@ function addReq() {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            table.rows[table.rows.length -1].innerHTML = this.responseText;
+            table.rows[table.rows.length -1].outerHTML = this.responseText;
         }
       };
     xhttp.open("GET", "requisite.php", true);
