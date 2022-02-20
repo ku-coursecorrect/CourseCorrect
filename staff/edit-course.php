@@ -42,11 +42,12 @@
 				<span aria-hidden='true'>&times;</span>
 			</button>
 		</div>
-		<form method='POST' action='edit-course.php'>
+		<form method='POST' action='commit-course.php' id='edit-course-form' onsubmit="updateReqsPost()">
 			<div class='modal-body'>
+				<input type='text' name='course_id' value='<?=$course_info['course_id']?>' hidden />
 				<div class='form-group'>
-					<label for='code'><b>Course Code</b></label>
-					<input type='text' id='code' name='code' class='form-control' placeholder='<?=$placeholder_info['course_code']?>' value='<?=$course_info['course_code']?>'>
+					<label for='course_code'><b>Course Code</b></label>
+					<input type='text' id='course_code' name='course_code' class='form-control' placeholder='<?=$placeholder_info['course_code']?>' value='<?=$course_info['course_code']?>'>
 				</div>
 				<div class='form-group'>
 					<label for='title'><b>Title</b></label>
@@ -59,22 +60,26 @@
 				<div class='container'><div class='row'>
 					<div class='col-md-auto'>
 						<label for='credits' style='padding-right:25px'><b>Credit Hours</b></label> 
-						<button type='button' class='btn btn-outline-secondary<?=$course_info['variable'] ? ' active' : ''?>' data-toggle='button' aria-pressed='<?=$course_info['variable'] ? 'true' : 'false'?>' autocomplete='off' onclick='toggleCredits(this)'  data-toggle=tooltip data-placement=auto title='Enable a min and max range of credit hours for special topics, projects, etc.'>Variable Credits</button>
+						<button type='button' class='btn btn-outline-secondary<?=$course_info['variable'] ? ' active' : ''?>' data-toggle='button' aria-pressed='<?=$course_info['variable'] ? 'true' : 'false'?>' autocomplete='off' onclick='toggleCredits(this); addPost(this);'  data-toggle=tooltip data-placement=auto title='Enable a min and max range of credit hours for special topics, projects, etc.'>Variable Credits</button>
+						<input type='text' name='variable' value='<?=$course_info['variable'] ? 'true' : 'false' ?>' hidden />
 						<div class='input-group' id='credits'>
-							<input type='number' id='credits_min' name='credits_min' class='form-control' placeholder='<?=$placeholder_info['min_hours']?>' value='<?=$course_info['min_hours']?>' max=1000 min='-1000'/>
+							<input type='number' id='min_hours' name='min_hours' class='form-control' placeholder='<?=$placeholder_info['min_hours']?>' value='<?=$course_info['min_hours']?>' max=1000 min='-1000'/>
 							<span class='input-group-text' id='credits_max_separator' style='display:<?=$course_info['variable'] ? '' : 'none'?>'>-</span>
-							<input type='number' id='credits_max' name='credits_max' style='display:<?=$course_info['variable'] ? '' : 'none'?>' placeholder='<?=$placeholder_info['max_hours']?>' value='<?=$course_info['max_hours']?>' class='form-control' max='1000' min='-1000' placeholder='max creds'/>
+							<input type='number' id='max_hours' name='max_hours' style='display:<?=$course_info['variable'] ? '' : 'none'?>' placeholder='<?=$placeholder_info['max_hours']?>' value='<?=$course_info['max_hours']?>' class='form-control' max='1000' min='-1000' placeholder='max creds'/>
 						</div>
 					</div>
 					<div class='col-md-auto ml-auto'>
 						<label for='semesters'><b>Semesters</b></label>
 						<div id='semesters'>
 							<div class='input-group'>
-								<button class='btn btn-outline-primary<?=$course_info['f_spring']==="1" ? ' active' : ''?>' data-toggle='button' aria-pressed='false' type='button' id='springcheck'>Spring</button>
+								<button class='btn btn-outline-primary<?=$course_info['f_spring']==="1" ? ' active' : ''?>' data-toggle='button' aria-pressed='false' type='button' id='springcheck' onclick='addPost(this);'>Spring</button>
+								<input type='text' name='f_spring' value='<?=$course_info['f_spring']==="1" ? 'true' : 'false'?>' hidden />
 								<span style='padding-left:5px; padding-right:5px;'>
-									<button class='btn btn-outline-primary<?=$course_info['f_summer']==="1" ? ' active' : ''?>' data-toggle='button' aria-pressed='false' type='button' id='summercheck'>Summer</button>
+									<button class='btn btn-outline-primary<?=$course_info['f_summer']==="1" ? ' active' : ''?>' data-toggle='button' aria-pressed='false' type='button' id='summercheck' onclick='addPost(this);'>Summer</button>
+									<input type='text' name='f_summer' value='<?=$course_info['f_summer']==="1" ? 'true' : 'false'?>' hidden />
 								</span>
-								<button class='btn btn-outline-primary<?=$course_info['f_fall']==="1" ? ' active' : ''?>' data-toggle='button' aria-pressed='false' type='button' id='fallcheck'>Fall</button>
+								<button class='btn btn-outline-primary<?=$course_info['f_fall']==="1" ? ' active' : ''?>' data-toggle='button' aria-pressed='false' type='button' id='fallcheck' onclick='addPost(this);'>Fall</button>
+								<input type='text' name='f_fall' value='<?=$course_info['f_fall']==="1" ? 'true' : 'false'?>' hidden />
 							</div>
 						</div>
 					</div>
@@ -107,6 +112,7 @@
 					</table>
 					<button type='button' class='btn btn-secondary float-right' onclick='addReq()'><i class='fas fa-plus'></i> Add requisite</button>
 				</div>
+				<input type='text' id='reqs-post' name='requisites' value='[]' hidden />
 			</div>
 			<div class='modal-footer float-left' style='padding-top:15px'>
 				<button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>

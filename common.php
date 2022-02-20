@@ -48,10 +48,16 @@
 	define("SUMMER", 1);
 	define("FALL", 2);
 
-	$seasons = [
+	$season_name = [
 		0 => "Spring",
 		1 => "Summer",
 		2 => "Fall"
+	];
+	
+	$season_num = [
+		"spring" => 0,
+		"summer" => 1,
+		"fall" => 2
 	];
 
 	function semester_id($year, $season) {
@@ -65,8 +71,8 @@
 
 	// Convert a semester format to a season string
 	function semester_season($semester) {
-		global $seasons;
-		return $seasons[$semester % 3];
+		global $season_name;
+		return $season_name[$semester % 3];
 	}
 
 	// Populate a new plan with empty semesters for the next 4 years

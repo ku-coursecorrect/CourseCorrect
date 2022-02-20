@@ -127,11 +127,12 @@ function toggleCredits(btn) {
     timeout = setTimeout(function(btn) {
         if (btn.ariaPressed === 'true') { // Apparently this isn't set immediately. Timeout works
             document.getElementById("credits_max_separator").style.display = ""; 
-            document.getElementById("credits_max").style.display = ""; 
+            document.getElementById("max_hours").style.display = ""; 
         } else {
             document.getElementById("credits_max_separator").style.display = "none"; 
-            document.getElementById("credits_max").style.display = "none"; 
+            document.getElementById("max_hours").style.display = "none"; 
         }
+        btn.value = btn.ariaPressed;
     }, 1, btn);
 }
 
@@ -194,7 +195,48 @@ function populateModal(btn) {
     xhttp.send();
 }
 
-function editCourse() {
-    
+// Set a hidden input following a button to the state of the button
+// So that the value is included in the form POST
+function addPost(btn) {
+    timeout = setTimeout(function(btn) {
+        let input = btn.nextElementSibling;
+        input.value = btn.ariaPressed;
+    }, 3, btn); // wait 3 to ensure this occurs after the value is changed
+}
 
+function to_Semester(year, season) {
+    season_nums = {
+        "spring": 0,
+        "summer": 1,
+        "fall": 2
+    };
+
+    return year * 3 + season_nums[season];
+}
+
+// Grab values for reqs and place in the reqs input value for the form 
+function updateReqsPost() {
+    let post_input_ele = document.getElementById('reqs-post');
+    let reqs_to_post = [];
+
+    let reqs = document.getElementsByClassName('req');
+    for (let req of reqs) {
+        reqs_to_post.push({});
+        let req_ind = reqs_to_post.length-1;
+        reqs_to_post[req_ind]["course_code"] = req.children[0].children[0].value;
+        reqs_to_post[req_ind]["co_req"] = req.children[1].children[0].value === 'co_req';
+        
+        let start_season = req.children[2].children[0].children[0].value;
+        let start_year = req.children[2].children[0].children[2].value;
+        let start_semester = start_season === "None" ? null : to_Semester(start_year, start_season);
+        reqs_to_post[req_ind]["start_semester"] = start_semester;
+        
+        let end_season = req.children[3].children[0].children[0].value;
+        let end_year = req.children[3].children[0].children[2].value;
+        let end_semester = end_season === "None" ? null : to_Semester(end_year, end_season);
+        reqs_to_post[req_ind]["end_semester"] = end_semester;
+    }
+
+    post_input_ele.value = JSON.stringify(reqs_to_post);
+    return true;
 }
