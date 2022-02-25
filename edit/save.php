@@ -9,6 +9,6 @@
     if (count($plan) != 1) crash(ErrorCode::PlanSaveFailed, $_POST);
 
     // user_id included to ensure the plan belongs to the student
-    $db->query("UPDATE plan SET plan_title = ?, json = ? WHERE plan_id = ? AND user_id = ?",
-        [$_POST["plan_title"], $_POST["json"], $_POST["plan_id"], $_SESSION["user_id"]]);
+    $db->query("UPDATE plan SET plan_title = ?, plan_status = ?, json = ? WHERE plan_id = ? AND user_id = ?",
+        [$_POST["plan_title"], $_POST["plan_status"], $_POST["json"], $_POST["plan_id"], $_SESSION["user_id"]]);
 ?>

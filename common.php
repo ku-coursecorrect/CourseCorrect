@@ -66,9 +66,9 @@
 	
 	// Status codes bit flags
 	abstract class PlanStatus {
-		const Complete = 1;
-		const Incomplete = 2;
-		const Warning = 4;
+		const Incomplete = 1;
+		const Warning = 2;
+		const Complete = 4;
 		const Submitted = 8;
 		const Approved = 16;
 	}

@@ -41,6 +41,7 @@ class Executive {
 				let data = new FormData();
 				data.append("plan_id", this.plan.plan_id);
 				data.append("plan_title", document.getElementById("plan_title").value);
+				data.append("plan_status", this.plan_status);
 				data.append("json", this.plan.save_json());
 
 				fetch("save.php", {"method": "POST", "body": data}).then(response => {
@@ -137,6 +138,9 @@ class Executive {
 		if (!firstLoad) {
 			document.getElementById("save-button").disabled = false;
 		}
+
+		this.plan_status = 4; // 4 = complete (any errors/warnings that occur alter this)
+		if (this.plan.course_bank.length > 0) this.plan.status = 1; // 1 = incomplete
 
 		// Update course bank and transfer credits
 		this.plan.course_bank.sort((a, b) => (a.course_code > b.course_code ? 1 : -1));
@@ -322,6 +326,12 @@ class Executive {
 	add_error(msg, type="danger") {
 		this.makeElement("li", "print-notifications", msg);
 		document.getElementById("notifications").innerHTML += `<div class="alert alert-${type} mt-2 mb-0">${msg}</div>`;
+		if (type == "danger") {
+			this.plan_status = Math.min(this.plan_status, 1); // 1 = Error
+		}
+		else if (type == "warning") {
+			this.plan_status = Math.min(this.plan_status, 2); // 2 = Warning
+		}
 	}
 
 	/**
