@@ -21,7 +21,7 @@
 	<?php display_navbar(); ?>
     <div class="container">
 		<div class="row">
-			<div class="col-lg-8">
+			<div class="col-lg-9">
 				<h1>
 					My saved plans
 					<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#create-plan"><i class="fas fa-plus"></i> Create new plan</button>
@@ -36,22 +36,28 @@
 						<?php
 							require_once "../common.php";
 							
-							// TODO: These will come from database queries
-							$plans = [
-								["id" => 1, "name" => "My official plan", "major" => "Computer Science 2018", "created" => "2018-10-28", "modified" => "2021-10-12", "status" => 4+16],
-								["id" => 2, "name" => "Astronomy test", "major" => "IC Astronomy 2018", "created" => "2020-03-01", "modified" => "2020-05-23", "status" => 2],
-								["id" => 3, "name" => "EECS 101 plan", "major" => "Computer Science 2018", "created" => "2018-10-18", "modified" => "2018-10-31", "status" => 1],
-							];
+							$plans = $db->query("SELECT plan_id, 
+													    plan_title, 
+														degree.major, 
+														degree.year, 
+														plan.created_ts, 
+														plan.modified_ts, 
+														plan_status 
+												FROM plan 
+												JOIN degree ON plan.degree_id = degree.degree_id
+												WHERE user_id = ?
+												ORDER BY modified_ts DESC", [$_SESSION["user_id"]]);
 							
 							foreach ($plans as $plan) {
 								echo "<tr>";
-								echo "<td>" . $plan["name"] . planStatusToHTML($plan["status"]) . "</td>";
-								echo "<td>" . $plan["major"] . "</td>";
-								echo "<td>" . date(DATE_FORMAT, strtotime($plan["created"])) . "</td>";
-								echo "<td>" . date(DATE_FORMAT, strtotime($plan["modified"])) . "</td>";
+								echo "<td>" . $plan["plan_title"] . planStatusToHTML($plan["plan_status"]) . "</td>";
+								echo "<td>" . $plan["major"]  . " " . $plan["year"] . "</td>";
+								echo "<td>" . date(DATE_FORMAT, strtotime($plan["created_ts"])) . "</td>";
+								echo "<td>" . date(DATE_FORMAT, strtotime($plan["modified_ts"])) . "</td>";
 								echo '<td class="text-nowrap">';
-								echo '<a href="../edit?plan=' . $plan["id"] . '" class="text-dark"><i class="fas fa-edit"></i></a>';
-								echo '<i class="fas fa-trash ml-3"></i>'; // TODO: Display a delete confirmation modal
+								echo '<a href="../edit?plan=' . $plan["plan_id"] . '" class="text-dark" title="Edit"><i class="fas fa-edit"></i></a>';
+								echo '<i class="fas fa-copy ml-3" title="Duplicate"></i>'; // TODO: Create copy of plan (either one click or a modal for new name)
+								echo '<i class="fas fa-trash ml-3" title="Delete"></i>'; // TODO: Display a delete confirmation modal
 								echo "</td>";
 								echo "</tr>";
 							}
@@ -59,7 +65,10 @@
 					</tbody>
 				</table>
 			</div>
-			<div class="col-lg-4">
+			<script>
+				$('body').tooltip({selector: '[title]'});
+			</script>
+			<div class="col-lg-3">
 				<p>
 					This is a place that some help text could be included about how to use this page.
 				</p>
