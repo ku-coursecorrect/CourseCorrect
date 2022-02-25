@@ -162,6 +162,8 @@ ul {
         display: none;
 	}
 
+	a#big_title { color: black; text-decoration: none; }
+
 	.KU_image {
 		filter: grayscale(100%) brightness(0%);
 	}

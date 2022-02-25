@@ -77,7 +77,7 @@
 	</script>
 </head>
 <body>
-	<div id="alert_holder"></div>
+	<div id="alert_holder" class="no-print"></div>
 
 	<header class="container-fluid py-3">
 		<div class="row">
@@ -85,7 +85,7 @@
 				<a href="https://ku.edu/"><img src="../images/KUSig_Horz_Web_Blue.png" class="KU_image pt-2 ml-2"></a>
 			</div>
 			<div class="col-sm-4 text-sm-center KU_color_text">
-				<h1><a href="../list">CourseCorrect</a></h1>
+				<h1><a href="../list" id="big_title">CourseCorrect</a></h1>
 			</div>
 			<div class="col-sm-4 text-right">
 				<!--Student info-->
@@ -151,97 +151,108 @@
 			</div>
 		</div>
 	</div>
-	
-	<!--Content-->
-	<div class="container">
-		<div id="notifications" class="col-12"></div>
-		<div id="redips-drag" class="row">
-			<div class="col-lg-4 no-print">
-				<div class="my-4">
-					<h3>Course Bank</h3>
-					<table id="course-bank" class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border" style="min-width: 250px; min-height: 100px;">
-						<tr><td></td></tr>
-					</table>
-				</div>
-				
-				<div class="mb-4">
-					<h3>Transfer Credits</h3>
-					<table id="transfer-bank" class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border" style="min-width: 250px; min-height: 60px;">
-						<tr><td></td></tr>
-					</table>
-				</div>
-				
-				<div class="mb-4 mr-4" id="add_extra_course_box">
-					<h3>Add Extra Course</h3>
-					<table>
-						<tr>
-							<td class="text-nowrap pr-2">Course Code:</td>
-							<td><input type="text" class="form-control" id="course_code"></td>
-						</tr>
-						<tr>
-							<td class="text-nowrap pr-2">Credit Hours:</td>
-							<td>
-								<div class="input-group">
-									<input type="number" class="form-control" id="credit_hours" name="credit_hours" min="0">
-									<div class="input-group-append">
-										<button type="submit" class="btn btn-primary" id="course_add_submit">Add</button>
-									</div>
-								</div>
-							</td>
-						</tr>
-					</table>
-				</div>
 
-				<div class="mb-4 mr-4 no-print">
-					<h3>Add Semester</h3>
-					<div class="input-group">
-						<select id="addSemesterSelect" class="form-control">
-							<option disabled selected value="-1">Choose a semester...</option>
-						</select>
+	<!-- Notifications (e.g. requisites, ULE) -->
+	<div class="container">
+		<div class="row">
+			<div id="notifications" class="col-12 no-print"></div>
+		</div>
+	</div>
+	
+	<!-- Main content (course bank, semester grid) -->
+	<div id="redips-drag" class="d-flex flex-row">
+		<div class="ml-auto px-4" style="flex: 0 0 340px">
+			<div class="my-4">
+				<h3>Course Bank</h3>
+				<table id="course-bank" class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border" style="min-width: 250px; min-height: 100px;">
+					<tr><td></td></tr>
+				</table>
+			</div>
+			
+			<div class="mb-4">
+				<h3>Transfer Credits</h3>
+				<table id="transfer-bank" class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border" style="min-width: 250px; min-height: 60px;">
+					<tr><td></td></tr>
+				</table>
+			</div>
+			
+			<div class="mb-4 mr-4" id="add_extra_course_box">
+				<h3>Add Extra Course</h3>
+				<div class="form-group row">
+					<div class="col text-nowrap" style="flex: 0 0 130px">
+						<label for="course_code" class="col-form-label">Course Code:</label>
+					</div>
+					<div class="col">
+						<input type="text" class="form-control" name="course_code" id="course_code">
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="col text-nowrap" style="flex: 0 0 130px">
+						<label for="course_code" class="col-form-label">Credit Hours:</label>
+					</div>
+					<div class="col input-group">
+						<input type="number" class="form-control" id="credit_hours" name="credit_hours" min="0">
 						<div class="input-group-append">
-							<button type="button" class="btn btn-primary" id="add-semester-btn">Add</button>
+							<button type="submit" class="btn btn-primary" id="course_add_submit">Add</button>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<div class="col-lg-8 mt-4">
-				<div class="d-flex">
-					<div id="schedule-container" class="bg-light"> <!--Schedule-->
-						<div id="arrows"></div><!--Will contain the SVG with the arrows-->
-						<table id="course-grid" class="border"></table><!--Will contain the drag-and-droppable courses-->
+			<div class="mb-4 mr-4 no-print">
+				<h3>Add Semester</h3>
+				<div class="input-group">
+					<select id="addSemesterSelect" class="form-control">
+						<option disabled selected value="-1">Choose a semester...</option>
+					</select>
+					<div class="input-group-append">
+						<button type="button" class="btn btn-primary" id="add-semester-btn">Add</button>
 					</div>
 				</div>
-
-				<div class="row mt-5 no-print">
-					<div class="col-sm-6">
-						<h3>KU Core links</h3>
-						<div class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border scrollable_box">
-							<ul>
-								<li><a href="https://kucore.ku.edu/courses">List of all approved courses</a></li>
-								<li><a href="https://college.ku.edu/winter">Winter break courses</a></li>
-							</ul>
-						</div>
-					</div>
-					<div class="col-sm-6">
-						<h3>EECS links</h3>
-						<div class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border scrollable_box">
-							<ul>
-								<li><a href="http://eecs.ku.edu/eecs-courses">List of all EECS courses</a></li>
-								<li><a href="http://eecs.ku.edu/current-students/undergraduate">Undergraduate handbook</a></li>
-								<li><a href="https://catalog.ku.edu/engineering/electrical-engineering-computer-science/bs-computer-science/">Description of the Bachelor of Science in Computer Science</a></li>
-							</ul>
-						</div>
-					</div>
+			</div>
+		</div>
+	
+		<!-- Semester grid -->
+		<div class="mr-auto pt-4">
+			<div class="d-flex">
+				<div id="schedule-container" class="bg-light">
+					<div id="arrows"></div><!-- Will contain the SVG with the arrows -->
+					<table id="course-grid" class="border"></table><!-- Will contain the drag-and-droppable courses -->
 				</div>
 			</div>
 		</div>
 	</div>
 
+	<!-- Useful links -->
+	<div class="container">
+		<div class="row mt-5 no-print">
+			<div class="col-sm-6">
+				<h3>KU Core links</h3>
+				<div class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border scrollable_box">
+					<ul>
+						<li><a href="https://kucore.ku.edu/courses">List of all approved courses</a></li>
+						<li><a href="https://college.ku.edu/winter">Winter break courses</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<h3>EECS links</h3>
+				<div class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border scrollable_box">
+					<ul>
+						<li><a href="http://eecs.ku.edu/eecs-courses">List of all EECS courses</a></li>
+						<li><a href="http://eecs.ku.edu/current-students/undergraduate">Undergraduate handbook</a></li>
+						<li><a href="https://catalog.ku.edu/engineering/electrical-engineering-computer-science/bs-computer-science/">Description of the Bachelor of Science in Computer Science</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Copyright footer -->
 	<footer class="pt-2 my-2 border-top text-center">
 		<a href="https://github.com/ku-coursecorrect/coursecorrect">CourseCorrect</a> Copyright &copy; 2022: Drake Prebyl, James Kraijcek, Rafael Alaras, Reece Mathews, Tiger Ruan
 		<br>
-		View <a href="README.md">readme</a> for works cited | <a href="documentation/index.html">Documentation</a> | <a href="tests.html">Tests</a>
+		View <a href="../README.md">readme</a> for works cited
 	</footer>
 </body>
 </html>
