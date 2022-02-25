@@ -26,7 +26,7 @@ class Executive {
 		document.getElementById("plan_title").value = plan.plan_title;
 		this.plan = new Plan(plan, this.courses);
 
-		this.update();
+		this.update(true);
 
 		// Add help text in the first cell
 		if (this.plan.semesters.length >= 1 && this.plan.semesters[0].courses.length < 1) {
@@ -47,6 +47,7 @@ class Executive {
 					if (response.ok) {
 						console.log(response);
 						this.displayAlert("success", "Plan saved", 5000);
+						document.getElementById("save-button").disabled = true;
 					}
 					else {
 						console.error(response);
@@ -132,7 +133,11 @@ class Executive {
 	/**
 	* @post All aspects of the plan are updated: Course locations, arrows, credit hours per semester, errors/warnings, etc.
 	**/
-	update() {
+	update(firstLoad = false) {
+		if (!firstLoad) {
+			document.getElementById("save-button").disabled = false;
+		}
+
 		// Update course bank and transfer credits
 		this.plan.course_bank.sort((a, b) => (a.course_code > b.course_code ? 1 : -1));
 		this.plan.transfer_bank.sort((a, b) => (a.course_code > b.course_code ? 1 : -1));
@@ -221,7 +226,14 @@ class Executive {
 			}
 		}
 
-		// Autosave plan TODO
+		// Unsaved plan warning
+		window.addEventListener("beforeunload", e => {
+			if (document.getElementById("save-button").disabled == false) {
+				var msg = "Warning: Your plan has unsaved changes. Continue?";
+				e.returnValue = msg;
+				return msg;
+			}
+		});
 	}
 
 	/**

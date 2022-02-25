@@ -123,10 +123,10 @@
 		<span class="float-right">
 			<span class="navbar-text py-0 pr-2"><?= $plan["degree_major"] . " " . $plan["degree_year"] ?></span>
 			<span id="save-container">
-				<input type="text" id="plan_title" class="form-control form-control-sm" placeholder="Plan name...">
-				<a id="save-button" type="button" class="btn btn-light btn-sm"><i class="fa fa-save"></i> Save</a>
+				<input type="text" id="plan_title" class="form-control form-control-sm" placeholder="Plan name..." oninput="document.getElementById('save-button').disabled = false">
+				<button id="save-button" type="button" class="btn btn-light btn-sm" disabled><i class="fa fa-save"></i> Save</button>
 			</span>
-			<a href="javascript:window.print()" type="button" class="btn btn-light btn-sm"><i class="fa fa-print"></i> Print</a>
+			<button onclick="window.print()" type="button" class="btn btn-light btn-sm"><i class="fa fa-print"></i> Print</button>
 		</span>
 	</nav>
 
