@@ -24,7 +24,6 @@ class Executive {
 
 		// Load plan
 		document.getElementById("plan_title").value = plan.plan_title;
-		document.getElementById("degree_title").innerText = plan.degree_major + " " + plan.degree_year;
 		this.plan = new Plan(plan, this.courses);
 
 		this.update();

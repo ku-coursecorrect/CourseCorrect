@@ -1,6 +1,6 @@
 //Major, list of semester objects, list of transfer/exempt courses
 const SPRING = 0, SUMMER = 1, FALL = 2;
-const MIN_COLS = 3; // Minimum number of columns to put courses in
+const MIN_COLS = 5; // Minimum number of columns to put courses in
 
 /**
 * @class

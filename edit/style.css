@@ -1,5 +1,5 @@
 @media screen {
-	.only_print {
+	.only-print {
 		display: none;
 	}
 }
@@ -26,12 +26,6 @@ header {
 	background-color: #e9ecef;
 }
 
-.KU_image {
-	float: left;
-	max-height: 5cm;
-	max-width: 6cm;
-}
-
 .KU_color_text {
 	color: rgb(0, 81, 186);
 }
@@ -40,35 +34,11 @@ header {
 	background-color: rgb(0, 81, 186);
 }
 
-.profile_picture {
-	max-height: 2cm;
-	max-width: 3cm;
-	border-radius: 20%;
-}
-
-.students_info {
-	font-weight: bold;
-}
-
-.students_info input {
-	padding: 0;
-	border: 1px solid #ced4da;
-}
-
 #plan_title {
 	display: inline;
 	width: 16em;
 	position: relative;
 	top: 1px;
-}
-
-.scrollable_box {
-	max-width: 800px;
-	max-height: 200px;
-}
-
-ul {
-	padding-left: 20px;
 }
 
 #course-grid tr {
@@ -155,34 +125,21 @@ ul {
 
 @media print {
     @page {
-        margin: 0.5cm;
+        margin: 0.5in;
     }
 
     header nav, footer, .delete-semester, .no-print {
         display: none;
 	}
 
-	a#big_title { color: black; text-decoration: none; }
-
 	.KU_image {
 		filter: grayscale(100%) brightness(0%);
-	}
-	
-	.students_info input {
-		padding: 0;
-		border: 0;
-		font-weight: bold;
 	}
 
 	header {
 		background: white;
 		border-bottom: solid black;
 	}
-
-    .profile_picture {
-        max-height: 5cm;
-        max-width: 6cm;
-    }
 
     .KU_color_text {
         color: black;

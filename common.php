@@ -86,14 +86,21 @@
 	// Start the session to keep track of who's logged in
 	session_start();
 
+	function is_logged_in() {
+		return isset($_SESSION["permissions"]);
+	}
+
+	function is_staff() {
+		return is_logged_in() && $_SESSION["permissions"] > 0;
+	}
+
 	function require_login() {
-		if (!isset($_SESSION["permissions"])) crash(ErrorCode::NotLoggedIn, $_SESSION);
+		if (!is_logged_in()) crash(ErrorCode::NotLoggedIn, $_SESSION);
 	}
 	
 	// Page requires staff permissions to access (TODO: specific permission levels)
 	function require_staff() {
-		require_login();
-		if ($_SESSION["permissions"] < 1) crash(ErrorCode::InsufficientPermission, $_SESSION);
+		if (!is_staff()) crash(ErrorCode::InsufficientPermission, $_SESSION);
 	}
 
 	function find_degree_id($major, $year) {
