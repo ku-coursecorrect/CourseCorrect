@@ -78,6 +78,8 @@
 			</div>
 		</div>
 	</div>
+
+	<?php display_footer(); ?>
 	
 	<!-- Modal -->
 	<div class="modal fade" id="create-plan" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">

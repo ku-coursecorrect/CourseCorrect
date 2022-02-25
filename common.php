@@ -154,5 +154,13 @@
 
 		<?php
 	}
+
+	function display_footer() {
+		?>
+	<footer class="pt-2 my-2 border-top text-center">
+		<a href="https://github.com/ku-coursecorrect/coursecorrect">CourseCorrect</a> Copyright &copy; 2022: Drake Prebyl, James Kraijcek, Rafael Alaras, Reece Mathews, Tiger Ruan
+	</footer>
+		<?php
+	}
 	
 ?>
