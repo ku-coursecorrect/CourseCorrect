@@ -14,6 +14,7 @@
 	<script src="../libs/popper.min.js"></script>
 	<script src="../libs/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../libs/fontawesome.min.css">
+	<link rel="stylesheet" href="../common.css">
 	<script src="../common.js"></script>
 </head>
 <body>

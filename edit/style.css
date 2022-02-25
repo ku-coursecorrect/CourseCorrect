@@ -4,10 +4,6 @@
 	}
 }
 
-body {
-	font-family: Raleway, sans-serif;
-}
-
 #alert_holder {
 	position: fixed;
 	top: 0;
@@ -20,18 +16,6 @@ body {
 
 #alert_holder * {
 	pointer-events: auto;
-}
-
-header {
-	background-color: #e9ecef;
-}
-
-.KU_color_text {
-	color: rgb(0, 81, 186);
-}
-
-.KU_color_background {
-	background-color: rgb(0, 81, 186);
 }
 
 #plan_title {

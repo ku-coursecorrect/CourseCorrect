@@ -112,19 +112,46 @@
 	// TODO: Useful links, maybe different for student and staff
 	function display_navbar() {
 		?>
-	<nav class="navbar navbar-light bg-light">
-		<a class="navbar-brand" href="https://ku.edu">
-			<img src="../images/KUSig_Horz_Web_Blue.png" height="30" alt="">
-		</a>
-		<ul class="navbar-nav mr-auto">
-			<li class="nav-item">
-				<a class="nav-link" href="https://eecs.ku.edu">Electrical Engineering and Computer Science</a>
-			</li>
-		</ul>
-		<span class="navbar-text">
-			<?= $_SESSION["kuid"] ?? "Not logged in" ?>
-		</span>
+
+	<header class="container-fluid py-3">
+		<div class="row">
+			<div class="col-sm-4">
+				<a href="../"><img class="KU_image" src="../images/eecs_logo.png" height="60"></a>
+			</div>
+			<div class="col-sm-4 text-sm-center KU_color_text">
+				<h1>CourseCorrect</h1>
+			</div>
+			<div class="col-sm-4 text-right">
+				<!--Student info-->
+				<div class="d-inline-block text-left">
+					<?php if (isset($_SESSION["user_id"])): ?>
+						<?=$_SESSION["name"]?>
+						<a href="../logout.php" class="btn btn-outline-dark btn-sm no-print">Logout</a>
+						<br>
+						<span class="only-print">Student ID: <?=$_SESSION["kuid"]?></span>
+					<?php else: ?>
+						Guest mode (not logged in)
+					<?php endif; ?>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<!-- Navigation bar -->
+	<nav class="navbar navbar-expand-md navbar-dark KU_color_background mb-3">
+		<a class="navbar-brand" href="../">Home</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="collapsibleNavbar">
+			<ul class="navbar-nav">
+				<li class="nav-item">
+					<a class="nav-link active" href="../list">Plan list</a>
+				</li>
+		  	</ul>
+		</div>
 	</nav>
+
 		<?php
 	}
 	

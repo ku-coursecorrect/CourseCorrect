@@ -64,6 +64,7 @@
 	<script type="text/javascript" src="../libs/redips-drag.min.js"></script>
 
 	<!-- Application code and style -->
+	<link rel="stylesheet" href="../common.css">
 	<link rel="stylesheet" href="style.css">
 	<script type="text/javascript" src="Executive.js"></script>
 	<script type="text/javascript" src="ArrowRender.js"></script>
@@ -104,7 +105,7 @@
 	</header>
 
 	<!-- Navigation bar -->
-	<nav class="navbar navbar-expand-sm navbar-dark KU_color_background">
+	<nav class="navbar navbar-expand-md navbar-dark KU_color_background mb-3">
 		<a class="navbar-brand" href="../">Home</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
 			<span class="navbar-toggler-icon"></span>
@@ -212,7 +213,7 @@
 		</div>
 	
 		<!-- Semester grid -->
-		<div class="mr-auto pt-4">
+		<div class="mr-auto mt-3">
 			<div class="d-flex">
 				<div id="schedule-container" class="bg-light">
 					<div id="arrows"></div><!-- Will contain the SVG with the arrows -->
