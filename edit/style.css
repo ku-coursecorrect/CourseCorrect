@@ -1,9 +1,3 @@
-@media screen {
-	.only-print {
-		display: none;
-	}
-}
-
 #alert_holder {
 	position: fixed;
 	top: 0;
@@ -112,7 +106,7 @@
         margin: 0.5in;
     }
 
-    header nav, footer, .delete-semester, .no-print {
+    header nav, footer, .delete-semester {
         display: none;
 	}
 
