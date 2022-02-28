@@ -16,6 +16,9 @@
 	<script src="../libs/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../libs/fontawesome.min.css">
 </head>
+
+
+
 <body>
 	<?php display_navbar(); ?>
     <div class="container">
@@ -31,36 +34,34 @@
 							<th>Degree</th><th>Year</th><th>Created</th><th>Modified</th><th></th>
 						</tr>
 					</thead>
+					<!-- -->
+
 					<tbody>
-						<tr>
-							<td>Computer Science</td><td>2021</td><td>May 28<sup>th</sup>, 2021</td><td>Jul 28<sup>th</sup>, 2021</td>
-							<td class="text-nowrap"><a href="edit-degree.php"><i class="fas fa-edit ml-3"></i></a><i class="fas fa-trash ml-3"></i></td>
-						</tr>
-						<tr>
-							<!-- <i class="fas fa-clone"></i> -->
-							<td>IC Biology</td><td>2019</td><td>May 28<sup>th</sup>, 2019</td><td>Jul 28<sup>th</sup>, 2019</td>
-							<td class="text-nowrap"><i class="fas fa-edit ml-3"></i><i class="fas fa-trash ml-3"></i></td>
-						</tr>
-						<tr>
-							<td>Computer Engineering</td><td>2019</td><td>May 28<sup>th</sup>, 2019</td><td>Jul 28<sup>th</sup>, 2019</td>
-							<td class="text-nowrap"><i class="fas fa-edit ml-3"></i><i class="fas fa-trash ml-3"></i></td>
-						</tr>
-						<tr>
-							<td>Computer Science</td><td>2019</td><td>May 28<sup>th</sup>, 2019</td><td>Jul 28<sup>th</sup>, 2019</td>
-							<td class="text-nowrap"><i class="fas fa-edit ml-3"></i><i class="fas fa-trash ml-3"></i></td>
-						</tr>
-						<tr>
-							<td>IC Biology</td><td>2018</td><td>Jun 1<sup>st</sup>, 2018</td><td>Jul 17<sup>th</sup>, 2018</td>
-							<td class="text-nowrap"><i class="fas fa-edit ml-3"></i><i class="fas fa-trash ml-3"></i></td>
-						</tr>
-						<tr>
-							<td>Computer Engineering</td><td>2018</td><td>Jun 1<sup>st</sup>, 2018</td><td>Jul 17<sup>th</sup>, 2018</td>
-							<td class="text-nowrap"><i class="fas fa-edit ml-3"></i><i class="fas fa-trash ml-3"></i></td>
-						</tr>
-						<tr>
-							<td>Computer Science</td><td>2018</td><td>Jun 1<sup>st</sup>, 2018</td><td>Jul 17<sup>th</sup>, 2018</td>
-							<td class="text-nowrap"><i class="fas fa-edit ml-3"></i><i class="fas fa-trash ml-3"></i></td>
-						</tr>
+						<?php
+						 	include_once "degree_func.php";
+							$tables = refresh_table();
+							$arrays = $tables->fetch_all(MYSQLI_NUM);
+							$arr_count = count($arrays);
+
+							$temp_date = "Oct 23, 2077";
+
+							for($i = 0; $i<$arr_count; $i++){
+								$arr2 = $arrays[$i];
+								$arr_count2 = count($arr2);
+								echo "<tr>";
+								//J starts at 1 to remove primary id
+								//and arr_count2 is -1 to remove description
+								for($j = 1; $j<$arr_count2-1; $j++){
+									echo "<td>" . $arr2[$j] . "</td>";
+								}
+								echo "<td>" .  $temp_date . "</td>";
+								echo "<td>" .  $temp_date . "</td>";
+								echo "<td class='text-nowrap'><i class='fas fa-edit ml-3'></i><i class='fas fa-trash ml-3'></i></td>";
+								echo "</tr>";
+
+							}
+						?>
+
 					</tbody>
 				</table>
 			</div>
@@ -74,7 +75,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- Modal -->
 	<div class="modal fade" id="create-plan" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
