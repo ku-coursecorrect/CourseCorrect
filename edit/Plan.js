@@ -1,18 +1,15 @@
 //Major, list of semester objects, list of transfer/exempt courses
 const SPRING = 0, SUMMER = 1, FALL = 2;
-const MIN_COLS = 3; // Minimum number of columns to put courses in
+const MIN_COLS = 5; // Minimum number of columns to put courses in
 
 /**
 * @class
 * @description Represents a user's plan, including their major, all semesters, and transfer credits
 **/
 class Plan {
-
 	/**
-		@param major_name {string} Major name
-		@param start_semester {number} SPRING or FALL constant
-		@param start_year {number} year
-		@post All parameters are assigned to their respective member variables and the first 8 falls/springs after the start semester are added
+		@param plan {string} JSON plan data, also includes ID, title, status, etc.
+		@param courses {string} JSON list of courses required for the plan's degree
 	*/
 	constructor(plan, courses) {
 		this.plan_id = plan.plan_id;

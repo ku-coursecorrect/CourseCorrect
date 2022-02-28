@@ -66,9 +66,9 @@
 	
 	// Status codes bit flags
 	abstract class PlanStatus {
-		const Complete = 1;
-		const Incomplete = 2;
-		const Warning = 4;
+		const Incomplete = 1;
+		const Warning = 2;
+		const Complete = 4;
 		const Submitted = 8;
 		const Approved = 16;
 	}
@@ -86,14 +86,21 @@
 	// Start the session to keep track of who's logged in
 	session_start();
 
+	function is_logged_in() {
+		return isset($_SESSION["permissions"]);
+	}
+
+	function is_staff() {
+		return is_logged_in() && $_SESSION["permissions"] > 0;
+	}
+
 	function require_login() {
-		if (!isset($_SESSION["permissions"])) crash(ErrorCode::NotLoggedIn, $_SESSION);
+		if (!is_logged_in()) crash(ErrorCode::NotLoggedIn, $_SESSION);
 	}
 	
 	// Page requires staff permissions to access (TODO: specific permission levels)
 	function require_staff() {
-		require_login();
-		if ($_SESSION["permissions"] < 1) crash(ErrorCode::InsufficientPermission, $_SESSION);
+		if (!is_staff()) crash(ErrorCode::InsufficientPermission, $_SESSION);
 	}
 
 	function find_degree_id($major, $year) {
@@ -105,19 +112,92 @@
 	// TODO: Useful links, maybe different for student and staff
 	function display_navbar() {
 		?>
-	<nav class="navbar navbar-light bg-light">
-		<a class="navbar-brand" href="https://ku.edu">
-			<img src="../images/KUSig_Horz_Web_Blue.png" height="30" alt="">
-		</a>
-		<ul class="navbar-nav mr-auto">
-			<li class="nav-item">
-				<a class="nav-link" href="https://eecs.ku.edu">Electrical Engineering and Computer Science</a>
-			</li>
-		</ul>
-		<span class="navbar-text">
-			<?= $_SESSION["kuid"] ?? "Not logged in" ?>
-		</span>
+
+	<header class="container-fluid py-3">
+		<div class="row">
+			<div class="col-sm-4">
+				<a href="../"><img class="KU_image" src="../images/eecs_logo.png" height="60"></a>
+			</div>
+			<div class="col-sm-4 text-sm-center KU_color_text">
+				<h1>CourseCorrect</h1>
+			</div>
+			<div class="col-sm-4 text-right">
+				<!--Student info-->
+				<div class="d-inline-block text-left">
+					<?php if (isset($_SESSION["user_id"])): ?>
+						<?=$_SESSION["name"]?>
+						<a href="../logout.php" class="btn btn-outline-dark btn-sm no-print">Logout</a>
+						<br>
+						<span class="only-print">Student ID: <?=$_SESSION["kuid"]?></span>
+					<?php else: ?>
+						Guest mode (not logged in)
+					<?php endif; ?>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<!-- Navigation bar -->
+	<nav class="navbar navbar-expand-md navbar-dark KU_color_background mb-3">
+		<a class="navbar-brand" href="../">Home</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="collapsibleNavbar">
+			<ul class="navbar-nav">
+				<li class="nav-item">
+					<a class="nav-link active" href="../list">Plan list</a>
+				</li>
+		  	</ul>
+		</div>
 	</nav>
+
+		<?php
+	}
+
+	function display_footer() {
+		?>
+
+	<!-- Useful links -->
+	<div class="container no-print">
+		<div class="row mt-5">
+			<div class="col-lg">
+				<h3>Other tools</h3>
+				<div class="p-3 mb-3 mr-md-3 bg-light border">
+					<ul class="mb-0">
+						<li><a href="http://vsb.ku.edu/" target="_blank">Visual schedule builder</a></li>
+						<li><a href="http://sa.ku.edu/" target="_blank">Enroll & Pay</a></li>
+						<li><a href="http://myku.edu/" target="_blank">myKU</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-lg">
+				<h3>KU course info</h3>
+				<div class="p-3 mb-3 mr-md-3 bg-light border">
+					<ul class="mb-0">
+						<li><a href="https://classes.ku.edu" target="_blank">Schedule of classes</a></li>
+						<li><a href="https://kucore.ku.edu/courses" target="_blank">List of KU Core courses</a></li>
+						<li><a href="https://college.ku.edu/winter" target="_blank">Winter break courses</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-lg">
+				<h3>EECS info</h3>
+				<div class="p-3 mb-3 mr-md-3 bg-light border">
+					<ul class="mb-0">
+						<li><a href="http://eecs.ku.edu/current-students/undergraduate" target="_blank">Undergraduate handbook</a></li>
+						<li><a href="https://eecs.drupal.ku.edu/prospective-students/undergraduate/degree-requirements" target="_blank">Degree requirements</a></li>
+						<li><a href="http://eecs.ku.edu/eecs-courses" target="_blank">List of all EECS courses</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Copyright line -->
+	<footer class="pt-2 my-2 border-top text-center">
+		<a href="https://github.com/ku-coursecorrect/coursecorrect">CourseCorrect</a> Copyright &copy; 2022: Drake Prebyl, James Kraijcek, Rafael Alaras, Reece Mathews, Tiger Ruan
+	</footer>
 		<?php
 	}
 	

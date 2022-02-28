@@ -1,0 +1,27 @@
+body {
+	font-family: Raleway, sans-serif;
+}
+
+header {
+	background-color: #e9ecef;
+}
+
+.KU_color_text {
+	color: rgb(0, 81, 186);
+}
+
+.KU_color_background {
+	background-color: rgb(0, 81, 186);
+}
+
+@media screen {
+	.only-print {
+		display: none;
+	}
+}
+
+@media print {
+    .no-print {
+        display: none;
+	}
+}

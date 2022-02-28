@@ -24,10 +24,9 @@ class Executive {
 
 		// Load plan
 		document.getElementById("plan_title").value = plan.plan_title;
-		document.getElementById("degree_title").innerText = plan.degree_major + " " + plan.degree_year;
 		this.plan = new Plan(plan, this.courses);
 
-		this.update();
+		this.update(true);
 
 		// Add help text in the first cell
 		if (this.plan.semesters.length >= 1 && this.plan.semesters[0].courses.length < 1) {
@@ -42,12 +41,14 @@ class Executive {
 				let data = new FormData();
 				data.append("plan_id", this.plan.plan_id);
 				data.append("plan_title", document.getElementById("plan_title").value);
+				data.append("plan_status", this.plan_status);
 				data.append("json", this.plan.save_json());
 
 				fetch("save.php", {"method": "POST", "body": data}).then(response => {
 					if (response.ok) {
 						console.log(response);
 						this.displayAlert("success", "Plan saved", 5000);
+						document.getElementById("save-button").disabled = true;
 					}
 					else {
 						console.error(response);
@@ -133,7 +134,14 @@ class Executive {
 	/**
 	* @post All aspects of the plan are updated: Course locations, arrows, credit hours per semester, errors/warnings, etc.
 	**/
-	update() {
+	update(firstLoad = false) {
+		if (!firstLoad) {
+			document.getElementById("save-button").disabled = false;
+		}
+
+		this.plan_status = 4; // 4 = complete (any errors/warnings that occur alter this)
+		if (this.plan.course_bank.length > 0) this.plan.status = 1; // 1 = incomplete
+
 		// Update course bank and transfer credits
 		this.plan.course_bank.sort((a, b) => (a.course_code > b.course_code ? 1 : -1));
 		this.plan.transfer_bank.sort((a, b) => (a.course_code > b.course_code ? 1 : -1));
@@ -222,7 +230,14 @@ class Executive {
 			}
 		}
 
-		// Autosave plan TODO
+		// Unsaved plan warning
+		window.addEventListener("beforeunload", e => {
+			if (document.getElementById("save-button").disabled == false) {
+				var msg = "Warning: Your plan has unsaved changes. Continue?";
+				e.returnValue = msg;
+				return msg;
+			}
+		});
 	}
 
 	/**
@@ -311,6 +326,12 @@ class Executive {
 	add_error(msg, type="danger") {
 		this.makeElement("li", "print-notifications", msg);
 		document.getElementById("notifications").innerHTML += `<div class="alert alert-${type} mt-2 mb-0">${msg}</div>`;
+		if (type == "danger") {
+			this.plan_status = Math.min(this.plan_status, 1); // 1 = Error
+		}
+		else if (type == "warning") {
+			this.plan_status = Math.min(this.plan_status, 2); // 2 = Warning
+		}
 	}
 
 	/**
