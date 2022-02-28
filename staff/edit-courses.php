@@ -120,7 +120,7 @@
 							foreach($TABLE_FORMAT as $field_format) {
 								echo '<td>', $field_format($course), '</td>';
 							}
-							echo '<td class="text-nowrap"><a onclick="populateModal(this)" data-toggle="modal" data-target="#edit-course"><i class="fas fa-edit ml-3"></i></a><i class="fas fa-trash ml-3"></i></td>';
+							echo '<td class="text-nowrap"><a onclick="populateModal(this)" data-toggle="modal" data-target="#edit-course"><i class="fas fa-edit ml-3"></i></a><a onclick="deleteCourse(this)" data-toggle="modal" data-target="#delete-course"><i class="fas fa-trash ml-3"></i></a></td>';
 							echo '</tr>';
 						}
 
@@ -131,7 +131,25 @@
 		</div>
 	</div>
 	<div class='modal' id='edit-course' tabindex='-1' aria-hidden='true'> <!-- Making this modal a modal fade class breaks the close button for some reason :) -->
-
+	</div>
+	<div class="modal" id='delete-course' tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+		<div class="modal-header">
+			<h5 class="modal-title">Delete Course</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		<div class="modal-body">
+			<p>Are you sure you want to delete this course?</p>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-primary">Delete course</button>
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+		</div>
+		</div>
+	</div>
 	</div>
 </body>
 </html>

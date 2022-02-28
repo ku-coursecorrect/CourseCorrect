@@ -240,3 +240,8 @@ function updateReqsPost() {
     post_input_ele.value = JSON.stringify(reqs_to_post);
     return true;
 }
+
+function deleteCourse(btn) {
+    // TODO: Confirmation box
+    console.log(btn);
+}
