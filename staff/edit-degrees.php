@@ -38,28 +38,8 @@
 
 					<tbody>
 						<?php
-						 	include_once "degree_func.php";
-							$tables = refresh_table();
-							$arrays = $tables->fetch_all(MYSQLI_NUM);
-							$arr_count = count($arrays);
-
-							$temp_date = "Oct 23, 2077";
-
-							for($i = 0; $i<$arr_count; $i++){
-								$arr2 = $arrays[$i];
-								$arr_count2 = count($arr2);
-								echo "<tr>";
-								//J starts at 1 to remove primary id
-								//and arr_count2 is -1 to remove description
-								for($j = 1; $j<$arr_count2-1; $j++){
-									echo "<td>" . $arr2[$j] . "</td>";
-								}
-								echo "<td>" .  $temp_date . "</td>";
-								echo "<td>" .  $temp_date . "</td>";
-								echo "<td class='text-nowrap'><i class='fas fa-edit ml-3'></i><i class='fas fa-trash ml-3'></i></td>";
-								echo "</tr>";
-
-							}
+						 	include_once "degree-func.php";
+							print_degree();
 						?>
 
 					</tbody>

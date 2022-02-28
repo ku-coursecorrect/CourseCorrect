@@ -33,8 +33,8 @@
 					</thead>
                     <tbody>
                         <?php
-						 	include_once "degree_func.php";
-							$tables = refresh_table();
+						 	include_once "degree-func.php";
+							$tables = refresh_course();
 							$arrays = $tables->fetch_all(MYSQLI_NUM);
 							$arr_count = count($arrays);
 
