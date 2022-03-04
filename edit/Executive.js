@@ -14,12 +14,12 @@ class Executive {
 		this.arrowRender = new ArrowRender();
 
 		this.courses = courses.map(course => new Course(course.course_id,
-														course.course_code, 
-														course.title, 
+														course.course_code,
+														course.title,
 														course.prereq,
 														course.coreq,
-														[course.f_spring, course.f_summer, course.f_fall], 
-														course.max_hours, 
+														[course.f_spring, course.f_summer, course.f_fall],
+														course.hours,
 														course.f_ule));
 
 		// Load plan
