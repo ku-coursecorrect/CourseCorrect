@@ -143,7 +143,7 @@ class Executive {
 
 			// Delete the course from the courses list
 			this.courses.splice(this.courses.findIndex(course => course && course.course_id == course_id), 1);
-			
+
 			// Redraw plan
 			this.update();
 
@@ -201,6 +201,8 @@ class Executive {
 				this.makeElement("option", "addSemesterSelect", (new Semester(id)).toString(), id);
 			}
 		}
+		// Select the next semester after the end of the plan by default
+		document.getElementById("addSemesterSelect").value = this.plan.semesters[this.plan.semesters.length-1].id + 1;
 
 		// Update the credit hour displays and the Upper level eligibility
 		for (let semester of this.plan.semesters) {
