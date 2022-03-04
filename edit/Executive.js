@@ -20,7 +20,8 @@ class Executive {
 														course.coreq,
 														[course.f_spring, course.f_summer, course.f_fall],
 														course.hours,
-														course.f_ule));
+														course.f_ule,
+														course.description));
 
 		// Load plan
 		document.getElementById("plan_title").value = plan.plan_title;
@@ -71,8 +72,8 @@ class Executive {
 			document.getElementById("save-container").style.display = "none";
 		}
 
-		// Add tooltips to courses
-		$('#redips-drag').tooltip({selector: '[data-toggle="tooltip"]'})
+		// Add tooltips to courses - removed because it makes it hard to see the arrows which get highlighted on hover
+		//$('#redips-drag').tooltip({selector: '[data-toggle="tooltip"]'})
 
 		// Initialize drag-and-drop to move courses
 		REDIPS.drag.dropMode = "single";
@@ -126,6 +127,31 @@ class Executive {
 
 			document.getElementById("course_code").value = "";
 			document.getElementById("credit_hours").value = "";
+		});
+
+		// Deleting a custom course
+		document.getElementById("course-delete").addEventListener("click", () => {
+			let course_id = document.getElementById("course-delete").dataset.course;
+
+			// Loop through every place that can have courses: semesters, course bank, and transfer credits
+			for (let semester of [...this.plan.semesters.map(semester => semester.courses), this.plan.course_bank, this.plan.transfer_bank]) {
+				// See if the semester contains the course
+				let index = semester.findIndex(course => course && course.course_id == course_id);
+				// Delete it if so
+				if (index > -1) semester[index] = undefined;
+			}
+
+			// Delete the course from the courses list
+			this.courses.splice(this.courses.findIndex(course => course && course.course_id == course_id), 1);
+			
+			// Redraw plan
+			this.update();
+
+			// Clear the course info box
+			document.getElementById("course-title").innerText = "Course info";
+			document.getElementById("course-subtitle").innerText = "";
+			document.getElementById("course-description").innerText = "Click on a course to display information and options here.";
+			document.getElementById("course-delete").style.display = "none";
 		});
 	}
 
