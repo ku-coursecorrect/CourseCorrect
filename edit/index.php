@@ -26,7 +26,7 @@
 	}
 
 	else if (isset($_GET["major"]) && isset($_GET["year"])) { // Guest mode create an unsavable empty plan
-		$plan = new_plan_json(intval($_GET["year"]));
+		$plan = new_plan_content(intval($_GET["year"]));
 
 		$plan["plan_title"] = "Guest mode";
 		$plan["degree_id"] = find_degree_id($_GET["major"], $_GET["year"]);

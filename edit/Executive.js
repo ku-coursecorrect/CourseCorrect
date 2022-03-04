@@ -35,7 +35,7 @@ class Executive {
 
 		// The rest of this sets up event listeners for user interactions
 
-		// Plan save button
+		// Setup plan save button if logged in
 		if (this.plan.plan_id) {
 			document.getElementById("save-button").addEventListener("click", () => {
 				let data = new FormData();
@@ -57,8 +57,17 @@ class Executive {
 					response.text().then(text => console.log(text));
 				});
 			});
+
+			// Unsaved plan warning
+			window.addEventListener("beforeunload", e => {
+				if (document.getElementById("save-button").disabled == false) {
+					var msg = "Warning: Your plan has unsaved changes. Continue?";
+					e.returnValue = msg;
+					return msg;
+				}
+			});
 		}
-		else {
+		else { // Guest mode - no save button
 			document.getElementById("save-container").style.display = "none";
 		}
 
@@ -229,15 +238,6 @@ class Executive {
 				}
 			}
 		}
-
-		// Unsaved plan warning
-		window.addEventListener("beforeunload", e => {
-			if (document.getElementById("save-button").disabled == false) {
-				var msg = "Warning: Your plan has unsaved changes. Continue?";
-				e.returnValue = msg;
-				return msg;
-			}
-		});
 	}
 
 	/**
