@@ -159,7 +159,7 @@
 		?>
 
 	<!-- Useful links -->
-	<div class="container no-print">
+	<div id="useful_links" class="container no-print">
 		<div class="row mt-5">
 			<div class="col-lg">
 				<h3>Other tools</h3>

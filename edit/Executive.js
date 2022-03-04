@@ -274,6 +274,11 @@ class Executive {
 		while (grid.firstChild) grid.removeChild(grid.firstChild); // Clear grid
 
 		let cols = this.plan.get_longest() + 1; // +1 leaves an empty column to add another course to a semester
+
+		// Fix an issue with redips drag
+		// It cannot handle a container being wider than the page or having a horizontal scrollbar
+		document.body.style.minWidth = (500 + 120 * cols) + "px";
+
 		for (let i = 0; i < this.plan.semesters.length; i++) {
 			let semester = this.plan.semesters[i];
 			let tr = document.createElement("tr");

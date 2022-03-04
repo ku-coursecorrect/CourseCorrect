@@ -153,7 +153,7 @@
 	</div>
 
 	<!-- Notifications (e.g. requisites, ULE) -->
-	<div class="container">
+	<div id="notifications-container" class="container">
 		<div class="row">
 			<div id="notifications" class="col-12 no-print"></div>
 		</div>
