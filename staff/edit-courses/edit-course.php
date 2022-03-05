@@ -1,5 +1,5 @@
 <?php
-    require_once "../common.php";
+    require_once "../../common.php";
     require_once "course-common.php";
 	$course_code = $_GET['course_code'];
     if ($course_code != "New") {

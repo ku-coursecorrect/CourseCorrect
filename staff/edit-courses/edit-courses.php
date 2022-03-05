@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-	require_once "../common.php";
+	require_once "../../common.php";
 	require_once "course-common.php";
 	require_staff();
 ?>
@@ -11,11 +11,11 @@
 	<link rel="icon" href="../favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="../libs/bootstrap.min.css">
-	<script src="../libs/jquery.slim.min.js"></script>
-	<script src="../libs/popper.min.js"></script>
-	<script src="../libs/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="../libs/fontawesome.min.css">
+    <link rel="stylesheet" href="../../libs/bootstrap.min.css">
+	<script src="../../libs/jquery.slim.min.js"></script>
+	<script src="../../libs/popper.min.js"></script>
+	<script src="../../libs/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="../../libs/fontawesome.min.css">
 	<script src="edit-course.js"></script>
 	<style>
 		.form-control::placeholder {

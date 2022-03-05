@@ -1,5 +1,5 @@
 <?php
-require_once "../common.php";
+require_once "../../common.php";
 require_staff();
 
 // Map each course to it's requisites
