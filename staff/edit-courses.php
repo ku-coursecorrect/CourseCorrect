@@ -18,18 +18,8 @@
 	<link rel="stylesheet" href="../libs/fontawesome.min.css">
 	<script src="edit-course.js"></script>
 	<style>
-		/* Make placeholder text more visually distinguishable as per https://github.com/twbs/bootstrap/issues/21624#issuecomment-274438794 */
-		.form-control::-webkit-input-placeholder {
-		color: #999;
-		}
-		.form-control::-moz-placeholder {
-		color: #999;
-		}
-		.form-control:-ms-input-placeholder {
-		color: #999;
-		}
 		.form-control::placeholder {
-		color: #999;
+			color: #999;
 		}
 	</style>
 </head>

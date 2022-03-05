@@ -20,7 +20,7 @@
         if ($course_id === '') {
             // Create a new course
             $keys_str = implode(",", array_keys($values));
-            $course_id = $db->query('insert into course ('.$keys_str.') VALUES ('.implode(',', array_fill(0, count($values), '?')).');', array_values($values));
+            $course_id = $db->query('INSERT into course ('.$keys_str.') VALUES ('.implode(',', array_fill(0, count($values), '?')).');', array_values($values));
         } else {
             // Edit an existing course
             $val_str = "";
@@ -46,6 +46,6 @@
         }
     }
     // Redirect back to the courses page
-    echo '<META HTTP-EQUIV="Refresh" Content="0; URL='.'edit-courses.php'.'">';
+    header("Location: edit-courses.php");
     exit;
 ?>
