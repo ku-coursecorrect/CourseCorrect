@@ -10,8 +10,7 @@
             'course_code' => $_POST['course_code'],
             'title' => $_POST['title'],
             'description' => $_POST['description'],
-            'min_hours' => intval($_POST['min_hours']),
-            'max_hours' => $_POST['variable'] === 'true' ? intval($_POST['max_hours']) : intval($_POST['min_hours']),
+            'hours' => intval($_POST['hours']),
             'f_spring' => $_POST['f_spring'] === 'true' ? 1 : 0,
             'f_summer' => $_POST['f_summer'] === 'true' ? 1 : 0,
             'f_fall' => $_POST['f_fall'] === 'true' ? 1 : 0

@@ -12,8 +12,7 @@
             "course_id" => "",
             "course_code" => "",
             "title" => "",
-            "min_hours" => "",
-            "max_hours" => "",
+            "hours" => "",
             "description" => "",
             "f_fall" => "0",
             "f_spring" => "0",
@@ -23,8 +22,7 @@
             "course_id" => "",
             "course_code" => "EECS 268",
             "title" => "Programming II",
-            "min_hours" => "1",
-            "max_hours" => "max creds",
+            "hours" => "1",
             "description" => "This course continues developing problem solving techniques by focusing on the imperative and object-oriented styles using Abstract Data Types.",
             "f_fall" => "0",
             "f_spring" => "1",
@@ -32,7 +30,6 @@
         ];
         $title = "Create Course";
     }
-	$course_info['variable'] = $course_info['min_hours'] !== $course_info['max_hours'];
 ?>
 
 <div class='modal-dialog modal-lg'>
@@ -61,13 +58,7 @@
 				<div class='container'><div class='row'>
 					<div class='col-md-auto'>
 						<label for='credits' style='padding-right:25px'><b>Credit Hours</b></label> 
-						<button type='button' class='btn btn-outline-secondary<?=$course_info['variable'] ? ' active' : ''?>' data-toggle='button' aria-pressed='<?=$course_info['variable'] ? 'true' : 'false'?>' autocomplete='off' onclick='toggleCredits(this); addPost(this);'  data-toggle=tooltip data-placement=auto title='Enable a min and max range of credit hours for special topics, projects, etc.'>Variable Credits</button>
-						<input type='text' name='variable' value='<?=$course_info['variable'] ? 'true' : 'false' ?>' hidden />
-						<div class='input-group' id='credits'>
-							<input type='number' id='min_hours' name='min_hours' class='form-control' placeholder='<?=$placeholder_info['min_hours']?>' value='<?=$course_info['min_hours']?>' max=1000 min='-1000'/>
-							<span class='input-group-text' id='credits_max_separator' style='display:<?=$course_info['variable'] ? '' : 'none'?>'>-</span>
-							<input type='number' id='max_hours' name='max_hours' style='display:<?=$course_info['variable'] ? '' : 'none'?>' placeholder='<?=$placeholder_info['max_hours']?>' value='<?=$course_info['max_hours']?>' class='form-control' max='1000' min='-1000' placeholder='max creds'/>
-						</div>
+						<input type='number' id='hours' name='hours' class='form-control' placeholder='<?=$placeholder_info['hours']?>' value='<?=$course_info['hours']?>' max=1000 min='-1000'/>
 					</div>
 					<div class='col-md-auto ml-auto'>
 						<label for='semesters'><b>Semesters</b></label>

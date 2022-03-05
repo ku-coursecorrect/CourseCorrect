@@ -66,12 +66,7 @@
 								echo "<span class=expand data-toggle=tooltip data-placement=auto title='Click to expand' onclick='expandText(event, \"$descSanitized\", true)' style='font-style:italic;'>" . substr($desc, 0, $MINLEN) . "...</span>";
 							},
 							"Credit Hours" => function($course) {
-								if ($course["min_hours"] == $course["max_hours"])
-								{
-									echo $course["min_hours"], "    ";
-								} else {
-									echo $course["min_hours"], ' - ', $course["max_hours"];
-								}
+								echo $course["hours"];
 							},
 							"Semester" => function($course) {
 								$semesters = [];
