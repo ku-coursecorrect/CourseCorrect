@@ -160,14 +160,9 @@ function addReq() {
     let table = document.getElementById("reqs-table");
     table.insertRow();
 
-    let xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            table.rows[table.rows.length -1].outerHTML = this.responseText;
-        }
-      };
-    xhttp.open("GET", "requisite.php", true);
-    xhttp.send();
+    fetch("requisite.php").then(
+        response => response.text()
+    ).then(text => table.rows[table.rows.length -1].outerHTML = text);
 }
 
 function removeReq(btn) {
