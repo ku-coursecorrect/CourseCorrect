@@ -105,7 +105,7 @@
 							foreach($TABLE_FORMAT as $field_format) {
 								echo '<td>', $field_format($course), '</td>';
 							}
-							echo '<td class="text-nowrap"><a onclick="populateModal(this)" data-toggle="modal" data-target="#edit-course"><i class="fas fa-edit ml-3"></i></a><a onclick="deleteCourse(this)" data-toggle="modal" data-target="#delete-course"><i class="fas fa-trash ml-3"></i></a></td>';
+							echo '<td class="text-nowrap"><a onclick="populateModal(this)" data-toggle="modal" data-target="#edit-course"><i class="fas fa-edit ml-3"></i></a><a onclick="deleteModal(this)" data-toggle="modal" data-target="#delete-course"><i class="fas fa-trash ml-3"></i></a></td>';
 							echo '</tr>';
 						}
 
@@ -121,7 +121,7 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 		<div class="modal-header">
-			<h5 class="modal-title">Delete Course</h5>
+			<h5 class="modal-title">Delete <span id="delete-subtitle"></span> </h5>
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			<span aria-hidden="true">&times;</span>
 			</button>
@@ -130,8 +130,8 @@
 			<p>Are you sure you want to delete this course?</p>
 		</div>
 		<div class="modal-footer">
-			<button type="button" class="btn btn-primary">Delete course</button>
 			<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+			<button type="button" class="btn btn-primary" onclick="deleteCourse(this)">Delete course</button>
 		</div>
 		</div>
 	</div>

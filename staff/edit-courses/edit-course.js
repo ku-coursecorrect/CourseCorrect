@@ -236,7 +236,13 @@ function updateReqsPost() {
     return true;
 }
 
+function deleteModal(btn) {
+    let course_code = btn.parentElement.parentElement.children[0].innerText;
+    let subtitle = document.getElementById("delete-subtitle");
+    subtitle.innerText = course_code;
+}
+
 function deleteCourse(btn) {
-    // TODO: Confirmation box
-    console.log(btn);
+    let course_code = btn.parentElement.parentElement.children[0].children[0].children[0].innerText;
+    fetch("delete-course.php?course_code="+course_code).then(response => response.text()).then(text => location.reload());
 }
