@@ -185,15 +185,9 @@ function populateModal(btn) {
         course_code = course_row.children[0].innerText;
     }
 
-    // TODO: Replace with Fetch!
-    let xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("edit-course").innerHTML = this.responseText;
-        }
-      };
-    xhttp.open("GET", "edit-course.php?course_code="+course_code, true);
-    xhttp.send();
+    fetch("edit-course.php?course_code="+course_code).then(
+        response => response.text()
+    ).then(text => document.getElementById("edit-course").innerHTML = text);
 }
 
 // Set a hidden input following a button to the state of the button
