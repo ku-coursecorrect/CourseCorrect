@@ -14,13 +14,14 @@ class Executive {
 		this.arrowRender = new ArrowRender();
 
 		this.courses = courses.map(course => new Course(course.course_id,
-														course.course_code, 
-														course.title, 
+														course.course_code,
+														course.title,
 														course.prereq,
 														course.coreq,
-														[course.f_spring, course.f_summer, course.f_fall], 
-														course.max_hours, 
-														course.f_ule));
+														[course.f_spring, course.f_summer, course.f_fall],
+														course.hours,
+														course.f_ule,
+														course.description));
 
 		// Load plan
 		document.getElementById("plan_title").value = plan.plan_title;
@@ -35,7 +36,7 @@ class Executive {
 
 		// The rest of this sets up event listeners for user interactions
 
-		// Plan save button
+		// Setup plan save button if logged in
 		if (this.plan.plan_id) {
 			document.getElementById("save-button").addEventListener("click", () => {
 				let data = new FormData();
@@ -57,13 +58,22 @@ class Executive {
 					response.text().then(text => console.log(text));
 				});
 			});
+
+			// Unsaved plan warning
+			window.addEventListener("beforeunload", e => {
+				if (document.getElementById("save-button").disabled == false) {
+					var msg = "Warning: Your plan has unsaved changes. Continue?";
+					e.returnValue = msg;
+					return msg;
+				}
+			});
 		}
-		else {
+		else { // Guest mode - no save button
 			document.getElementById("save-container").style.display = "none";
 		}
 
-		// Add tooltips to courses
-		$('#redips-drag').tooltip({selector: '[data-toggle="tooltip"]'})
+		// Add tooltips to courses - removed because it makes it hard to see the arrows which get highlighted on hover
+		//$('#redips-drag').tooltip({selector: '[data-toggle="tooltip"]'})
 
 		// Initialize drag-and-drop to move courses
 		REDIPS.drag.dropMode = "single";
@@ -118,6 +128,31 @@ class Executive {
 			document.getElementById("course_code").value = "";
 			document.getElementById("credit_hours").value = "";
 		});
+
+		// Deleting a custom course
+		document.getElementById("course-delete").addEventListener("click", () => {
+			let course_id = document.getElementById("course-delete").dataset.course;
+
+			// Loop through every place that can have courses: semesters, course bank, and transfer credits
+			for (let semester of [...this.plan.semesters.map(semester => semester.courses), this.plan.course_bank, this.plan.transfer_bank]) {
+				// See if the semester contains the course
+				let index = semester.findIndex(course => course && course.course_id == course_id);
+				// Delete it if so
+				if (index > -1) semester[index] = undefined;
+			}
+
+			// Delete the course from the courses list
+			this.courses.splice(this.courses.findIndex(course => course && course.course_id == course_id), 1);
+
+			// Redraw plan
+			this.update();
+
+			// Clear the course info box
+			document.getElementById("course-title").innerText = "Course info";
+			document.getElementById("course-subtitle").innerText = "";
+			document.getElementById("course-description").innerText = "Click on a course to display information and options here.";
+			document.getElementById("course-delete").style.display = "none";
+		});
 	}
 
 	alertCount = 0;
@@ -166,6 +201,8 @@ class Executive {
 				this.makeElement("option", "addSemesterSelect", (new Semester(id)).toString(), id);
 			}
 		}
+		// Select the next semester after the end of the plan by default
+		document.getElementById("addSemesterSelect").value = this.plan.semesters[this.plan.semesters.length-1].id + 1;
 
 		// Update the credit hour displays and the Upper level eligibility
 		for (let semester of this.plan.semesters) {
@@ -229,15 +266,6 @@ class Executive {
 				}
 			}
 		}
-
-		// Unsaved plan warning
-		window.addEventListener("beforeunload", e => {
-			if (document.getElementById("save-button").disabled == false) {
-				var msg = "Warning: Your plan has unsaved changes. Continue?";
-				e.returnValue = msg;
-				return msg;
-			}
-		});
 	}
 
 	/**
@@ -274,6 +302,11 @@ class Executive {
 		while (grid.firstChild) grid.removeChild(grid.firstChild); // Clear grid
 
 		let cols = this.plan.get_longest() + 1; // +1 leaves an empty column to add another course to a semester
+
+		// Fix an issue with redips drag
+		// It cannot handle a container being wider than the page or having a horizontal scrollbar
+		document.body.style.minWidth = (500 + 120 * cols) + "px";
+
 		for (let i = 0; i < this.plan.semesters.length; i++) {
 			let semester = this.plan.semesters[i];
 			let tr = document.createElement("tr");

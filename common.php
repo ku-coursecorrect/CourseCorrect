@@ -54,14 +54,13 @@
 
 	// Populate a new plan with empty semesters for the next 4 years
 	// Fall of start year, spring and fall of next 3 years, then spring of the year after that
-	function new_plan_json($startYear) {
+	function new_plan_content($startYear) {
 		$semesters = [];
 		for ($year = $startYear; $year < $startYear + 4; $year++) {
 			$semesters[] = ["id" => semester_id($year, FALL), "courses" => []];
 			$semesters[] = ["id" => semester_id($year+1, SPRING), "courses" => []];
 		}
-		$json = json_encode(["semesters" => $semesters, "transfer_bank" => []]);
-		return $json;
+		return ["semesters" => $semesters, "transfer_bank" => []];
 	}
 	
 	// Status codes bit flags
@@ -158,45 +157,53 @@
 	function display_footer() {
 		?>
 
-	<!-- Useful links -->
-	<div class="container no-print">
-		<div class="row mt-5">
-			<div class="col-lg">
-				<h3>Other tools</h3>
-				<div class="p-3 mb-3 mr-md-3 bg-light border">
-					<ul class="mb-0">
-						<li><a href="http://vsb.ku.edu/" target="_blank">Visual schedule builder</a></li>
-						<li><a href="http://sa.ku.edu/" target="_blank">Enroll & Pay</a></li>
-						<li><a href="http://myku.edu/" target="_blank">myKU</a></li>
-					</ul>
+	<!-- Copyright line -->
+	<footer class="pt-2 mt-5 pb-2 border-top">
+		<div class="container">
+			<div class="row my-2">
+				<div class="col-lg">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Other tools</h5>
+							<ul class="mb-0">
+								<li><a href="http://vsb.ku.edu/" target="_blank">Visual schedule builder</a></li>
+								<li><a href="http://sa.ku.edu/" target="_blank">Enroll & Pay</a></li>
+								<li><a href="http://myku.edu/" target="_blank">myKU</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">KU course info</h5>
+							<ul class="mb-0">
+								<li><a href="https://classes.ku.edu" target="_blank">Schedule of classes</a></li>
+								<li><a href="https://kucore.ku.edu/courses" target="_blank">List of KU Core courses</a></li>
+								<li><a href="https://college.ku.edu/winter" target="_blank">Winter break courses</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">EECS info</h5>
+							<ul class="mb-0">
+								<li><a href="http://eecs.ku.edu/current-students/undergraduate" target="_blank">Undergraduate handbook</a></li>
+								<li><a href="https://eecs.drupal.ku.edu/prospective-students/undergraduate/degree-requirements" target="_blank">Degree requirements</a></li>
+								<li><a href="http://eecs.ku.edu/eecs-courses" target="_blank">List of all EECS courses</a></li>
+							</ul>
+						</div>
+					</div>
 				</div>
 			</div>
-			<div class="col-lg">
-				<h3>KU course info</h3>
-				<div class="p-3 mb-3 mr-md-3 bg-light border">
-					<ul class="mb-0">
-						<li><a href="https://classes.ku.edu" target="_blank">Schedule of classes</a></li>
-						<li><a href="https://kucore.ku.edu/courses" target="_blank">List of KU Core courses</a></li>
-						<li><a href="https://college.ku.edu/winter" target="_blank">Winter break courses</a></li>
-					</ul>
-				</div>
-			</div>
-			<div class="col-lg">
-				<h3>EECS info</h3>
-				<div class="p-3 mb-3 mr-md-3 bg-light border">
-					<ul class="mb-0">
-						<li><a href="http://eecs.ku.edu/current-students/undergraduate" target="_blank">Undergraduate handbook</a></li>
-						<li><a href="https://eecs.drupal.ku.edu/prospective-students/undergraduate/degree-requirements" target="_blank">Degree requirements</a></li>
-						<li><a href="http://eecs.ku.edu/eecs-courses" target="_blank">List of all EECS courses</a></li>
-					</ul>
+			<div class="row">
+				<div class="col text-center">
+					<a href="https://github.com/ku-coursecorrect/coursecorrect">CourseCorrect</a> Copyright &copy; 2022: Drake Prebyl, James Kraijcek, Rafael Alaras, Reece Mathews, Tiger Ruan
 				</div>
 			</div>
 		</div>
-	</div>
-
-	<!-- Copyright line -->
-	<footer class="pt-2 my-2 border-top text-center">
-		<a href="https://github.com/ku-coursecorrect/coursecorrect">CourseCorrect</a> Copyright &copy; 2022: Drake Prebyl, James Kraijcek, Rafael Alaras, Reece Mathews, Tiger Ruan
 	</footer>
 		<?php
 	}

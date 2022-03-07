@@ -26,7 +26,7 @@
 	}
 
 	else if (isset($_GET["major"]) && isset($_GET["year"])) { // Guest mode create an unsavable empty plan
-		$plan = new_plan_json(intval($_GET["year"]));
+		$plan = new_plan_content(intval($_GET["year"]));
 
 		$plan["plan_title"] = "Guest mode";
 		$plan["degree_id"] = find_degree_id($_GET["major"], $_GET["year"]);
@@ -153,7 +153,7 @@
 	</div>
 
 	<!-- Notifications (e.g. requisites, ULE) -->
-	<div class="container">
+	<div id="notifications-container" class="container">
 		<div class="row">
 			<div id="notifications" class="col-12 no-print"></div>
 		</div>
@@ -162,21 +162,29 @@
 	<!-- Main content (course bank, semester grid) -->
 	<div id="redips-drag" class="d-flex flex-row">
 		<div class="ml-auto px-4 no-print" style="flex: 0 0 340px">
-			<div class="my-4">
+			<div class="my-3 mr-3 card">
+				<div class="card-body p-2">
+					<h5 class="card-title" id="course-title">Course Info</h5>
+					<h6 class="card-subtitle mb-2 text-muted" id="course-subtitle"></h6>
+					<div class="card-text" id="course-description">Click on a course to display information and options here.</div>
+					<input type="button" id="course-delete" class="btn btn-danger mt-2" value="Delete" style="display:none">
+				</div>
+			</div>
+			<div class="mb-3">
 				<h3>Course Bank</h3>
 				<table id="course-bank" class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border" style="min-width: 250px; min-height: 100px;">
 					<tr><td></td></tr>
 				</table>
 			</div>
 			
-			<div class="mb-4">
+			<div class="mb-3">
 				<h3>Transfer Credits</h3>
 				<table id="transfer-bank" class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border" style="min-width: 250px; min-height: 60px;">
 					<tr><td></td></tr>
 				</table>
 			</div>
 			
-			<div class="mb-4 mr-4" id="add_extra_course_box">
+			<div class="mb-3 mr-4" id="add_extra_course_box">
 				<h3>Add Extra Course</h3>
 				<div class="form-group row">
 					<div class="col text-nowrap" style="flex: 0 0 130px">
@@ -199,7 +207,7 @@
 				</div>
 			</div>
 
-			<div class="mb-4 mr-4 no-print">
+			<div class="mb-3 mr-4 no-print">
 				<h3>Add Semester</h3>
 				<div class="input-group">
 					<select id="addSemesterSelect" class="form-control">

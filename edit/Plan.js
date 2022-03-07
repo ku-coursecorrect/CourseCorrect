@@ -113,6 +113,7 @@ class Plan {
 		@post creates a semester of season and year, which is added in the array
 	*/
 	add_semester(id) {
+		id = parseInt(id);
 		this.semesters.push(new Semester(id, []));
 		this.semesters.sort((sem1, sem2) => sem1.id - sem2.id);
 	}

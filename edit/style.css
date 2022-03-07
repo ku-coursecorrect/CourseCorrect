@@ -1,3 +1,13 @@
+/* 
+	To compensate for the body being wider than the viewport,
+	which must be done with wide plans on small screens due to limitations of redips drag,
+	prevent everything besides the sememester grid from being wider than the screen
+*/
+#alert_holder, header, nav, #notifications-container, #useful_links, footer {
+	max-width: 100vw;
+	margin-left: 0 !important;
+}
+
 #alert_holder {
 	position: fixed;
 	top: 0;
