@@ -25,6 +25,8 @@ class Executive {
 
 		// Load plan
 		document.getElementById("plan_title").value = plan.plan_title;
+		document.getElementById("notes").value = plan.notes;
+		document.getElementById("print-notes").innerText = plan.notes;
 		this.plan = new Plan(plan, this.courses);
 
 		this.update(true);
@@ -49,7 +51,7 @@ class Executive {
 					if (response.ok) {
 						console.log(response);
 						this.displayAlert("success", "Plan saved", 5000);
-						document.getElementById("save-button").disabled = true;
+						this.markSaved();
 					}
 					else {
 						console.error(response);
@@ -61,7 +63,7 @@ class Executive {
 
 			// Unsaved plan warning
 			window.addEventListener("beforeunload", e => {
-				if (document.getElementById("save-button").disabled == false) {
+				if (!this.isSaved()) {
 					var msg = "Warning: Your plan has unsaved changes. Continue?";
 					e.returnValue = msg;
 					return msg;
@@ -83,12 +85,6 @@ class Executive {
 			$(targetCell.firstElementChild).tooltip("dispose");
 		};
 		REDIPS.drag.event.dropped = targetCell => {
-			// Clear all notifications
-			for (let id of ["notifications", "print-notifications"]) {
-				let list = document.getElementById(id);
-				while (list.firstChild) list.removeChild(list.firstChild);
-			}
-
 			// Remove tutorial if present
 			$(".tutorial").remove();
 
@@ -116,7 +112,7 @@ class Executive {
 
 		// Adding a custom course
 		document.getElementById("course_add_submit").addEventListener("click", () => {
-			let t_course_code = document.getElementById("course_code").value;
+			let t_course_code = document.getElementById("course_code").value.replace(/[^\w\s]/g, "-"); // Remove special characters
 			let t_credit_hours = parseInt(document.getElementById("credit_hours").value);
 			if (t_course_code == "" || isNaN(t_credit_hours)) return; // Both inputs not filled out
 
@@ -133,12 +129,18 @@ class Executive {
 		document.getElementById("course-delete").addEventListener("click", () => {
 			let course_id = document.getElementById("course-delete").dataset.course;
 
-			// Loop through every place that can have courses: semesters, course bank, and transfer credits
-			for (let semester of [...this.plan.semesters.map(semester => semester.courses), this.plan.course_bank, this.plan.transfer_bank]) {
+			// Delete from course/transfer bank completely (since they can't have gaps)
+			for (let bank of [this.plan.course_bank, this.plan.transfer_bank]) {
+				let index = bank.findIndex(course => course && course.course_id == course_id);
+				if (index > -1) bank.splice(index, 1);
+			}
+
+			// Delete from semesters, leaving a blank space behind
+			for (let semester of this.plan.semesters) {
 				// See if the semester contains the course
-				let index = semester.findIndex(course => course && course.course_id == course_id);
+				let index = semester.courses.findIndex(course => course && course.course_id == course_id);
 				// Delete it if so
-				if (index > -1) semester[index] = undefined;
+				if (index > -1) semester.courses[index] = undefined;
 			}
 
 			// Delete the course from the courses list
@@ -153,6 +155,24 @@ class Executive {
 			document.getElementById("course-description").innerText = "Click on a course to display information and options here.";
 			document.getElementById("course-delete").style.display = "none";
 		});
+
+		// Editing plan title and notes
+		document.getElementById("plan_title").addEventListener("input", e => this.markUnsaved());
+		document.getElementById("notes").addEventListener("input", e => {
+			this.markUnsaved();
+			document.getElementById("print-notes").innerText = e.target.value;
+		});
+	}
+
+	// The state of the save button is used to keep track of if there are unsaved changes
+	markUnsaved() {
+		document.getElementById('save-button').disabled = false;
+	}
+	markSaved() {
+		document.getElementById('save-button').disabled = true;
+	}
+	isSaved() {
+		return document.getElementById('save-button').disabled;
 	}
 
 	alertCount = 0;
@@ -170,8 +190,12 @@ class Executive {
 	* @post All aspects of the plan are updated: Course locations, arrows, credit hours per semester, errors/warnings, etc.
 	**/
 	update(firstLoad = false) {
-		if (!firstLoad) {
-			document.getElementById("save-button").disabled = false;
+		if (!firstLoad) this.markUnsaved();
+
+		// Clear all notifications
+		for (let id of ["notifications", "print-notifications"]) {
+			let list = document.getElementById(id);
+			while (list.firstChild) list.removeChild(list.firstChild);
 		}
 
 		this.plan_status = 4; // 4 = complete (any errors/warnings that occur alter this)
@@ -337,7 +361,7 @@ class Executive {
 					// If the course that is being loaded into the table cell is not offered in the current semester's season.
 					if (course.course_semester[semester.season()] != 1) { 
 						td.firstElementChild.classList.add("error"); // Stylize the cell to be red
-						this.add_error(course.course_code + " is not offered in the " + semester.season_name()); // Display an error message
+						this.add_error("<b>SEASON ERROR:</b> " + course.course_code + " is not offered in the " + semester.season_name()); // Display an error message
 					}
 				}
 				td.dataset["x"] = j;

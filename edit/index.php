@@ -123,7 +123,7 @@
 		<span class="float-right">
 			<span class="navbar-text py-0 pr-2"><?= $plan["degree_major"] . " " . $plan["degree_year"] ?></span>
 			<span id="save-container">
-				<input type="text" id="plan_title" class="form-control form-control-sm" placeholder="Plan name..." oninput="document.getElementById('save-button').disabled = false">
+				<input type="text" id="plan_title" class="form-control form-control-sm" placeholder="Plan name...">
 				<button id="save-button" type="button" class="btn btn-light btn-sm" disabled><i class="fa fa-save"></i> Save</button>
 			</span>
 			<button onclick="window.print()" type="button" class="btn btn-light btn-sm"><i class="fa fa-print"></i> Print</button>
@@ -138,9 +138,7 @@
 		<div class="row mt-3">
 			<div class="col-sm-6">
 				<h3>Errors and warnings</h3>
-				<div class="bg-light border p-3">
-					<ul id="print-notifications"></ul>
-				</div>
+				<ul id="print-notifications" class="pl-4"></ul>
 			</div>
 			<div class="col-sm-6">
 				<h3>Excluded courses</h3>
@@ -241,6 +239,11 @@
 					<div class="redips-drag error">Invalid</div>
 					<div class="redips-drag" data-course="custom">Custom</div>
 				</div>
+			</div>
+			<div class="col-12">
+				<h3>Notes</h3>
+				<textarea id="notes" class="form-control no-print" rows=5 placeholder="Add any notes about your plan here. For example, you could explain why a semester is empty or why a course has an invalid placement."></textarea>
+				<p id="print-notes" class="only-print"></p>
 			</div>
 		</div>
 	</div>

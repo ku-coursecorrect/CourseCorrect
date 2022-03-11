@@ -46,6 +46,7 @@ class Plan {
 					return course.course_id;
 				}),
 			})),
+			"notes": document.getElementById("notes").value,
 		}
 		return JSON.stringify(plan);
 	}

@@ -60,7 +60,7 @@
 			$semesters[] = ["id" => semester_id($year, FALL), "courses" => []];
 			$semesters[] = ["id" => semester_id($year+1, SPRING), "courses" => []];
 		}
-		return ["semesters" => $semesters, "transfer_bank" => []];
+		return ["semesters" => $semesters, "transfer_bank" => [], "notes" => ""];
 	}
 	
 	// Status codes bit flags
