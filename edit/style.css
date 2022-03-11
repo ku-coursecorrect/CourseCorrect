@@ -72,11 +72,17 @@
 	min-width: 100px; /*not sure why, but this is needed or table cells could shrink*/
 }
 
+#arrows svg {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .redips-drag {
 	width: 90px;
 	height: 45px;
-	border: 2px outset gray;
-	border-style: outset !important; /* override redips style */
+	border-width: 2px;
+	border-style: solid;
 	border-radius: 5px;
 	background: white;
 	/* Center this within td */
@@ -93,22 +99,32 @@
 .redips-drag:hover { 
 	background: yellow;
 	border-color: red;
+	border-style: outset !important; /* override redips style */
 }
 
-.redips-drag.warning {
-	background: #ff6;
+.redips-drag.warning, .redips-drag.error {
 	font-weight: bold;
 }
 
-.redips-drag.error {
-	background: #f44;
-	font-weight: bold;
-}
+@media screen {
+	.redips-drag {
+		border: 2px outset rgba(0, 0, 0, 0.5);
+		/* outset style doesn't seem to work with rgba, so mimic the effect manually */
+		border-bottom-color: rgba(0, 0, 0, 0.7);
+		border-right-color: rgba(0, 0, 0, 0.7);
+	}
 
-#arrows svg {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
+	.redips-drag.warning {
+		background: #ff6;
+	}
+	
+	.redips-drag.error {
+		background: #f44;
+	}
+
+	.redips-drag[data-course^=custom] {
+		background-color: #4f6;
+	}
 }
 
 @media print {
@@ -148,10 +164,31 @@
         background: white;
     }
 
+	.redips-drag.warning {
+		/* diagonal stripes */
+		background: repeating-linear-gradient(45deg, transparent, transparent 14px, #888 14px, #888 16px);
+	}
+	
+	.redips-drag.error {
+		/* diagonal cross-out (stripes in 2 directions) */
+		background: 
+			repeating-linear-gradient(45deg, transparent, transparent 14px, #555 14px, #555 16px),
+			repeating-linear-gradient(135deg, transparent, transparent 14px, #555 14px, #555 16px);
+	}
+
+	.redips-drag[data-course^=custom] {
+		border-style: dotted !important; /* override redips style */
+	}
+
     * {
         -webkit-print-color-adjust: exact !important;
         color-adjust: exact !important;
     }
+
+	#schedule-container-container {
+		margin-left: auto;
+	}
+
 
     /* all arrows black when printing */
 	#arrows svg polyline {

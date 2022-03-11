@@ -221,11 +221,25 @@
 		</div>
 	
 		<!-- Semester grid -->
-		<div class="mr-auto mt-3">
+		<div id="schedule-container-container" class="mr-auto mt-3">
 			<div class="d-flex">
 				<div id="schedule-container" class="bg-light">
 					<div id="arrows"></div><!-- Will contain the SVG with the arrows -->
 					<table id="course-grid" class="border"></table><!-- Will contain the drag-and-droppable courses -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="card d-flex flex-row p-2 mt-2 mx-auto" style="width: 520px; pointer-events: none;">
+					<h3 class="mt-1">Legend</h3>
+					<div class="redips-drag">Valid</div>
+					<div class="redips-drag warning">Warning</div>
+					<div class="redips-drag error">Invalid</div>
+					<div class="redips-drag" data-course="custom">Custom</div>
 				</div>
 			</div>
 		</div>

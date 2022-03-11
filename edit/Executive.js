@@ -357,7 +357,7 @@ class Executive {
 	* @post The message is added to the elements on the page and print layoutt
 	**/
 	add_error(msg, type="danger") {
-		this.makeElement("li", "print-notifications", msg);
+		this.makeElement("li", "print-notifications").innerHTML = msg;
 		document.getElementById("notifications").innerHTML += `<div class="alert alert-${type} mt-2 mb-0">${msg}</div>`;
 		if (type == "danger") {
 			this.plan_status = Math.min(this.plan_status, 1); // 1 = Error
