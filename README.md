@@ -9,3 +9,4 @@ A visual tool for planning courses through to graduation. Built for the Universi
 - [Font Awesome](https://fontawesome.com/) for icons
 - [materialpalette.com](https://www.materialpalette.com/) for colors used on arrows
 - [Flaticon](https://www.flaticon.com/free-icon/path_2783925?term=path&page=1&position=11) for our browser icon
+- [autoComplete.js](https://github.com/TarekRaafat/autoComplete.js) for autocompletion
