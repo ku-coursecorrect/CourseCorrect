@@ -10,15 +10,18 @@
     $placeholder['course_code'] = $req['course_code'] ?: 'EECS 168';
     $placeholder['start_year'] = $req['start_year'] ?: 'year'; // Coalesce (pick B if A is false)
     $placeholder['end_year'] = $req['end_year'] ?: 'year';
+    $req_num = ($req_num ?? 0) + 1;
 ?>
 <tr class='req'>
-    <td width="150px">
-        <input type='text' id='reqCode' class='form-control' maxlength="12" placeholder='<?=$placeholder['course_code']?>' value='<?=$req['course_code']?>'/>
+    <td>
+        <div class="autoComplete_wrapper">
+            <input autocomplete="off" style='width:300px;' type='text' id='reqCode-<?=$req_num?>' class='form-control' maxlength="12" placeholder='<?=$placeholder['course_code']?>' value='<?=$req['course_code']?>'/>
+        </div>
     </td>
     <td><button class='btn btn-outline-secondary dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' value='<?=$req['co_req']==='1' ? 'coreq' : 'prereq'?>' id='reqDrop'><?=$req['co_req']==='1' ? 'Corequisite' : 'Prerequisite'?></button>
         <div class='dropdown-menu'>
-        <a class='dropdown-item' <?=$req['co_req']==='0' ? 'selected' : ''?> value='prereq' onclick='dropdownSelect(this); addReqPost('<?=$req["course_code"]?>', this);'>Prerequisite</a>
-        <a class='dropdown-item' <?=$req['co_req']==='1' ? 'selected' : ''?> value='coreq' onclick='dropdownSelect(this); addReqPost('<?=$req["course_code"]?>', this);'>Corequisite</a>
+        <a class='dropdown-item' <?=$req['co_req']==='0' ? 'selected' : ''?> value='prereq' onclick='dropdownSelect(this);'>Prerequisite</a>
+        <a class='dropdown-item' <?=$req['co_req']==='1' ? 'selected' : ''?> value='coreq' onclick='dropdownSelect(this);'>Corequisite</a>
         </div>
     </td>
     <td>

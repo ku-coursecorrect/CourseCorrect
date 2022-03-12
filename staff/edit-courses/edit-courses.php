@@ -15,6 +15,8 @@
 	<script src="../../libs/jquery.slim.min.js"></script>
 	<script src="../../libs/popper.min.js"></script>
 	<script src="../../libs/bootstrap.min.js"></script>
+	<script src="../../libs/autoComplete.min.js"></script>
+	<link rel="stylesheet" href="../../libs/autoComplete.02.css">
 	<link rel="stylesheet" href="../../libs/fontawesome.min.css">
 	<script src="edit-course.js"></script>
 	<style>

@@ -5,6 +5,61 @@ let SUFFIX = "...";
 let expand_timer = null;
 let expand = true;
 
+let courses = {};
+fetch("get-courses.php").then((source) => source.json()).then((data) => courses = data );
+
+function updateReqAutoComplete(req_num) {
+    let req_id = "reqCode-" + req_num;
+    let autoCompleteJS = new autoComplete({
+        selector: "#" + req_id, 
+        placeHolder: "EECS 101",
+        data: {
+                src: courses,
+                keys: ["course_code", "title"]
+            },
+        resultsList: {
+            element: (list, data) => {
+                const info = document.createElement("p");
+                if (data.results.length > 0) {
+                    info.innerHTML = `Displaying <strong>${data.results.length}</strong> out of <strong>${data.matches.length}</strong> results`;
+                } else {
+                    info.innerHTML = `Found <strong>${data.matches.length}</strong> matching results for <strong>"${data.query}"</strong>`;
+                }
+                list.prepend(info);
+            },
+            noResults: true,
+            maxResults: 15,
+            tabSelect: true
+        },
+        resultItem: {
+            element: (item, data) => {
+                item.style = "display: flex; justify-content: space-between;";
+                item.innerHTML = `
+                <span style="white-space: nowrap; overflow: hidden;">
+                ${data.value.course_code}
+                </span>
+                <span style="white-space: nowrap; width:50%; overflow: hidden; text-overflow: ellipsis; align-items: left; font-size: 13px; font-weight: 100; text-transform: uppercase;">
+                ${data.value.title}
+                </span>`;
+            }
+        },
+        events: {
+            input: {
+                focus: () => {
+                    if (autoCompleteJS.input.value.length) autoCompleteJS.start();
+                }
+            }
+        }
+    });
+    autoCompleteJS.input.addEventListener("selection", function (event) {
+        const feedback = event.detail;
+        autoCompleteJS.input.blur();
+        const selection = feedback.selection.value['course_code'];
+        document.querySelector("#" + req_id).innerHTML = selection;
+        autoCompleteJS.input.value = selection;
+    });
+}
+
 function expandText(e, full_text, click, delta=DELTA, expand_=null) {
     if (expand_timer) {  
         clearTimeout(expand_timer);
@@ -162,7 +217,13 @@ function addReq() {
 
     fetch("requisite.php").then(
         response => response.text()
-    ).then(text => table.rows[table.rows.length -1].outerHTML = text);
+    ).then(function(text) {
+        table.rows[table.rows.length -1].outerHTML = text;
+        let req_pos = text.search("reqCode");
+        let req_end = text.search("'", req_pos);
+        let req_id = text.slice(req_pos + "reqCode-".length, req_pos + req_end - 1);
+        updateReqAutoComplete(req_id);
+    });
 }
 
 function removeReq(btn) {
@@ -214,7 +275,7 @@ function updateReqsPost() {
     for (let req of reqs) {
         reqs_to_post.push({});
         let req_ind = reqs_to_post.length-1;
-        reqs_to_post[req_ind]["course_code"] = req.children[0].children[0].value;
+        reqs_to_post[req_ind]["course_code"] = req.children[0].children[0].children[0].children[0].value;
         reqs_to_post[req_ind]["co_req"] = req.children[1].children[0].value === 'co_req';
         
         let start_season = req.children[2].children[0].children[0].value;
