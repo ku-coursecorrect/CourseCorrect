@@ -237,7 +237,6 @@ function addReq() {
 function removeReq(btn) {
     let row = btn.parentNode.parentNode;
     row.parentNode.removeChild(row);
-    // TODO[reece]: Warn user of associated requisites?
 }
 
 function populateModal(btn) {
@@ -340,6 +339,16 @@ function deleteModal(btn) {
     let course_code = btn.parentElement.parentElement.children[0].innerText;
     let subtitle = document.getElementById("delete-subtitle");
     subtitle.innerText = course_code;
+    fetch("get-dependents.php?course_code=" + course_code).then(json => json.json()).then(
+        function (dependents) {
+            let dependents_text = document.getElementById("dependents");
+            if (dependents.length > 0) {
+                dependents_text.innerHTML = "<ul class='list-group'><li class='list-group-item list-group-item-danger'><b>" + course_code + " will be removed as a requisite from the following courses:</b></li>";
+                dependents_text.innerHTML += "<li class='list-group-item'>" + dependents.join("</li><li class='list-group-item'>") + "</li>";
+                dependents_text.innerHTML += "</ul>";
+            }
+        }
+    )
 }
 
 function deleteCourse(btn) {

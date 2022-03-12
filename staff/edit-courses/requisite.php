@@ -8,6 +8,14 @@
     $req['end_year'] = $_GET['end_year'] ?? $req['end_year'] ?? '';
     $req['req_num'] = $_GET['req_num'] ?? $req['req_num'] ?? '';
 
+    unset($_GET['course_code']);
+    unset($_GET['co_req']);
+    unset($_GET['start_season']);
+    unset($_GET['end_season']);
+    unset($_GET['start_year']);
+    unset($_GET['end_year']);
+    unset($_GET['req_num']);
+
     $placeholder['course_code'] = $req['course_code'] ?: 'EECS 168';
     $placeholder['start_year'] = $req['start_year'] ?: 'year'; // Coalesce (pick B if A is false)
     $placeholder['end_year'] = $req['end_year'] ?: 'year';
