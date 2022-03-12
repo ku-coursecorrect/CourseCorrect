@@ -15,7 +15,7 @@
 <tr class='req'>
     <td>
         <div class="autoComplete_wrapper">
-            <input autocomplete="off" style='width:300px;' type='text' id='reqCode-<?=$req['req_num']?>' class='form-control' maxlength="12" placeholder='<?=$placeholder['course_code']?>' value='<?=$req['course_code']?>'/>
+            <input autocomplete="off" style='width:300px;' type='text' id='reqCode-<?=$req['req_num']?>' class='form-control' maxlength="12" placeholder='<?=$placeholder['course_code']?>' value='<?=$req['course_code']?>' />
         </div>
     </td>
     <td><button class='btn btn-outline-secondary dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' value='<?=$req['co_req']==='1' ? 'coreq' : 'prereq'?>' id='reqDrop'><?=$req['co_req']==='1' ? 'Corequisite' : 'Prerequisite'?></button>
@@ -33,7 +33,7 @@
                 <a class='dropdown-item' <?=$req['start_season']=='Summer' ? 'selected' : ''?> value='summer' onclick='dropdownSelect(this)'>Summer</a>
                 <a class='dropdown-item' <?=$req['start_season']=='Fall' ? 'selected' : ''?> value='fall' onclick='dropdownSelect(this)'>Fall</a>
             </div>
-            <input type='text' id='startYear' class='form-control' placeholder='<?=$placeholder['start_year']?>' value='<?=$req['start_year']?>' style='width: 50px; padding:0px; text-align:center; display:<?=$req['start_season']=='None' ? 'none' : ''?>;' maxlength='4'/>
+            <input type='number' id='startYear' class='form-control' placeholder='<?=$placeholder['start_year']?>' value='<?=$req['start_year']?>' style='width: 50px; padding:0px; text-align:center; display:<?=$req['start_season']=='None' ? 'none' : ''?>;' maxlength='4'/>
         </div>
     </td>
     <td>
@@ -45,7 +45,7 @@
                 <a class='dropdown-item' <?=$req['end_season']=='Summer' ? 'selected' : ''?> value='summer' onclick='dropdownSelect(this)'>Summer</a>
                 <a class='dropdown-item' <?=$req['end_season']=='Fall' ? 'selected' : ''?> value='fall' onclick='dropdownSelect(this)'>Fall</a>
             </div>
-            <input type='text' id='endYear' class='form-control' placeholder='<?=$placeholder['end_year']?>' value='<?=$req['end_year']?>' style='width: 50px; padding:0px; text-align:center; display:<?=$req['end_season']=='None' ? 'none' : ''?>;' maxlength='4'/>
+            <input type='number' id='endYear' class='form-control' placeholder='<?=$placeholder['end_year']?>' value='<?=$req['end_year']?>' style='width: 50px; padding:0px; text-align:center; display:<?=$req['end_season']=='None' ? 'none' : ''?>;' maxlength='4'/>
         </div>
     </td>
     <td>

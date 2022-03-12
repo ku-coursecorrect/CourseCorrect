@@ -6,8 +6,12 @@ let expand_timer = null;
 let expand = true;
 
 let courses = {};
+let course_codes = {};
 let nextReq = 0;
-fetch("get-courses.php").then((source) => source.json()).then((data) => courses = data );
+fetch("get-courses.php").then((source) => source.json()).then(function(data) {
+    courses = data;
+    course_codes = data.map((value) => value.course_code);
+});
 
 // Add autocomplete functionality to a requisite input box
 function updateReqAutoComplete(req_num) {
@@ -59,6 +63,9 @@ function updateReqAutoComplete(req_num) {
         const selection = feedback.selection.value['course_code'];
         document.querySelector("#" + req_id).innerHTML = selection;
         autoCompleteJS.input.value = selection;
+    });
+    document.getElementById(req_id).addEventListener('change', function() {
+        document.getElementById(req_id).style.border = "";
     });
 }
 
@@ -256,6 +263,13 @@ function populateModal(btn) {
                 // Update all reqs with autocomplete functionality
                 updateReqAutoComplete(i);
             }
+            // Handle submit button manually to prevent enter from pressing default button
+            $('#form-button-submit').click(function(){
+                $('#edit-course-form').submit();
+              });
+            document.getElementById("course_code").addEventListener('change', function() {
+                document.getElementById("course_code").style.border = "";
+            });
     });
 }
 
@@ -278,6 +292,16 @@ function to_Semester(year, season) {
     return year * 3 + season_nums[season];
 }
 
+// Validate the form
+function checkCourseForm() {
+    let course_code_inp = document.getElementById("course_code");
+    if (course_code_inp.value === '') {
+        course_code_inp.style.border = "solid red";
+        return false;
+    }
+    return updateReqsPost();
+}
+
 // Grab values for reqs and place in the reqs input value for the form 
 function updateReqsPost() {
     let post_input_ele = document.getElementById('reqs-post');
@@ -287,7 +311,14 @@ function updateReqsPost() {
     for (let req of reqs) {
         reqs_to_post.push({});
         let req_ind = reqs_to_post.length-1;
-        reqs_to_post[req_ind]["course_code"] = req.children[0].children[0].children[0].children[0].value;
+        let course_code_inp = req.children[0].children[0].children[0].children[0];
+        let course_code = course_code_inp.value;
+        if (!course_codes.includes(course_code)) {
+            course_code_inp.style.border = "solid red";
+            return false;
+        }
+
+        reqs_to_post[req_ind]["course_code"] = course_code;
         reqs_to_post[req_ind]["co_req"] = req.children[1].children[0].value === 'co_req';
         
         let start_season = req.children[2].children[0].children[0].value;

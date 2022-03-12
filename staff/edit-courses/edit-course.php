@@ -41,7 +41,7 @@
 				<span aria-hidden='true'>&times;</span>
 			</button>
 		</div>
-		<form method='POST' action='commit-course.php' id='edit-course-form' onsubmit="updateReqsPost()">
+		<form method='POST' action='commit-course.php' id='edit-course-form' onsubmit="return checkCourseForm()">
 			<div class='modal-body'>
 				<input type='text' name='course_id' value='<?=$course_info['course_id']?>' hidden />
 				<div class='form-group'>
@@ -112,7 +112,7 @@
 			</div>
 			<div class='modal-footer float-left' style='padding-top:15px'>
 				<button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
-				<button type='submit' class='btn btn-success'><?=$title?></button>
+				<button id="form-button-submit" type='button' class='btn btn-success'><?=$title?></button>
 			</div>
 		</form>
 	</div>
