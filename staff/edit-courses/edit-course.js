@@ -168,6 +168,7 @@ function addReq() {
 function removeReq(btn) {
     let row = btn.parentNode.parentNode;
     row.parentNode.removeChild(row);
+    // TODO[reece]: Warn user of associated requisites?
 }
 
 function populateModal(btn) {

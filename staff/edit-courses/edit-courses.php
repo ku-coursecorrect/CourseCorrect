@@ -115,7 +115,7 @@
 			</div>
 		</div>
 	</div>
-	<div class='modal' id='edit-course' tabindex='-1' aria-hidden='true'> <!-- Making this modal a modal fade class breaks the close button for some reason :) -->
+	<div class='modal' data-backdrop="static" id='edit-course' tabindex='-1' aria-hidden='true'> <!-- Making this modal a modal fade class breaks the close button for some reason :) -->
 	</div>
 	<div class="modal" id='delete-course' tabindex="-1" role="dialog">
 	<div class="modal-dialog" role="document">
