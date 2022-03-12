@@ -346,6 +346,8 @@ function deleteModal(btn) {
                 dependents_text.innerHTML = "<ul class='list-group'><li class='list-group-item list-group-item-danger'><b>" + course_code + " will be removed as a requisite from the following courses:</b></li>";
                 dependents_text.innerHTML += "<li class='list-group-item'>" + dependents.join("</li><li class='list-group-item'>") + "</li>";
                 dependents_text.innerHTML += "</ul>";
+            } else {
+                dependents_text.innerHTML = "";
             }
         }
     )
