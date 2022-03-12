@@ -6,8 +6,10 @@ let expand_timer = null;
 let expand = true;
 
 let courses = {};
+let nextReq = 0;
 fetch("get-courses.php").then((source) => source.json()).then((data) => courses = data );
 
+// Add autocomplete functionality to a requisite input box
 function updateReqAutoComplete(req_num) {
     let req_id = "reqCode-" + req_num;
     let autoCompleteJS = new autoComplete({
@@ -215,15 +217,14 @@ function addReq() {
     let table = document.getElementById("reqs-table");
     table.insertRow();
 
-    fetch("requisite.php").then(
+    let current_req = nextReq;
+    fetch("requisite.php?req_num="+current_req).then(
         response => response.text()
     ).then(function(text) {
         table.rows[table.rows.length -1].outerHTML = text;
-        let req_pos = text.search("reqCode");
-        let req_end = text.search("'", req_pos);
-        let req_id = text.slice(req_pos + "reqCode-".length, req_pos + req_end - 1);
-        updateReqAutoComplete(req_id);
+        updateReqAutoComplete(current_req);
     });
+    nextReq++;
 }
 
 function removeReq(btn) {
@@ -244,7 +245,18 @@ function populateModal(btn) {
 
     fetch("edit-course.php?course_code="+course_code).then(
         response => response.text()
-    ).then(text => document.getElementById("edit-course").innerHTML = text);
+    ).then(
+        function(text) {
+            document.getElementById("edit-course").innerHTML = text;
+            // Find last req in course to determine how many need updated with autocomplete
+            let req_pos = text.lastIndexOf("reqCode");
+            let req_end = text.indexOf("'", req_pos);
+            let req_id = text.slice(req_pos + "reqCode-".length, req_end);
+            for (let i = 0; i <= req_id; i++) {
+                // Update all reqs with autocomplete functionality
+                updateReqAutoComplete(i);
+            }
+    });
 }
 
 // Set a hidden input following a button to the state of the button

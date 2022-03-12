@@ -1,21 +1,21 @@
 <?php
-    // Requisite information can come from Ajax via _GETs or from PHP via $req
+    // Requisite information can come from _GETs or from PHP via $req
     $req['course_code'] = $_GET['course_code'] ?? $req['course_code'] ?? ''; // Null coalesce (pick B if A is null)
     $req['co_req'] = $_GET['co_req'] ?? $req['co_req'] ?? 'false';
     $req['start_season'] = $_GET['start_season'] ?? $req['start_season'] ?? 'None';
     $req['end_season'] = $_GET['end_season'] ?? $req['end_season'] ?? 'None';
     $req['start_year'] = $_GET['start_year'] ?? $req['start_year'] ?? '';
     $req['end_year'] = $_GET['end_year'] ?? $req['end_year'] ?? '';
+    $req['req_num'] = $_GET['req_num'] ?? $req['req_num'] ?? '';
 
     $placeholder['course_code'] = $req['course_code'] ?: 'EECS 168';
     $placeholder['start_year'] = $req['start_year'] ?: 'year'; // Coalesce (pick B if A is false)
     $placeholder['end_year'] = $req['end_year'] ?: 'year';
-    $req_num = ($req_num ?? 0) + 1;
 ?>
 <tr class='req'>
     <td>
         <div class="autoComplete_wrapper">
-            <input autocomplete="off" style='width:300px;' type='text' id='reqCode-<?=$req_num?>' class='form-control' maxlength="12" placeholder='<?=$placeholder['course_code']?>' value='<?=$req['course_code']?>'/>
+            <input autocomplete="off" style='width:300px;' type='text' id='reqCode-<?=$req['req_num']?>' class='form-control' maxlength="12" placeholder='<?=$placeholder['course_code']?>' value='<?=$req['course_code']?>'/>
         </div>
     </td>
     <td><button class='btn btn-outline-secondary dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' value='<?=$req['co_req']==='1' ? 'coreq' : 'prereq'?>' id='reqDrop'><?=$req['co_req']==='1' ? 'Corequisite' : 'Prerequisite'?></button>

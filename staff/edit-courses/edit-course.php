@@ -2,6 +2,7 @@
     require_once "../../common.php";
     require_once "course-common.php";
 	$course_code = $_GET['course_code'];
+	unset($_GET['course_code']);
     if ($course_code != "New") {
 		// TODO: Order by most recent for all queries that assume course codes are unique
         $course_info = $db->query("SELECT * FROM course where course_code=?;", [$course_code])[0];
@@ -88,6 +89,7 @@
 							<?php
 								// Fill out course requisites from db
 								$requisites = $db->query("select course.course_code, requisite.co_req, requisite.start_semester, requisite.end_semester from requisite join course on requisite.dependent_id=course.course_id where requisite.course_id=?;", [$course_info['course_id']]);
+								$req_num = 0;
 								foreach($requisites as $req) {
 									if ($req["start_semester"] != null) { 
 										$req["start_season"] = semester_season(intval($req["start_semester"]));
@@ -97,7 +99,9 @@
 										$req["end_season"] = semester_season(intval($req["end_semester"]));
 										$req["end_year"] = semester_year(intval($req["end_semester"]));
 									}
+									$req["req_num"] = strval($req_num);
 									include("requisite.php");
+									$req_num++;
 								}
 							?>
 						</tbody>
