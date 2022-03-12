@@ -1,5 +1,13 @@
 <!DOCTYPE html>
-<?php require_once "common.php" ?>
+<?php
+	require_once "common.php";
+
+	// Redirect to plan list or staff homepage if logged in
+	if (is_logged_in()) {
+		if (is_staff()) header("Location: staff");
+		else header("Location: list");
+	}
+?>
 <html lang="en">
 <head>
     <title>CourseCorrect</title>
