@@ -52,9 +52,7 @@
 				</div>
 			</div>
 			<div class="col-lg-4">
-				<p class="mt-4">
-					This is a place that some help text could be included about what this application is and how students should use it. For example, links could be included to the handbook here.
-				</p>
+				<p class="mt-4" style="white-space: pre-wrap"><?=$db->query("SELECT text FROM help_text WHERE id='WelcomeText'")[0]["text"]?></p>
 			</div>
 		</div>
 	</div>
