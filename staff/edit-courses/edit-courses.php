@@ -106,7 +106,7 @@
 							}
 						];
 
-						echo '<thead style="position: sticky; z-index: 0; inset-block-start: 0; top: -2px; background: white; box-shadow: inset 0 -2px 0 #ccc;"><tr>';
+						echo '<thead style="position: sticky; z-index: 1000; inset-block-start: 0; top: -2px; background: white; box-shadow: inset 0 -2px 0 #ccc;"><tr>';
 						foreach(array_keys($TABLE_FORMAT) as $field){
 							if (array_key_exists($field, $TABLE_HEADER_FORMAT)) {
 								$TABLE_HEADER_FORMAT[$field]($field);
