@@ -1,16 +1,21 @@
-let MINLEN = 20;
-let DELTA = 20;
-let SUFFIX = "...";
-
-let expand_timer = null;
-let expand = true;
-
 let courses = {};
 let course_codes = {};
 let nextReq = 0;
+let rmjs = null;
+let marks = [];
+
 fetch("get-courses.php").then((source) => source.json()).then(function(data) {
     courses = data;
     course_codes = data.map((value) => value.course_code);
+});
+
+window.addEventListener('load', function() {
+    rmjs = new Readmore('article', {
+        "collapsedHeight": 50,
+        "moreLink": '<a href="#">More</a>',
+        "lessLink": '<a href="#">Close</a>',
+    });
+    console.log("here");
 });
 
 // Add autocomplete functionality to a requisite input box
@@ -69,58 +74,8 @@ function updateReqAutoComplete(req_num, course_code) {
     });
 }
 
-function expandText(ele, click, delta=DELTA, force_expand_state=null) {
-    let full_HTML = ele.dataset["fulltext"];
-
-    if (expand_timer) {  
-        clearTimeout(expand_timer);
-    }
-    if (ele.innerHTML.endsWith(SUFFIX))
-    {
-        ele.innerHTML = ele.innerHTML.substring(0, ele.innerHTML.length-3);
-    }
-
-    let current_len = ele.innerText.length;
-    let target_len = full_HTML.trim().length;
-
-    if (click) {
-        expand = current_len != target_len;
-    }
-    if (force_expand_state !== null) {
-        expand = force_expand_state;
-    }
-
-    // Get bigger
-    if (expand && current_len < target_len) {
-        ele.style = "";
-        let i = delta;
-        while (ele.innerText.length == current_len) { // Keep adding chars until the length changes since spaces get trimmed immediately
-            ele.innerText = full_HTML.substring(0, current_len + i);
-            i += delta;
-        }
-        if (ele.innerText.length == target_len) {
-            return;
-        }
-    }
-
-    // Get smaller
-    else if (!expand && current_len > MINLEN) {
-        ele.style = "font-style:italic";
-        ele.innerText = full_HTML.substring(0, current_len - delta);
-        if (ele.innerText.length <= MINLEN) {
-            ele.innerText = full_HTML.substring(0, MINLEN) + SUFFIX;
-            return;
-        }
-    }
-
-    expand_timer = setTimeout(function() {
-        expandText(ele, false);
-    }, 2);
-}
 
 let timeout = null;
-let HIGHLIGHT = ["<span style=\"background-color:yellow;\">", "</span>"]; // ' are converted to " in HTML
-
 
 function waitFilter() {
     if (timeout) {  
@@ -128,9 +83,19 @@ function waitFilter() {
     }
     timeout = setTimeout(function() {
         filterTable();
-    }, 150);
+    }, 300);
 }
+
+function isCollapsed(ele) {
+    return ele.getBoundingClientRect().height <= ele.readmore.collapsedHeight;
+}
+
 function filterTable() {
+    // Clear markings
+    for (let mark of marks) {
+        mark.unmark();
+    }
+
     let input = document.getElementById("filterTableInput");
     let filter = input.value.toUpperCase();
     let table = document.getElementById("classTable");
@@ -142,47 +107,38 @@ function filterTable() {
         if (row.cells[0].tagName == "TH") {
             continue;
         }
-        for (let column of row.cells) {
-            column.innerHTML = column.innerHTML.replace(HIGHLIGHT[0], ""); // Clean old highlights first
-            column.innerHTML = column.innerHTML.replace(HIGHLIGHT[1], "");
-        }
         if (filter === "") {
             row.style.display = "";
             continue;
         }
-        let found = false;
-        for (let column of row.cells) {
-            let expand_block = true;
-            // If an expansion block, select that instead of the parent column
-            let ele = column.querySelector('.expand');
-            if (ele === null) {
-                ele = column;
-                expand_block = false;
-            }
-            // Make sure the match does not cross HTML markup
-            let posText = ele.innerText.toUpperCase().indexOf(filter);
-            // Make sure the match is actually in the text, not in an HTML tag
-            let posHTML = ele.innerHTML.toUpperCase().indexOf(filter);
-            if (posText != -1 && posHTML != -1) {
-                if (expand_block) {
-                    // Instantly fully expand the expand block since a match occured within it
-                    expandText(ele, true, 1000000, true);
-                    highlightWord(ele, posHTML, posHTML+filter.length);
-                } else {
-                    highlightWord(ele, posHTML, posHTML+filter.length);
+
+        var instance = new Mark(row);
+        marks.push(instance);
+        instance.mark(filter, {
+            "each": function(ele) {
+                if (ele.parentNode.className == "desc") {
+                    // Readmore expand block should be expanded for highlight
+
+                    // Query selector returns elements stripped of readmore data for some reason
+                    // Iterate list of elements to find correct one instead
+                    for (let expand_ele of rmjs.elements) {
+                        if (expand_ele.id === ele.parentNode.id) {
+                            if (isCollapsed(expand_ele)) {
+                                rmjs.toggle(expand_ele);
+                            }
+                            break
+                        }
+                    }
                 }
-                found = true;
-                break;
+            },
+            "done": function(num) {
+                if (num > 0) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
             }
-        }
-        if (!found) {
-            row.style.display = "none";
-        } else {
-            row.style.display = "";
-        }
-    }
-    function highlightWord(ele, startPos, endPos) {
-        ele.innerHTML = ele.innerHTML.slice(0, startPos) + HIGHLIGHT[0] + ele.innerHTML.slice(startPos, endPos) + HIGHLIGHT[1] + ele.innerHTML.slice(endPos);
+        });
     }
 }
 

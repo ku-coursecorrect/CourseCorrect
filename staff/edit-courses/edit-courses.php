@@ -12,10 +12,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="../../libs/bootstrap.min.css">
+    <link rel="stylesheet" href="course.css">
 	<script src="../../libs/jquery.slim.min.js"></script>
 	<script src="../../libs/popper.min.js"></script>
 	<script src="../../libs/bootstrap.min.js"></script>
 	<script src="../../libs/autoComplete.min.js"></script>
+	<script src="../../libs/readmore.min.js"></script>
+	<script src="../../libs/mark.min.js"></script>
 	<link rel="stylesheet" href="../../libs/autoComplete.02.css">
 	<link rel="stylesheet" href="../../libs/fontawesome.min.css">
 	<script src="edit-course.js"></script>
@@ -54,7 +57,7 @@
 							"Description" => function($course) {
 								$MINLEN = 20;
 								$desc = $course["description"];
-								echo "<span class=expand data-toggle=tooltip data-placement=auto title='Click to expand' data-fulltext=\"$desc\" onclick='expandText(this, true)' style='font-style:italic;'>" . substr($desc, 0, $MINLEN) . "...</span>";
+								echo "<article class='desc' style='overflow:hidden'>" . $course["description"] . "</article>";
 							},
 							"Requisites" => function($course) {
 								global $course_codes;
