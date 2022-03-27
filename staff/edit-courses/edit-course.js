@@ -237,6 +237,8 @@ function removeReq(btn) {
 }
 
 function populateModal(btn) {
+    nextReq = 0;
+
     let course_code = "";
     
     if (btn.innerText.trim() === "Add new course") {
@@ -259,6 +261,7 @@ function populateModal(btn) {
                 // Update all reqs with autocomplete functionality
                 updateReqAutoComplete(i, course_code);
             }
+            nextReq = req_id + 1;
             // Handle submit button manually to prevent enter from pressing default button
             let form_submit_button = document.getElementById("form-button-submit");
             form_submit_button.addEventListener('click', function(){
