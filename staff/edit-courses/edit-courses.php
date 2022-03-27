@@ -82,6 +82,9 @@
 									array_push($semesters, "Summer");
 								}
 								echo implode(", ", $semesters);
+							},
+							"ULE Setting" => function($course) {
+								echo ULE_OPTIONS[$course["f_ule"]];
 							}
 						];
 

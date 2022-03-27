@@ -32,18 +32,6 @@
         ];
         $title = "Create Course";
     }
-	$ULE_OPTIONS = [
-		0 => "Unaffected",
-		1 => "Requirement for ULE",
-		2 => "Last Semester Exception",
-		3 => "Requires ULE Completion"
-	];
-	$ULE_HINTS = [
-		0 => "Course that you can take whenever you want and have nothing to do with ULE",
-		1 => "Course that you are required to take to earn ULE",
-		2 => "Course that can be taken in the same semester the last required ULE courses are being completed",
-		3 => "Course that requires ULE to be completed (or a waiver) to take"
-	];
 ?>
 
 <div class='modal-dialog modal-lg'>
@@ -80,10 +68,10 @@
 								<div class="row justify-content-around">
 									<div class='col-md-auto'>
 										<label for='uleDrop'><b>ULE Setting</b></label><br>
-										<button class='btn btn-outline-secondary dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' value='<?=$course_info['f_ule']?>' id='uleDrop'><?=$ULE_OPTIONS[$course_info['f_ule']]?></button>
+										<button class='btn btn-outline-secondary dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' value='<?=$course_info['f_ule']?>' id='uleDrop'><?=ULE_OPTIONS[$course_info['f_ule']]?></button>
 										<div class='dropdown-menu'>
 											<?php 
-												foreach($ULE_OPTIONS as $ule_num => $ule_name) {
+												foreach(ULE_OPTIONS as $ule_num => $ule_name) {
 													echo "<a class='dropdown-item' " . ($ule_num === $course_info['f_ule'] ? 'selected' : '') .  " value='" . $ule_num . "' onclick='dropdownSelect(this);' data-toggle=tooltip data-placement=auto title='" . $ULE_HINTS[$ule_num] . "'>" . $ule_name . "</a>";
 												}
 											?>

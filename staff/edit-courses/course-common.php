@@ -21,4 +21,16 @@ function getReqs($reqs_array=NULL) {
     return $requisites;
 }
 
+const ULE_OPTIONS = [
+    0 => "Unaffected",
+    1 => "Requirement for ULE",
+    2 => "Last Semester Exception",
+    3 => "Requires ULE Completion"
+];
+const ULE_HINTS = [
+    0 => "Course that you can take whenever you want and have nothing to do with ULE",
+    1 => "Course that you are required to take to earn ULE",
+    2 => "Course that can be taken in the same semester the last required ULE courses are being completed",
+    3 => "Course that requires ULE to be completed (or a waiver) to take"
+];
 ?>
