@@ -72,7 +72,7 @@
 										<div class='dropdown-menu'>
 											<?php 
 												foreach(ULE_OPTIONS as $ule_num => $ule_name) {
-													echo "<a class='dropdown-item' " . ($ule_num === $course_info['f_ule'] ? 'selected' : '') .  " value='" . $ule_num . "' onclick='dropdownSelect(this);' data-toggle=tooltip data-placement=auto title='" . $ULE_HINTS[$ule_num] . "'>" . $ule_name . "</a>";
+													echo "<a class='dropdown-item' " . ($ule_num === $course_info['f_ule'] ? 'selected' : '') .  " value='" . $ule_num . "' onclick='dropdownSelect(this);' data-toggle=tooltip data-placement=auto title='" . ULE_HINTS[$ule_num] . "'>" . $ule_name . "</a>";
 												}
 											?>
 										</div>
