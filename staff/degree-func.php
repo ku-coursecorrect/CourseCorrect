@@ -1,15 +1,10 @@
 <?php
     require_once "../common.php";
 
-    function read_degree() {
+    function print_degree() {
         global $db;
         $degree_info = $db->query("SELECT * FROM degree;", []);
-        return $degree_info;
-    }
-    function print_degree() {
-        $table = read_degree();
-        $temp_date = "Oct 23, 2077";
-        foreach($table as $row){
+        foreach($degree_info as $row){
             echo "<tr>";
 
             echo "<td>" .  $row["major"] . "</td>";
@@ -22,26 +17,12 @@
         }
     }
 
-
-
-    function refresh_course(){
-        $dbhost = 'localhost';
-    	$dbuser = 'root';
-    	$dbpass = '';
-        $dbname = 'coursecorrect';
-
-        $conn = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
-
-        if (!$conn) {
-          die("Connection failed: " . mysqli_connect_error());
+    function print_course(){
+        global $db;
+        $course_code = $db->query("SELECT * FROM course;", []);
+        foreach($course_code as $row){
+            echo "<option>" .  $row["course_code"] . "</option>";
         }
-
-        $table_name = "course";
-        $sql = "SELECT * FROM course";
-        $result = mysqli_query($conn, $sql);
-
-        mysqli_close($conn);
-        return $result;
     }
 
 ?>
