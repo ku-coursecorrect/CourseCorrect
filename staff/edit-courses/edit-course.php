@@ -4,7 +4,6 @@
 	$course_code = $_GET['course_code'];
 	unset($_GET['course_code']);
     if ($course_code != "New") {
-		// TODO: Order by most recent for all queries that assume course codes are unique
         $course_info = $db->query("SELECT * FROM course where course_code=?;", [$course_code])[0];
         $placeholder_info = $course_info;
         $title = "Edit Course";

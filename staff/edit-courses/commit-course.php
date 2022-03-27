@@ -3,8 +3,6 @@
 	require_once "course-common.php";
     require_staff();
 
-    // TODO: Handle errors (such as a requisite course id not existing or course code already existing)
-
     if (array_key_exists('course_id', $_POST)) { // Only do anything if this page was accessed via the edit-course form
         $values = [
             'course_code' => $_POST['course_code'],

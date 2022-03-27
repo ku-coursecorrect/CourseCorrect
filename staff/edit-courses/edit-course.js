@@ -69,7 +69,7 @@ function updateReqAutoComplete(req_num) {
     });
 }
 
-function expandText(e, full_text, click, delta=DELTA, expand_=null) {
+function expandText(e, full_text, click, delta=DELTA, force_expand_state=null) {
     if (expand_timer) {  
         clearTimeout(expand_timer);
     }
@@ -84,8 +84,8 @@ function expandText(e, full_text, click, delta=DELTA, expand_=null) {
     if (click) {
         expand = current_len != target_len;
     }
-    if (expand_ !== null) {
-        expand = expand_;
+    if (force_expand_state !== null) {
+        expand = force_expand_state;
     }
 
     // Get bigger
@@ -210,11 +210,7 @@ function dropdownSelect(selection) {
 
         // Hide or show year box if altering a requisite semester
         if (drop.id == "req-sem") {
-            if (drop.value == 'none') {
-                drop.nextElementSibling.nextElementSibling.style.display='none';
-            } else {
-                drop.nextElementSibling.nextElementSibling.style.display='';
-            }
+            drop.nextElementSibling.nextElementSibling.style.display = drop.value == 'none' ? 'none' : '';
         }
 
     }, 1, selection);
@@ -263,8 +259,9 @@ function populateModal(btn) {
                 updateReqAutoComplete(i);
             }
             // Handle submit button manually to prevent enter from pressing default button
-            $('#form-button-submit').click(function(){
-                $('#edit-course-form').submit();
+            let form_submit_button = document.getElementById("form-button-submit");
+            form_submit_button.click(function(){
+                form_submit_button.submit();
               });
             document.getElementById("course_code").addEventListener('change', function() {
                 document.getElementById("course_code").style.border = "";
