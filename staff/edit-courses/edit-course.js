@@ -259,8 +259,13 @@ function updateULEPost() {
 // Validate the form
 function checkCourseForm() {
     let course_code_inp = document.getElementById("course_code");
+    let hours_inp = document.getElementById("hours");
     if (course_code_inp.value === '') {
         course_code_inp.style.border = "solid red";
+        return false;
+    }
+    if (hours_inp.value === '') {
+        hours_inp.style.border = "solid red";
         return false;
     }
     updateULEPost();

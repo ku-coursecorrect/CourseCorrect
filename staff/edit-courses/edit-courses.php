@@ -21,6 +21,7 @@
 	<script src="../../libs/mark.min.js"></script>
 	<link rel="stylesheet" href="../../libs/autoComplete.02.css">
 	<link rel="stylesheet" href="../../libs/fontawesome.min.css">
+	<link rel="stylesheet" href="../../libs/bootstrap-icons.css">
 	<script src="edit-course.js"></script>
 	<style>
 		.form-control::placeholder {
@@ -52,8 +53,12 @@
 					<?php
 						$course_codes = [];
 						$TABLE_FORMAT = [
-							"Course Number" => fn($course) => $course["course_code"],
-							"Title" => fn($course) => $course["title"],
+							"Course Number" => function($course) {
+								echo $course["course_code"];
+							},
+							"Title" => function($course) {
+								echo $course["title"];
+							},
 							"Description" => function($course) {
 								$MINLEN = 20;
 								$desc = $course["description"];
@@ -62,25 +67,31 @@
 							"Requisites" => function($course) {
 								global $course_codes;
 								if (isset($course["requisites"])) {
-									$req_codes = [];
 									foreach ($course["requisites"] as $req) {
-										array_push($req_codes, ($req["co_req"] ? "Coreq: " : "Prereq: ") . $course_codes[$req["dependent_id"]]);
+										echo '<div class="input-group style="margin: 0px" data-toggle=tooltip data-placement=auto title="' . ($req["co_req"] ? "Corequisite" : "Prequisite") . '">';
+										echo '<div class="input-group-prepend">';
+										echo '<span class="input-group-text" id="basic-addon1">';
+										echo '<b>' . ($req["co_req"] ? "<i class='bi-arrow-left-right'></i>" : "<i class='bi-arrow-right-circle'></i>") . '</b>';
+										echo "</span>";
+										echo "</div>";
+										echo '<input type="text" class="form-control" disabled style="padding: 0px; text-align:center; background: #fff" value="' . $course_codes[$req["dependent_id"]] . '">';
+										echo '</div>';
 									}
-									echo implode("<br>", $req_codes);
 								}
 							},
 							"Semester" => function($course) {
 								$semesters = [];
+								echo "<ul class='list-group'>";
 								if ($course["f_fall"]) {
-									array_push($semesters, "Fall");
+									echo "<li class='list-group-item' style='padding: 3px 5px; text-align:center; background:#EDE6DE'>Fall</li>";
 								}
 								if ($course["f_spring"]) {
-									array_push($semesters, "Spring");
+									echo "<li class='list-group-item' style='padding: 3px 5px; text-align:center; background:#E5EDDE'>Spring</li>";
 								}
 								if ($course["f_summer"]) {
-									array_push($semesters, "Summer");
+									echo "<li class='list-group-item' style='padding: 3px 5px; text-align:center; background:#EDEDDE'>Summer</li>";
 								}
-								echo implode(", ", $semesters);
+								echo "</ul>";
 							},
 							"ULE Setting" => function($course) {
 								echo ULE_OPTIONS[$course["f_ule"]];
@@ -89,10 +100,19 @@
 								echo $course["hours"];
 							}
 						];
+						$TABLE_HEADER_FORMAT = [
+							"Requisites" => function($field) {
+								echo '<th style="width: 13%">', $field, '</th>';
+							}
+						];
 
-						echo '<thead style="position: sticky; inset-block-start: 0; top: -2px; background: white; box-shadow: inset 0 -2px 0 #ccc;"><tr>';
+						echo '<thead style="position: sticky; z-index: 0; inset-block-start: 0; top: -2px; background: white; box-shadow: inset 0 -2px 0 #ccc;"><tr>';
 						foreach(array_keys($TABLE_FORMAT) as $field){
-							echo '<th>', $field, '</th>';
+							if (array_key_exists($field, $TABLE_HEADER_FORMAT)) {
+								$TABLE_HEADER_FORMAT[$field]($field);
+							} else {
+								echo '<th>', $field, '</th>';
+							}
 						}
 						echo '<th></th>'; // Extra column for buttons 
 						echo '</tr></thead><tbody>';
