@@ -51,6 +51,11 @@
 						$TABLE_FORMAT = [
 							"Course Number" => fn($course) => $course["course_code"],
 							"Title" => fn($course) => $course["title"],
+							"Description" => function($course) {
+								$MINLEN = 20;
+								$desc = $course["description"];
+								echo "<span class=expand data-toggle=tooltip data-placement=auto title='Click to expand' data-fulltext=\"$desc\" onclick='expandText(this, true)' style='font-style:italic;'>" . substr($desc, 0, $MINLEN) . "...</span>";
+							},
 							"Requisites" => function($course) {
 								global $course_codes;
 								if (isset($course["requisites"])) {
@@ -60,15 +65,6 @@
 									}
 									echo implode("<br>", $req_codes);
 								}
-							},
-							"Description" => function($course) {
-								$MINLEN = 20;
-								$desc = $course["description"];
-								$descSanitized = filter_var($desc, FILTER_SANITIZE_STRING);
-								echo "<span class=expand data-toggle=tooltip data-placement=auto title='Click to expand' onclick='expandText(event, \"$descSanitized\", true)' style='font-style:italic;'>" . substr($desc, 0, $MINLEN) . "...</span>";
-							},
-							"Credit Hours" => function($course) {
-								echo $course["hours"];
 							},
 							"Semester" => function($course) {
 								$semesters = [];
@@ -85,6 +81,9 @@
 							},
 							"ULE Setting" => function($course) {
 								echo ULE_OPTIONS[$course["f_ule"]];
+							},
+							"Credit Hours" => function($course) {
+								echo $course["hours"];
 							}
 						];
 
