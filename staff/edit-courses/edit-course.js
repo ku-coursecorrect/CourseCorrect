@@ -14,13 +14,13 @@ fetch("get-courses.php").then((source) => source.json()).then(function(data) {
 });
 
 // Add autocomplete functionality to a requisite input box
-function updateReqAutoComplete(req_num) {
+function updateReqAutoComplete(req_num, course_code) {
     let req_id = "reqCode-" + req_num;
     let autoCompleteJS = new autoComplete({
         selector: "#" + req_id, 
         placeHolder: "EECS 101",
         data: {
-                src: courses,
+                src: courses.filter(course => course["course_code"] !== course_code),
                 keys: ["course_code", "title"]
             },
         resultsList: {
@@ -217,6 +217,7 @@ function dropdownSelect(selection) {
 }
 
 function addReq() {
+    let course_code = document.getElementById("course_code").value;
     let table = document.getElementById("reqs-table");
     table.insertRow();
 
@@ -225,7 +226,7 @@ function addReq() {
         response => response.text()
     ).then(function(text) {
         table.rows[table.rows.length -1].outerHTML = text;
-        updateReqAutoComplete(current_req);
+        updateReqAutoComplete(current_req, course_code);
     });
     nextReq++;
 }
@@ -256,7 +257,7 @@ function populateModal(btn) {
             let req_id = text.slice(req_pos + "reqCode-".length, req_end);
             for (let i = 0; i <= req_id; i++) {
                 // Update all reqs with autocomplete functionality
-                updateReqAutoComplete(i);
+                updateReqAutoComplete(i, course_code);
             }
             // Handle submit button manually to prevent enter from pressing default button
             let form_submit_button = document.getElementById("form-button-submit");
@@ -314,17 +315,20 @@ function updateReqsPost() {
     let reqs_to_post = [];
 
     let reqs = document.getElementsByClassName('req');
+    let course_code = document.getElementById("course_code").value;
+
     for (let req of reqs) {
         reqs_to_post.push({});
         let req_ind = reqs_to_post.length-1;
-        let course_code_inp = req.children[0].children[0].children[0].children[0];
-        let course_code = course_code_inp.value;
-        if (!course_codes.includes(course_code)) {
-            course_code_inp.style.border = "solid red";
+        let req_course_code_inp = req.children[0].children[0].children[0].children[0];
+        let req_course_code = req_course_code_inp.value;
+
+        if (!course_codes.includes(req_course_code) || req_course_code === course_code ) {
+            req_course_code_inp.style.border = "solid red";
             return false;
         }
 
-        reqs_to_post[req_ind]["course_code"] = course_code;
+        reqs_to_post[req_ind]["course_code"] = req_course_code;
         reqs_to_post[req_ind]["co_req"] = req.children[1].children[0].value === 'co_req';
         
         let start_season = req.children[2].children[0].children[0].value;
