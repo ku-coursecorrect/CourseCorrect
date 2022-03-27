@@ -60,7 +60,7 @@
 			$semesters[] = ["id" => semester_id($year, FALL), "courses" => []];
 			$semesters[] = ["id" => semester_id($year+1, SPRING), "courses" => []];
 		}
-		return ["semesters" => $semesters, "transfer_bank" => []];
+		return ["semesters" => $semesters, "transfer_bank" => [], "notes" => ""];
 	}
 	
 	// Status codes bit flags
@@ -109,7 +109,7 @@
 	}
 	
 	// TODO: Useful links, maybe different for student and staff
-	function display_navbar() {
+	function display_navbar($staff = false) {
 		?>
 
 	<header class="container-fluid py-3">
@@ -117,7 +117,7 @@
 			<div class="col-sm-4">
 				<a href="../"><img class="KU_image" src="../images/eecs_logo.png" height="60"></a>
 			</div>
-			<div class="col-sm-4 text-sm-center KU_color_text">
+			<div class="col-sm-4 text-sm-center <?=$staff?"text-danger":"KU_color_text"?>">
 				<h1>CourseCorrect</h1>
 			</div>
 			<div class="col-sm-4 text-right">
@@ -137,16 +137,29 @@
 	</header>
 
 	<!-- Navigation bar -->
-	<nav class="navbar navbar-expand-md navbar-dark KU_color_background mb-3">
+	<nav class="navbar navbar-expand-md navbar-dark <?=$staff?"bg-danger":"KU_color_background"?> mb-3">
 		<a class="navbar-brand" href="../">Home</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div class="collapse navbar-collapse" id="collapsibleNavbar">
 			<ul class="navbar-nav">
-				<li class="nav-item">
-					<a class="nav-link active" href="../list">Plan list</a>
-				</li>
+				<?php
+					// TODO: Nav items based on staff permission level
+					if ($staff) {
+						$items = ["../staff/edit-degrees.php" => "Edit degrees", "../staff/edit-courses.php" => "Edit courses", "../staff/edit-help.php" => "Edit help text"];
+					}
+					else {
+						$items = ["../list" => "Plan list"];
+					}
+					foreach ($items as $url => $text) {
+						?>
+							<li class="nav-item">
+								<a class="nav-link active" href="<?=$url?>"><?=$text?></a>
+							</li>
+						<?php
+					}
+				?>
 		  	</ul>
 		</div>
 	</nav>
