@@ -1,11 +1,11 @@
-@media screen {
-	.only_print {
-		display: none;
-	}
-}
-
-body {
-	font-family: Raleway, sans-serif;
+/* 
+	To compensate for the body being wider than the viewport,
+	which must be done with wide plans on small screens due to limitations of redips drag,
+	prevent everything besides the sememester grid from being wider than the screen
+*/
+#alert_holder, header, nav, #notifications-container, #useful_links, footer {
+	max-width: 100vw;
+	margin-left: 0 !important;
 }
 
 #alert_holder {
@@ -20,39 +20,6 @@ body {
 
 #alert_holder * {
 	pointer-events: auto;
-}
-
-header {
-	background-color: #e9ecef;
-}
-
-.KU_image {
-	float: left;
-	max-height: 5cm;
-	max-width: 6cm;
-}
-
-.KU_color_text {
-	color: rgb(0, 81, 186);
-}
-
-.KU_color_background {
-	background-color: rgb(0, 81, 186);
-}
-
-.profile_picture {
-	max-height: 2cm;
-	max-width: 3cm;
-	border-radius: 20%;
-}
-
-.students_info {
-	font-weight: bold;
-}
-
-.students_info input {
-	padding: 0;
-	border: 1px solid #ced4da;
 }
 
 #plan_title {
@@ -134,11 +101,17 @@ ul {
 	min-width: 100px; /*not sure why, but this is needed or table cells could shrink*/
 }
 
+#arrows svg {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .redips-drag {
 	width: 90px;
 	height: 45px;
-	border: 2px outset gray;
-	border-style: outset !important; /* override redips style */
+	border-width: 2px;
+	border-style: solid;
 	border-radius: 5px;
 	background: white;
 	/* Center this within td */
@@ -155,30 +128,40 @@ ul {
 .redips-drag:hover {
 	background: yellow;
 	border-color: red;
+	border-style: outset !important; /* override redips style */
 }
 
-.redips-drag.warning {
-	background: #ff6;
+.redips-drag.warning, .redips-drag.error {
 	font-weight: bold;
 }
 
-.redips-drag.error {
-	background: #f44;
-	font-weight: bold;
-}
+@media screen {
+	.redips-drag {
+		border: 2px outset rgba(0, 0, 0, 0.5);
+		/* outset style doesn't seem to work with rgba, so mimic the effect manually */
+		border-bottom-color: rgba(0, 0, 0, 0.7);
+		border-right-color: rgba(0, 0, 0, 0.7);
+	}
 
-#arrows svg {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
+	.redips-drag.warning {
+		background: #ff6;
+	}
+
+	.redips-drag.error {
+		background: #f44;
+	}
+
+	.redips-drag[data-course^=custom] {
+		background-color: #4f6;
+	}
 }
 
 @media print {
     @page {
-        margin: 0.5cm;
+        margin: 0.5in;
     }
 
-    header nav, footer, .delete-semester, .no-print {
+    header nav, footer, .delete-semester {
         display: none;
 	}
 
@@ -196,11 +179,6 @@ ul {
 		background: white;
 		border-bottom: solid black;
 	}
-
-    .profile_picture {
-        max-height: 5cm;
-        max-width: 6cm;
-    }
 
     .KU_color_text {
         color: black;
@@ -221,10 +199,31 @@ ul {
         background: white;
     }
 
+	.redips-drag.warning {
+		/* diagonal stripes */
+		background: repeating-linear-gradient(45deg, transparent, transparent 14px, #888 14px, #888 16px);
+	}
+
+	.redips-drag.error {
+		/* diagonal cross-out (stripes in 2 directions) */
+		background:
+			repeating-linear-gradient(45deg, transparent, transparent 14px, #555 14px, #555 16px),
+			repeating-linear-gradient(135deg, transparent, transparent 14px, #555 14px, #555 16px);
+	}
+
+	.redips-drag[data-course^=custom] {
+		border-style: dotted !important; /* override redips style */
+	}
+
     * {
         -webkit-print-color-adjust: exact !important;
         color-adjust: exact !important;
     }
+
+	#schedule-container-container {
+		margin-left: auto;
+	}
+
 
     /* all arrows black when printing */
 	#arrows svg polyline {

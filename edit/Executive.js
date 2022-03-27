@@ -14,20 +14,22 @@ class Executive {
 		this.arrowRender = new ArrowRender();
 
 		this.courses = courses.map(course => new Course(course.course_id,
-														course.course_code, 
-														course.title, 
+														course.course_code,
+														course.title,
 														course.prereq,
 														course.coreq,
-														[course.f_spring, course.f_summer, course.f_fall], 
-														course.max_hours, 
-														course.f_ule));
+														[course.f_spring, course.f_summer, course.f_fall],
+														course.hours,
+														course.f_ule,
+														course.description));
 
 		// Load plan
 		document.getElementById("plan_title").value = plan.plan_title;
-		document.getElementById("degree_title").innerText = plan.degree_major + " " + plan.degree_year;
+		document.getElementById("notes").value = plan.notes;
+		document.getElementById("print-notes").innerText = plan.notes;
 		this.plan = new Plan(plan, this.courses);
 
-		this.update();
+		this.update(true);
 
 		// Add help text in the first cell
 		if (this.plan.semesters.length >= 1 && this.plan.semesters[0].courses.length < 1) {
@@ -36,33 +38,42 @@ class Executive {
 
 		// The rest of this sets up event listeners for user interactions
 
-		// Plan save button
+		// Setup plan saving if logged in
 		if (this.plan.plan_id) {
-			document.getElementById("save-button").addEventListener("click", () => {
-				let data = new FormData();
-				data.append("plan_id", this.plan.plan_id);
-				data.append("plan_title", document.getElementById("plan_title").value);
-				data.append("json", this.plan.save_json());
+			// Clicking save button
+			document.getElementById("save-button").addEventListener("click", () => this.save());
 
-				fetch("save.php", {"method": "POST", "body": data}).then(response => {
-					if (response.ok) {
-						console.log(response);
-						this.displayAlert("success", "Plan saved", 5000);
-					}
-					else {
-						console.error(response);
-						this.displayAlert("danger", "Error saving plan", 5000);
-					}
-					response.text().then(text => console.log(text));
-				});
+			// Ctrl+S
+			document.addEventListener("keydown", e => {
+				if (e.ctrlKey && e.key === "s") {
+					e.preventDefault();
+					if (!this.isSaved()) this.save();
+				}
+			});
+
+			// Pressing enter in the plan title box
+			document.getElementById("plan_title").addEventListener("keyup", e => {
+				if (e.key === "Enter") {
+					e.preventDefault();
+					if (!this.isSaved()) this.save();
+				}
+			})
+
+			// Unsaved plan warning when closing tab
+			window.addEventListener("beforeunload", e => {
+				if (!this.isSaved()) {
+					var msg = "Warning: Your plan has unsaved changes. Continue?";
+					e.returnValue = msg;
+					return msg;
+				}
 			});
 		}
-		else {
+		else { // Guest mode - no save button
 			document.getElementById("save-container").style.display = "none";
 		}
 
-		// Add tooltips to courses
-		$('#redips-drag').tooltip({selector: '[data-toggle="tooltip"]'})
+		// Add tooltips to courses - removed because it makes it hard to see the arrows which get highlighted on hover
+		//$('#redips-drag').tooltip({selector: '[data-toggle="tooltip"]'})
 
 		// Initialize drag-and-drop to move courses
 		REDIPS.drag.dropMode = "single";
@@ -72,12 +83,6 @@ class Executive {
 			$(targetCell.firstElementChild).tooltip("dispose");
 		};
 		REDIPS.drag.event.dropped = targetCell => {
-			// Clear all notifications
-			for (let id of ["notifications", "print-notifications"]) {
-				let list = document.getElementById(id);
-				while (list.firstChild) list.removeChild(list.firstChild);
-			}
-
 			// Remove tutorial if present
 			$(".tutorial").remove();
 
@@ -105,7 +110,7 @@ class Executive {
 
 		// Adding a custom course
 		document.getElementById("course_add_submit").addEventListener("click", () => {
-			let t_course_code = document.getElementById("course_code").value;
+			let t_course_code = document.getElementById("course_code").value.replace(/[^\w\s]/g, "-"); // Remove special characters
 			let t_credit_hours = parseInt(document.getElementById("credit_hours").value);
 			if (t_course_code == "" || isNaN(t_credit_hours)) return; // Both inputs not filled out
 
@@ -116,6 +121,76 @@ class Executive {
 
 			document.getElementById("course_code").value = "";
 			document.getElementById("credit_hours").value = "";
+		});
+
+		// Deleting a custom course
+		document.getElementById("course-delete").addEventListener("click", () => {
+			let course_id = document.getElementById("course-delete").dataset.course;
+
+			// Delete from course/transfer bank completely (since they can't have gaps)
+			for (let bank of [this.plan.course_bank, this.plan.transfer_bank]) {
+				let index = bank.findIndex(course => course && course.course_id == course_id);
+				if (index > -1) bank.splice(index, 1);
+			}
+
+			// Delete from semesters, leaving a blank space behind
+			for (let semester of this.plan.semesters) {
+				// See if the semester contains the course
+				let index = semester.courses.findIndex(course => course && course.course_id == course_id);
+				// Delete it if so
+				if (index > -1) semester.courses[index] = undefined;
+			}
+
+			// Delete the course from the courses list
+			this.courses.splice(this.courses.findIndex(course => course && course.course_id == course_id), 1);
+
+			// Redraw plan
+			this.update();
+
+			// Clear the course info box
+			document.getElementById("course-title").innerText = "Course info";
+			document.getElementById("course-subtitle").innerText = "";
+			document.getElementById("course-description").innerText = "Click on a course to display information and options here.";
+			document.getElementById("course-delete").style.display = "none";
+		});
+
+		// Editing plan title and notes
+		document.getElementById("plan_title").addEventListener("input", e => this.markUnsaved());
+		document.getElementById("notes").addEventListener("input", e => {
+			this.markUnsaved();
+			document.getElementById("print-notes").innerText = e.target.value;
+		});
+	}
+
+	// The state of the save button is used to keep track of if there are unsaved changes
+	markUnsaved() {
+		document.getElementById('save-button').disabled = false;
+	}
+	markSaved() {
+		document.getElementById('save-button').disabled = true;
+	}
+	isSaved() {
+		return document.getElementById('save-button').disabled;
+	}
+
+	save() {
+		let data = new FormData();
+		data.append("plan_id", this.plan.plan_id);
+		data.append("plan_title", document.getElementById("plan_title").value);
+		data.append("plan_status", this.plan_status);
+		data.append("json", this.plan.save_json());
+
+		fetch("save.php", {"method": "POST", "body": data}).then(response => {
+			if (response.ok) {
+				console.log(response);
+				this.displayAlert("success", "Plan saved", 5000);
+				this.markSaved();
+			}
+			else {
+				console.error(response);
+				this.displayAlert("danger", "Error saving plan", 5000);
+			}
+			response.text().then(text => console.log(text));
 		});
 	}
 
@@ -133,7 +208,18 @@ class Executive {
 	/**
 	* @post All aspects of the plan are updated: Course locations, arrows, credit hours per semester, errors/warnings, etc.
 	**/
-	update() {
+	update(firstLoad = false) {
+		if (!firstLoad) this.markUnsaved();
+
+		// Clear all notifications
+		for (let id of ["notifications", "print-notifications"]) {
+			let list = document.getElementById(id);
+			while (list.firstChild) list.removeChild(list.firstChild);
+		}
+
+		this.plan_status = 4; // 4 = complete (any errors/warnings that occur alter this)
+		if (this.plan.course_bank.length > 0) this.plan.status = 1; // 1 = incomplete
+
 		// Update course bank and transfer credits
 		this.plan.course_bank.sort((a, b) => (a.course_code > b.course_code ? 1 : -1));
 		this.plan.transfer_bank.sort((a, b) => (a.course_code > b.course_code ? 1 : -1));
@@ -158,6 +244,8 @@ class Executive {
 				this.makeElement("option", "addSemesterSelect", (new Semester(id)).toString(), id);
 			}
 		}
+		// Select the next semester after the end of the plan by default
+		document.getElementById("addSemesterSelect").value = this.plan.semesters[this.plan.semesters.length-1].id + 1;
 
 		// Update the credit hour displays and the Upper level eligibility
 		for (let semester of this.plan.semesters) {
@@ -221,8 +309,6 @@ class Executive {
 				}
 			}
 		}
-
-		// Autosave plan TODO
 	}
 
 	/**
@@ -259,6 +345,11 @@ class Executive {
 		while (grid.firstChild) grid.removeChild(grid.firstChild); // Clear grid
 
 		let cols = this.plan.get_longest() + 1; // +1 leaves an empty column to add another course to a semester
+
+		// Fix an issue with redips drag
+		// It cannot handle a container being wider than the page or having a horizontal scrollbar
+		document.body.style.minWidth = (500 + 120 * cols) + "px";
+
 		for (let i = 0; i < this.plan.semesters.length; i++) {
 			let semester = this.plan.semesters[i];
 			let tr = document.createElement("tr");
@@ -289,7 +380,7 @@ class Executive {
 					// If the course that is being loaded into the table cell is not offered in the current semester's season.
 					if (course.course_semester[semester.season()] != 1) { 
 						td.firstElementChild.classList.add("error"); // Stylize the cell to be red
-						this.add_error(course.course_code + " is not offered in the " + semester.season_name()); // Display an error message
+						this.add_error("<b>SEASON ERROR:</b> " + course.course_code + " is not offered in the " + semester.season_name()); // Display an error message
 					}
 				}
 				td.dataset["x"] = j;
@@ -309,8 +400,14 @@ class Executive {
 	* @post The message is added to the elements on the page and print layoutt
 	**/
 	add_error(msg, type="danger") {
-		this.makeElement("li", "print-notifications", msg);
+		this.makeElement("li", "print-notifications").innerHTML = msg;
 		document.getElementById("notifications").innerHTML += `<div class="alert alert-${type} mt-2 mb-0">${msg}</div>`;
+		if (type == "danger") {
+			this.plan_status = Math.min(this.plan_status, 1); // 1 = Error
+		}
+		else if (type == "warning") {
+			this.plan_status = Math.min(this.plan_status, 2); // 2 = Warning
+		}
 	}
 
 	/**
