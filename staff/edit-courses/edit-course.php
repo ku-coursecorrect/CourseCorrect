@@ -16,7 +16,8 @@
             "description" => "",
             "f_fall" => "0",
             "f_spring" => "0",
-            "f_summer" => "0"
+            "f_summer" => "0",
+            "f_ule" => "0"
         ];
         $placeholder_info = [
             "course_id" => "",
@@ -26,10 +27,23 @@
             "description" => "This course continues developing problem solving techniques by focusing on the imperative and object-oriented styles using Abstract Data Types.",
             "f_fall" => "0",
             "f_spring" => "1",
-            "f_summer" => "0"
+            "f_summer" => "0",
+            "f_ule" => "0"
         ];
         $title = "Create Course";
     }
+	$ULE_OPTIONS = [
+		0 => "Unaffected",
+		1 => "Requirement for ULE",
+		2 => "Last Semester Exception",
+		3 => "Requires ULE Completion"
+	];
+	$ULE_HINTS = [
+		0 => "Course that you can take whenever you want and have nothing to do with ULE",
+		1 => "Course that you are required to take to earn ULE",
+		2 => "Course that can be taken in the same semester the last required ULE courses are being completed",
+		3 => "Course that requires ULE to be completed (or a waiver) to take"
+	];
 ?>
 
 <div class='modal-dialog modal-lg'>
@@ -55,23 +69,43 @@
 					<label for='description'><b>Description</b></label>
 					<textarea type='text' id='description' name='description' class='form-control' rows='5' style='height:100%;' placeholder='<?=$placeholder_info['description']?>'><?=$course_info['description']?></textarea>
 				</div>
-				<div class='container'><div class='row'>
-					<div class='col-md-auto'>
-						<label for='credits' style='padding-right:25px'><b>Credit Hours</b></label> 
-						<input type='number' id='hours' name='hours' class='form-control' placeholder='<?=$placeholder_info['hours']?>' value='<?=$course_info['hours']?>' max=1000 min='-1000'/>
-					</div>
-					<div class='col-md-auto ml-auto'>
-						<label for='semesters'><b>Semesters</b></label>
-						<div id='semesters'>
-							<div class='input-group'>
-								<button class='btn btn-outline-primary<?=$course_info['f_spring']==="1" ? ' active' : ''?>' data-toggle='button' aria-pressed='false' type='button' id='springcheck' onclick='addPost(this);'>Spring</button>
-								<input type='text' name='f_spring' value='<?=$course_info['f_spring']==="1" ? 'true' : 'false'?>' hidden />
-								<span style='padding-left:5px; padding-right:5px;'>
-									<button class='btn btn-outline-primary<?=$course_info['f_summer']==="1" ? ' active' : ''?>' data-toggle='button' aria-pressed='false' type='button' id='summercheck' onclick='addPost(this);'>Summer</button>
-									<input type='text' name='f_summer' value='<?=$course_info['f_summer']==="1" ? 'true' : 'false'?>' hidden />
-								</span>
-								<button class='btn btn-outline-primary<?=$course_info['f_fall']==="1" ? ' active' : ''?>' data-toggle='button' aria-pressed='false' type='button' id='fallcheck' onclick='addPost(this);'>Fall</button>
-								<input type='text' name='f_fall' value='<?=$course_info['f_fall']==="1" ? 'true' : 'false'?>' hidden />
+				<div class='container'>
+					<div class='row'>
+						<div class='col-md-auto'>
+							<label for='credits'><b>Credit Hours</b></label> 
+							<input type='number' id='hours' name='hours' class='form-control' placeholder='<?=$placeholder_info['hours']?>' value='<?=$course_info['hours']?>' max=1000 min='-1000'/>
+						</div>
+						<div class='col'>
+							<div class='container'>
+								<div class="row justify-content-around">
+									<div class='col-md-auto'>
+										<label for='uleDrop'><b>ULE Setting</b></label><br>
+										<button class='btn btn-outline-secondary dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' value='<?=$course_info['f_ule']?>' id='uleDrop'><?=$ULE_OPTIONS[$course_info['f_ule']]?></button>
+										<div class='dropdown-menu'>
+											<?php 
+												foreach($ULE_OPTIONS as $ule_num => $ule_name) {
+													echo "<a class='dropdown-item' " . ($ule_num === $course_info['f_ule'] ? 'selected' : '') .  " value='" . $ule_num . "' onclick='dropdownSelect(this);' data-toggle=tooltip data-placement=auto title='" . $ULE_HINTS[$ule_num] . "'>" . $ule_name . "</a>";
+												}
+											?>
+										</div>
+										<input type='text' id='f_ule' name='f_ule' value='0' hidden />
+									</div>
+									<div class='col-md-auto'>
+										<label for='semesters'><b>Semesters</b></label>
+										<div id='semesters'>
+											<div class='input-group'>
+												<button class='btn btn-outline-primary<?=$course_info['f_spring']==="1" ? ' active' : ''?>' data-toggle='button' type='button' id='springcheck' onclick='addPost(this);'>Spring</button>
+												<input type='text' name='f_spring' value='<?=$course_info['f_spring']==="1" ? 'true' : 'false'?>' hidden />
+												<span style='padding-left:5px; padding-right:5px;'>
+													<button class='btn btn-outline-primary<?=$course_info['f_summer']==="1" ? ' active' : ''?>' data-toggle='button' type='button' id='summercheck' onclick='addPost(this);'>Summer</button>
+													<input type='text' name='f_summer' value='<?=$course_info['f_summer']==="1" ? 'true' : 'false'?>' hidden />
+												</span>
+												<button class='btn btn-outline-primary<?=$course_info['f_fall']==="1" ? ' active' : ''?>' data-toggle='button' type='button' id='fallcheck' onclick='addPost(this);'>Fall</button>
+												<input type='text' name='f_fall' value='<?=$course_info['f_fall']==="1" ? 'true' : 'false'?>' hidden />
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>

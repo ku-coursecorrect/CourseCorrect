@@ -260,8 +260,10 @@ function populateModal(btn) {
             }
             // Handle submit button manually to prevent enter from pressing default button
             let form_submit_button = document.getElementById("form-button-submit");
-            form_submit_button.click(function(){
-                form_submit_button.submit();
+            form_submit_button.addEventListener('click', function(){
+                if (checkCourseForm()) {
+                    document.getElementById("edit-course-form").submit();
+                }
               });
             document.getElementById("course_code").addEventListener('change', function() {
                 document.getElementById("course_code").style.border = "";
@@ -274,7 +276,7 @@ function populateModal(btn) {
 function addPost(btn) {
     timeout = setTimeout(function(btn) {
         let input = btn.nextElementSibling;
-        input.value = btn.ariaPressed;
+        input.value = btn.classList.contains("active");
     }, 3, btn); // wait 3 to ensure this occurs after the value is changed
 }
 
@@ -288,6 +290,13 @@ function to_Semester(year, season) {
     return year * 3 + season_nums[season];
 }
 
+function updateULEPost() {
+    let ule_post_inp = document.getElementById("f_ule");
+    let ule_drop = document.getElementById("uleDrop");
+    console.log(ule_drop);
+    ule_post_inp.value = ule_drop.value;
+}
+
 // Validate the form
 function checkCourseForm() {
     let course_code_inp = document.getElementById("course_code");
@@ -295,6 +304,7 @@ function checkCourseForm() {
         course_code_inp.style.border = "solid red";
         return false;
     }
+    updateULEPost();
     return updateReqsPost();
 }
 

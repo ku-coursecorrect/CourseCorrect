@@ -11,7 +11,8 @@
             'hours' => intval($_POST['hours']),
             'f_spring' => $_POST['f_spring'] === 'true' ? 1 : 0,
             'f_summer' => $_POST['f_summer'] === 'true' ? 1 : 0,
-            'f_fall' => $_POST['f_fall'] === 'true' ? 1 : 0
+            'f_fall' => $_POST['f_fall'] === 'true' ? 1 : 0,
+            'f_ule' => intval($_POST['f_ule'])
         ];
         $course_id = $_POST['course_id'];
         if ($course_id === '') {
