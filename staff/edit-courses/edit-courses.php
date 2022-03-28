@@ -12,7 +12,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="../../libs/bootstrap.min.css">
-    <link rel="stylesheet" href="course.css">
 	<script src="../../libs/jquery.slim.min.js"></script>
 	<script src="../../libs/popper.min.js"></script>
 	<script src="../../libs/bootstrap.min.js"></script>
@@ -26,6 +25,11 @@
 	<style>
 		.form-control::placeholder {
 			color: #999;
+		}
+		mark{
+			background: orange;
+			color: black;
+			padding: 0px;
 		}
 	</style>
 </head>
@@ -71,10 +75,10 @@
 										echo '<div class="input-group style="margin: 0px" data-toggle=tooltip data-placement=auto title="' . ($req["co_req"] ? "Corequisite" : "Prequisite") . '">';
 										echo '<div class="input-group-prepend">';
 										echo '<span class="input-group-text" id="basic-addon1">';
-										echo '<b>' . ($req["co_req"] ? "<i class='bi-arrow-left-right'></i>" : "<i class='bi-arrow-right-circle'></i>") . '</b>';
+										echo '<b>' . ($req["co_req"] ? "<i class='bi-arrow-left-right'></i>" : "<i class='bi-arrow-down-circle'></i>") . '</b>';
 										echo "</span>";
 										echo "</div>";
-										echo '<input type="text" class="form-control" disabled style="padding: 0px; text-align:center; background: #fff" value="' . $course_codes[$req["dependent_id"]] . '">';
+										echo '<span class="card" style="width: 65%"><span class="card-body" style="padding: 5px; text-align:center">' . $course_codes[$req["dependent_id"]] . '</span></span>';
 										echo '</div>';
 									}
 								}

@@ -15,7 +15,6 @@ window.addEventListener('load', function() {
         "moreLink": '<a href="#">More</a>',
         "lessLink": '<a href="#">Close</a>',
     });
-    console.log("here");
 });
 
 // Add autocomplete functionality to a requisite input box
@@ -252,7 +251,6 @@ function to_Semester(year, season) {
 function updateULEPost() {
     let ule_post_inp = document.getElementById("f_ule");
     let ule_drop = document.getElementById("uleDrop");
-    console.log(ule_drop);
     ule_post_inp.value = ule_drop.value;
 }
 
