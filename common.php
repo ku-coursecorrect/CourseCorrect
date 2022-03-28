@@ -48,8 +48,25 @@
 	define("SUMMER", 1);
 	define("FALL", 2);
 
+	const SEASON_NAME = [
+		0 => "Spring",
+		1 => "Summer",
+		2 => "Fall"
+	];
+	
 	function semester_id($year, $season) {
 		return $year * 3 + $season;
+	}
+
+	// Convert a semester format to a year
+	function semester_year($semester) {
+		return floor($semester / 3);
+	}
+
+	// Convert a semester format to a season string
+	function semester_season($semester) {
+		global $SEASON_NAME;
+		return $SEASON_NAME[$semester % 3];
 	}
 
 	// Populate a new plan with empty semesters for the next 4 years
@@ -115,7 +132,7 @@
 	<header class="container-fluid py-3">
 		<div class="row">
 			<div class="col-sm-4">
-				<a href="../"><img class="KU_image" src="../images/eecs_logo.png" height="60"></a>
+				<a href="../"><img class="KU_image" src="/images/eecs_logo.png" height="60"></a>
 			</div>
 			<div class="col-sm-4 text-sm-center <?=$staff?"text-danger":"KU_color_text"?>">
 				<h1>CourseCorrect</h1>

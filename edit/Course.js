@@ -3,7 +3,7 @@ const ULE = {
 	// Courses that you can take whenever you want and have nothing to do with ULE, e.g. MATH 526
 	Unaffected: 0,
 
-	// Coureses that you are required to take to earn ULE, e.g. EECS 168, MATH 125
+	// Courses that you are required to take to earn ULE, e.g. EECS 168, MATH 125
 	Requirement: 1,
 
 	// Courses that can be taken in the same semester the last required courses are being completed, e.g. EECS 368
