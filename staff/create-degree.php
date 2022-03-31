@@ -26,7 +26,7 @@
 	    <div class="container">
 			<form>
 	            <div class= "form-group">
-	                <select multiple id="example" name="duallistbox_demo1[]" size = 20>
+	                <select multiple id="example" name="course_list_box" size = 20>
 						<?php
 						 	include_once "degree-func.php";
 							print_course();
@@ -34,9 +34,16 @@
 	            </div>
 	            <button type="submit" class="btn btn-default">Submit</button>
 	        </form>
+
 		</div>
 		<script>
-	        var demo1 = $('select[name="duallistbox_demo1[]"]').bootstrapDualListbox();
+	        var listbox = $('select[name="course_list_box"]').bootstrapDualListbox();
+			<!--TODO -->
+			$("#demoform").submit(function() {
+				alert($('[name="course_list_box"]').val());
+				return false;
+			});
 	    </script>
 	</body>
+
 </html>

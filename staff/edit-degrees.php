@@ -47,10 +47,16 @@
 			</div>
 			<div class="col-lg-4">
 				<p>
-					This is a place that some help text could be included about how to use this page.
+					<b>Help and Assisstance</b>
 				</p>
 				<p>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ultrices lorem mi, vel dapibus diam posuere eu. Aliquam facilisis iaculis ipsum venenatis venenatis. Phasellus vulputate, ipsum quis mattis viverra, lectus dui sodales libero, id consequat massa justo ut magna. Donec sed ullamcorper metus. Donec lorem mauris, gravida eu pharetra nec, rutrum a arcu. Cras cursus eget nisl id luctus. Pellentesque sit amet sagittis felis.
+					1) Before adding any new degree, check if all courses have been created and are in the database.
+				</p>
+				<p>
+					2) Check the credit hours expected per semester, verify if the suggested classes are valid with prerequisites and corequisites.
+				</p>
+				<p>
+					3) For technical help, contact coursecorrect-invalid-email@ku.edu
 				</p>
 			</div>
 		</div>

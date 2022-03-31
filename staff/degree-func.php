@@ -21,7 +21,10 @@
         global $db;
         $course_code = $db->query("SELECT * FROM course;", []);
         foreach($course_code as $row){
-            echo "<option>" .  $row["course_code"] . "</option>";
+            echo "<option value ='" . $row["course_code"] . "' " ."data-hours ='" . $row["hours"];
+            echo "'>";
+            echo $row["course_code"] .": ". $row["title"];
+            echo "</option>";
         }
     }
 
