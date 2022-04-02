@@ -191,42 +191,34 @@
 	<footer class="pt-2 mt-5 pb-2 border-top">
 		<div class="container">
 			<div class="row my-2">
-				<div class="col-lg">
-					<div class="card">
-						<div class="card-body">
-							<h5 class="card-title">Other tools</h5>
-							<ul class="mb-0">
-								<li><a href="http://vsb.ku.edu/" target="_blank">Visual schedule builder</a></li>
-								<li><a href="http://sa.ku.edu/" target="_blank">Enroll & Pay</a></li>
-								<li><a href="http://myku.edu/" target="_blank">myKU</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg">
-					<div class="card">
-						<div class="card-body">
-							<h5 class="card-title">KU course info</h5>
-							<ul class="mb-0">
-								<li><a href="https://classes.ku.edu" target="_blank">Schedule of classes</a></li>
-								<li><a href="https://kucore.ku.edu/courses" target="_blank">List of KU Core courses</a></li>
-								<li><a href="https://college.ku.edu/winter" target="_blank">Winter break courses</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg">
-					<div class="card">
-						<div class="card-body">
-							<h5 class="card-title">EECS info</h5>
-							<ul class="mb-0">
-								<li><a href="http://eecs.ku.edu/current-students/undergraduate" target="_blank">Undergraduate handbook</a></li>
-								<li><a href="https://eecs.drupal.ku.edu/prospective-students/undergraduate/degree-requirements" target="_blank">Degree requirements</a></li>
-								<li><a href="http://eecs.ku.edu/eecs-courses" target="_blank">List of all EECS courses</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
+				<?php
+					$text = $GLOBALS["db"]->query("SELECT text FROM help_text WHERE id = 'FooterLinks'")[0]["text"];
+					$text = str_replace("\r", "", $text); // Remove any carriage returns
+					$sections = explode("\n\n", $text);
+					foreach ($sections as $section) {
+						$links = explode("\n", $section);
+						$heading = array_shift($links);
+						?>
+							<div class="col-lg">
+								<div class="card">
+									<div class="card-body">
+										<h5 class="card-title"><?=$heading?></h5>
+										<ul class="mb-0">
+											<?php
+												foreach($links as $link) {
+													$link = explode(" ", $link, 2);
+													$url = $link[0];
+													$label = $link[1];
+													echo "<li><a href='$url' target='_blank'>$label</a></li>";
+												}
+											?>
+										</ul>
+									</div>
+								</div>
+							</div>
+						<?php
+					}
+				?>
 			</div>
 			<div class="row">
 				<div class="col text-center">
