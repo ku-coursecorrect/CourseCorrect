@@ -52,7 +52,7 @@
 												ORDER BY modified_ts DESC", [$_SESSION["user_id"]]);
 							for ($i = 0; $i<count($plans); $i++) {
 								echo "<tr data-plan_id =". $plans[$i]["plan_id"].">";
-								echo "<td>" . $plans[$i]["plan_title"] . "</td>";
+								echo "<td><span>" . $plans[$i]["plan_title"] ."</span><span>" . planStatusToHTML($plans[$i]["plan_status"]) . "</span></td>";
 								echo "<td>" . $plans[$i]["major"]  . " " . $plans[$i]["year"] . "</td>";
 								echo "<td>" . date(DATE_FORMAT, strtotime($plans[$i]["created_ts"])) . "</td>";
 								echo "<td>" . date(DATE_FORMAT, strtotime($plans[$i]["modified_ts"])) . "</td>";
@@ -181,8 +181,8 @@
 			let linkClicked = e.relatedTarget;
 			let cells = linkClicked.parentElement.parentElement.childNodes;
 			let target_element = document.getElementById("name_change_field")
-			target_element.value = cells[0].innerText+" (copy)";
-			target_element.dataset.original_plan_id = linkClicked.parentElement.parentElement.dataset.plan_id;
+			target_element.value = cells[0].childNodes[0].innerText+" (copy)"; //Accesses the first <td> in the appropriate <tr>, selects the first span containing the plan name and pulls the plan name using innerText.
+			target_element.dataset.original_plan_id = linkClicked.parentElement.parentElement.dataset.plan_id; //Retrieves the original plan id from the data-plan_id tag in the appropriate <tr>.
 		});
 	</script>
 </body>
