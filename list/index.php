@@ -58,8 +58,8 @@
 								echo "<td>" . date(DATE_FORMAT, strtotime($plans[$i]["modified_ts"])) . "</td>";
 								echo '<td class="text-nowrap">';
 								echo '<a href="../edit?plan=' . $plans[$i]["plan_id"] . '" class="text-dark" title="Edit"><i class="fas fa-edit"></i></a>';
-								echo '<a data-toggle="modal" data-target="#duplicate-plan" class="text-dark" title="Duplicate"><i class="fas fa-copy ml-3"></i></a>'; // TODO: Create copy of plan (either one click or a modal for new name)
-								echo '<i class="fas fa-trash ml-3" data-plan_id="'. $plans[$i]["plan_id"].'" title="Delete"></i>'; // TODO: Display a delete confirmation modal
+								echo '<a data-toggle="modal" data-target="#duplicate-plan" class="text-dark" title="Duplicate"><i class="fas fa-copy ml-3"></i></a>';
+								echo '<a data-toggle="modal" data-target="#delete-plan" class="text-dark" title="Delete"><i class="fas fa-trash ml-3"</i></a>';
 								echo "</td>";
 								echo "</tr>";	
 							}
@@ -164,7 +164,7 @@
 					<div class="modal-body">
 						<div class="form-group">
 							<label for="name_change_field">Plan Name: </label>
-							<input type="text" data-original_plan_id="" id="name_change_field" name="name_change_field" class="form-control">
+							<input type="text" id="name_change_field" name="name_change_field" class="form-control">
 							<input type="hidden" id="og_plan_id" name="og_plan_id">
 						</div>
 					</div>
@@ -183,15 +183,8 @@
 			let cells = linkClicked.parentElement.parentElement.childNodes;
 			let target_element = document.getElementById("name_change_field")
 			target_element.value = cells[0].childNodes[0].innerText+" (copy)"; //Accesses the first <td> in the appropriate <tr>, selects the first span containing the plan name and pulls the plan name using innerText.
-			target_element.dataset.original_plan_id = linkClicked.parentElement.parentElement.dataset.plan_id; //Retrieves the original plan id from the data-plan_id tag in the appropriate <tr>.
-			document.getElementById("og_plan_id").value = linkClicked.parentElement.parentElement.dataset.plan_id;
+			document.getElementById("og_plan_id").value = linkClicked.parentElement.parentElement.dataset.plan_id; //Retrieves the original plan id from the data-plan_id tag in the appropriate <tr>.
 		});
-		// document.getElementById("duplication_form").addEventListener("submit", dupSendID());
-		// function dupSendID()
-		// {
-		// 	let og_plan_id = document.getElementById("name_change_field").dataset.original_plan_id;
-		// 	alert(og_plan_id);
-		// }
 	</script>
 </body>
 </html>
