@@ -22,7 +22,7 @@
     <p><br/></p>
     <div class = "container">
         <form>
-            <div class= "form-group">
+            <div class= "form-group" action="#">
                 <select multiple id="example" name="duallistbox_demo1[]" size = 20>
                     <option>Option 1</option>
                     <option>Option 2</option>
@@ -32,12 +32,17 @@
                     <option>Option 6</option>
                     <option>Option 7</option>
                     <option>Option 8</option>
+                </select>
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
+            <br>
+
         </form>
+        <button type="submit" class="btn btn-default">Submit</button>
     </div>
     <script>
         var demo1 = $('select[name="duallistbox_demo1[]"]').bootstrapDualListbox();
+
+
     </script>
   </body>
 </html>

@@ -19,31 +19,52 @@
 	    <script src="../libs/jquery.slim.min.js"></script>
 	    <script src="../libs/bootstrap.min.js"></script>
 	    <script src="../libs/jquery.bootstrap-duallistbox.js"></script>
+
+		<style>
+		.btn-block {
+			background-color: #4CAF50;
+			border: none;
+			color: white;
+			padding: 15px 32px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			margin: 4px 2px;
+			cursor: pointer;
+		}
+		</style>
 	</head>
 
 	<body>
-		<?php display_navbar(); ?>
-	    <div class="container">
-			<form>
-	            <div class= "form-group">
-	                <select multiple id="example" name="course_list_box" size = 20>
-						<?php
-						 	include_once "degree-func.php";
-							print_course();
-						?>
-	            </div>
-	            <button type="submit" class="btn btn-default">Submit</button>
-	        </form>
+		<!-- ?php display_navbar(); ?> -->
 
+		<div class="container">
+			<div class="row">
+				<form id="demoform" action="#" method="post" >
+		            <div class= "form-group">
+		                <select multiple id="example" name="course_list_box" size = 20>
+							<?php
+							 	include_once "degree-func.php";
+								print_course();
+							?>
+						</select>
+		            </div>
+					<br>
+					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Submit Major</button>
+		        </form>
+				<script>
+					var listbox = $('select[name="course_list_box"]').bootstrapDualListbox();
+					$("#demoform").submit(function() {
+						<?php
+							send_course();
+						?>
+						return false;
+					});
+				</script>
+
+			</div>
 		</div>
-		<script>
-	        var listbox = $('select[name="course_list_box"]').bootstrapDualListbox();
-			<!--TODO -->
-			$("#demoform").submit(function() {
-				alert($('[name="course_list_box"]').val());
-				return false;
-			});
-	    </script>
 	</body>
 
 </html>

@@ -28,4 +28,11 @@
         }
     }
 
+
+    function send_course(){
+        #INSERT INTO `coursecorrect`.`degree` (`major`, `year`) VALUES ('Computer Science', 2021);
+        #INSERT INTO `coursecorrect`.`degree_join_course` (`course_id`, `degree_id`, 'f_ule') VALUES ('Computer Science', 2021);
+        global $db;
+        
+    }
 ?>
