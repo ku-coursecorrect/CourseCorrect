@@ -7,5 +7,9 @@ A visual tool for planning courses through to graduation. Built for the Universi
 - [REDIPS.drag](https://www.redips.net/) for drag-and-drop courses
 - [SVG.js](https://svgjs.com/) for drawing arrows
 - [Font Awesome](https://fontawesome.com/) for icons
+- [Bootstrap Icons](https://icons.getbootstrap.com/) for icons
 - [materialpalette.com](https://www.materialpalette.com/) for colors used on arrows
 - [Flaticon](https://www.flaticon.com/free-icon/path_2783925?term=path&page=1&position=11) for our browser icon
+- [autoComplete.js](https://github.com/TarekRaafat/autoComplete.js) for autocompletion
+- [mark.js](https://markjs.io/) for text highlighting
+- [readmore.js](https://github.com/jedfoster/Readmore.js/tree/version-3.0) for text block collapsing

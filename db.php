@@ -24,8 +24,10 @@
 				if ($operation == "SELECT") {
 					return $stmt->fetchAll(); // Return results for select statements
 				}
-				elseif ($operation == "INSERT" || $operation == "UPDATE" || $operation == "DELETE") {
+				elseif ($operation == "UPDATE" || $operation == "DELETE") {
 					return $stmt->rowCount(); // Return number of rows affected
+				} elseif ($operation == "INSERT") {
+					return $this->conn->lastInsertId();
 				}
 				return true;
 			}
