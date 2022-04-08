@@ -197,7 +197,7 @@
 					if ($staff) {
 						$items = [
 							"../staff/edit-degrees.php" => "Edit degrees", 
-							"../staff/edit-courses.php" => "Edit courses", 
+							"../staff/edit-courses/edit-courses.php" => "Edit courses", 
 							"../staff/edit-help.php" => "Edit help text",
 							"../staff/view-errors.php" => "View errors",
 						];
