@@ -18,16 +18,21 @@
 
 		const PlanSaveFailed = 601;
 	}
+
+	function errorCodeToName($errorCode) {
+		// Find the error name via reflection
+		$errorName = "unknown";
+		foreach ((new ReflectionClass("ErrorCode"))->getReflectionConstants() as $const) {
+			if ($const->getValue() == $errorCode) $errorName = $const->getName();
+		}
+		return $errorName;
+	}
 	
 	function crash($errorCode, $data = null) {
 		if (DEBUG) {
 			// Dev/test code
 			http_response_code(500);
-			// Find the error name via reflection
-			$errorName = "unknown";
-			foreach ((new ReflectionClass("ErrorCode"))->getReflectionConstants() as $const) {
-				if ($const->getValue() == $errorCode) $errorName = $const->getName();
-			}
+			$errorName = errorCodeToName($errorCode);
 			echo "<div style='border: 4px dashed black; background: #faa; display: inline-block; font-size: 14px; text-shadow: none; color: black;'>";
 			echo "<h1 style='color: red; text-shadow: none;'>Error $errorCode: $errorName</h1>";
 			var_dump($data);
@@ -190,7 +195,12 @@
 				<?php
 					// TODO: Nav items based on staff permission level
 					if ($staff) {
-						$items = ["../staff/edit-degrees.php" => "Edit degrees", "../staff/edit-courses.php" => "Edit courses", "../staff/edit-help.php" => "Edit help text"];
+						$items = [
+							"../staff/edit-degrees.php" => "Edit degrees", 
+							"../staff/edit-courses.php" => "Edit courses", 
+							"../staff/edit-help.php" => "Edit help text",
+							"../staff/view-errors.php" => "View errors",
+						];
 					}
 					else {
 						$items = ["../list" => "Plan list"];
