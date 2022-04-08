@@ -3,3 +3,4 @@ deploy.php
 .htaccess
 .vscode
 *.sh
+emergency_error_log.txt

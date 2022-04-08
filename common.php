@@ -1,6 +1,6 @@
 <?php
 	// 1 for dev/test, 0 for production (maybe this should be in db_creds.php)
-	define("DEBUG", 1);
+	define("DEBUG", 0);
 
 	abstract class ErrorCode {
 		const DBConnectionFailed = 101;
@@ -20,8 +20,8 @@
 	}
 	
 	function crash($errorCode, $data = null) {
-		// Dev/test code
 		if (DEBUG) {
+			// Dev/test code
 			http_response_code(500);
 			// Find the error name via reflection
 			$errorName = "unknown";
@@ -35,8 +35,34 @@
 		}
 		else {
 			// Production code
+			$userId = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : 0;
+			$data = var_export($data, true);
+
+			try { // Log error to database
+				// db.php is not used in case the error is with the database connection
+				include_once 'db_creds.php';
+				global $DB_INFO;
+				$conn = new PDO($DB_INFO["DB_TYPE"] . ":host=" . $DB_INFO["HOST"] . ";dbname=" . $DB_INFO["DB_NAME"], $DB_INFO["USER"], $DB_INFO["PASSWORD"]);
+				$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				
+				$stmt = $conn->prepare("INSERT INTO error_log (error_code, user_id, data) VALUES (?, ?, ?)");
+				$stmt->execute([$errorCode, $userId, $data]);
+			}
+			catch (PDOException $e) { // Database failed, log error to file
+				ob_start();
+				echo date("Y-m-d H:i:s") . " logging error to database failed:\n";
+				echo "User ID: $userId\n";
+				echo "Error code: $errorCode\n";
+				echo "Error data: $data\n";
+				echo "PDO Exception: ";
+				var_dump($e);
+				echo "\n\n";
+				$text = ob_get_clean();
+				file_put_contents(__DIR__ . "/emergency_error_log.txt", $text, FILE_APPEND | LOCK_EX);
+			}
+			
+			// Redirect to error page
 			header("Location: /error.php?code=" . $errorCode);
-			// TODO log the data/exception somewhere
 		}
 		die();
 	}
