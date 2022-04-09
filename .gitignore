@@ -1,1 +1,5 @@
 db_creds.*
+deploy.php
+.htaccess
+.vscode
+*.sh
