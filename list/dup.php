@@ -10,7 +10,7 @@
     $og_plan_check = $db->query("SELECT plan_title
                                 FROM plan
                                 WHERE user_id = ? AND plan_id = ?", [$_SESSION["user_id"],$original_id]);
-    if (count($original_id) == 1)
+    if (count($og_plan_check) == 1)
     {
         $db->query("INSERT INTO 
                     plan (plan_title, user_id, degree_id, plan_status, json)
