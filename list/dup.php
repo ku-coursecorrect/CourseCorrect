@@ -4,9 +4,7 @@
 
     $new_name = $_POST['name_change_field'];
     $original_id = $_POST['og_plan_id'];
-    
-    //echo($new_name."<br>");
-    //echo($original_id);
+
     $og_plan_check = $db->query("SELECT plan_title
                                 FROM plan
                                 WHERE user_id = ? AND plan_id = ?", [$_SESSION["user_id"],$original_id]);
@@ -23,6 +21,6 @@
     }
     else
     {
-        echo("Uh uh uh you didn't say the magic word!");
+        crash(ErrorCode::InsufficientPermission, "The plan with ID '".$original_id."' doesn't belong to the user with ID '".$_SESSION["user_id"]."'.");
     }
 ?>
