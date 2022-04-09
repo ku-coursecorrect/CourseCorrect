@@ -65,8 +65,7 @@
 
 	// Convert a semester format to a season string
 	function semester_season($semester) {
-		global $SEASON_NAME;
-		return $SEASON_NAME[$semester % 3];
+		return SEASON_NAME[$semester % 3];
 	}
 
 	// Populate a new plan with empty semesters for the next 4 years
