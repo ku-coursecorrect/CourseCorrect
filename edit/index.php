@@ -71,6 +71,7 @@
 	<script type="text/javascript" src="Plan.js"></script>
 	<script type="text/javascript" src="Semester.js"></script>
 	<script type="text/javascript" src="Course.js"></script>
+	<script src="../libs/readmore.min.js"></script>
 	<script>
 		window.addEventListener('DOMContentLoaded', e => {
 			window.executive = new Executive(<?=json_encode($courses)?>, <?=json_encode($plan)?>);
@@ -165,6 +166,7 @@
 					<h5 class="card-title" id="course-title">Course Info</h5>
 					<h6 class="card-subtitle mb-2 text-muted" id="course-subtitle"></h6>
 					<div class="card-text" id="course-description">Click on a course to display information and options here.</div>
+					<div class="card-text" id='desc-block'></div>
 					<input type="button" id="course-delete" class="btn btn-danger mt-2" value="Delete" style="display:none">
 				</div>
 			</div>
