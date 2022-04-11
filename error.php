@@ -32,13 +32,27 @@
 					<h1>Whoops!</h1>
 				</div>
 				<div class="text-center my-3">
-					<p>
-						Something went wrong. Error code: 
-						<script>
-							// Only allow numbers in error code to prevent XSS attacks
-							document.write(new URLSearchParams(window.location.search).get("code").replace(/[^0-9]/g, ""));
-						</script>
-					</p>
+					<p style="white-space: pre-wrap;"><?php
+						// Only allow numbers in error code to prevent XSS attacks
+						$errorCode = preg_replace("/[^0-9]/", "", $_GET["code"]);
+					
+						// Connect to the database manually to read the error help text
+						// The class in db.php is not used since it redirects here when an error occurs
+						// In which case, an infinite loop could occur
+						try {
+							include_once 'db_creds.php';
+							$conn = new PDO($DB_INFO["DB_TYPE"] . ":host=" . $DB_INFO["HOST"] . ";dbname=" . $DB_INFO["DB_NAME"], $DB_INFO["USER"], $DB_INFO["PASSWORD"]);
+							$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+							
+							$stmt = $conn->prepare("SELECT text FROM help_text WHERE id = 'ErrorText'");
+							$stmt->execute();
+							$text = $stmt->fetchColumn();
+							echo str_replace("%ERROR%", $errorCode, $text);
+						}
+						catch (PDOException $e) { // Database failed, use a default hard-coded message
+							echo "Something went wrong. Error code: $errorCode";
+						}
+					?></p>
 				</div>
 				<div class="text-center">
 					<a href=".">

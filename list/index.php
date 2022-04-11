@@ -21,10 +21,13 @@
 	<?php display_navbar(); ?>
     <div class="container">
 		<div class="row">
-			<div class="col-lg-9">
+			<div class="col">
 				<h1>
 					My saved plans
-					<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#create-plan"><i class="fas fa-plus"></i> Create new plan</button>
+					<span class="float-right">
+						<button type="button" class="btn btn-secondary mr-2" data-toggle="modal" data-target="#help"><i class="fas fa-question"></i> Help</button><!--
+						--><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create-plan"><i class="fas fa-plus"></i> Create new plan</button>
+					</span>
 				</h1>
 				<table class="table table-striped">
 					<thead>
@@ -68,14 +71,6 @@
 			<script>
 				$('body').tooltip({selector: '[title]'});
 			</script>
-			<div class="col-lg-3">
-				<p>
-					This is a place that some help text could be included about how to use this page.
-				</p>
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ultrices lorem mi, vel dapibus diam posuere eu. Aliquam facilisis iaculis ipsum venenatis venenatis. Phasellus vulputate, ipsum quis mattis viverra, lectus dui sodales libero, id consequat massa justo ut magna. Donec sed ullamcorper metus. Donec lorem mauris, gravida eu pharetra nec, rutrum a arcu. Cras cursus eget nisl id luctus. Pellentesque sit amet sagittis felis.
-				</p>
-			</div>
 		</div>
 	</div>
 
@@ -140,6 +135,23 @@
 						<button type="submit" class="btn btn-success">Create</button>
 					</div>
 				</form>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="help" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="helpModalLabel">Help</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" style="white-space: pre-wrap"><?=$db->query("SELECT text FROM help_text WHERE id='PlanListHelp'")[0]["text"]?></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
 			</div>
 		</div>
 	</div>
