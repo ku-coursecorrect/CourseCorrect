@@ -16,7 +16,6 @@
                         FROM plan
                         WHERE user_id = ? AND plan_id = ?;", [$new_name, $_SESSION["user_id"], $original_id]);
         $new_plan_id = $db->query("SELECT plan_id FROM plan WHERE user_id = ? AND plan_title = ?", [$_SESSION["user_id"],$new_name]);
-        echo("completed execution");
         header("Location: ../edit?plan=". $new_plan_id[0]["plan_id"]."");
     }
     else
