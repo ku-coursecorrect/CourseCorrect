@@ -230,7 +230,7 @@
 			</div>
 			<div class="row">
 				<div class="col text-center">
-					<a href="https://github.com/ku-coursecorrect/coursecorrect">CourseCorrect</a> Copyright &copy; 2022: Drake Prebyl, James Kraijcek, Rafael Alaras, Reece Mathews, Tiger Ruan
+					<a href="https://github.com/ku-coursecorrect/coursecorrect">CourseCorrect</a> Copyright &copy; 2022: Drake Prebyl, James Krajicek, Rafael Alaras, Reece Mathews, Tiger Ruan
 				</div>
 			</div>
 		</div>
