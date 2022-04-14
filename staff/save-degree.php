@@ -50,6 +50,9 @@
             $course_arr = $_POST['course_list_box'];
             $degree_name = $_POST['name'];
             $degree_year = $_POST['year'];
+			//Time to do the sql queries
+			include_once "degree-func.php";
+			send_course($degree_name, $degree_year, $course_arr);
 		?>
 
 		<div class="container">

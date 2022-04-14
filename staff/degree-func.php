@@ -36,10 +36,23 @@
         }
     }
 
-    function send_course(){
+    function send_course($f_name, $f_year, $f_courses){
         #INSERT INTO `coursecorrect`.`degree` (`major`, `year`) VALUES ('Computer Science', 2021);
-        #INSERT INTO `coursecorrect`.`degree_join_course` (`course_id`, `degree_id`, 'f_ule') VALUES ('Computer Science', 2021);
+        #INSERT INTO `coursecorrect`.`degree_join_course` (`course_id`, `degree_id`) VALUES ('69', '4');
         global $db;
 
+        $table_query = "INSERT INTO `coursecorrect`.`degree` (`major`, `year`) VALUES ('" . $f_name . "', " . $f_year . ");";
+        //Now get table id
+        $db->query($table_query);
+        $degree_id = $db->lastInsertId();
+        echo $degree_id;
+        foreach($f_courses as $row){
+            $course_id_query = "SELECT `course_id` FROM course WHERE `course_code` = '" . $row . "';";
+            $course_id_table = $db->query($course_id_query);
+            $course_id_row = $course_id_table[0];
+
+            $course_query = "INSERT INTO `coursecorrect`.`degree_join_course` (`course_id`, `degree_id`) VALUES (" . $course_id . ", " . $degree_id . ");";
+            $db->query($course_query);
+        }
     }
 ?>
