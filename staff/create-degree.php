@@ -37,32 +37,48 @@
 	</head>
 
 	<body>
-		<!-- ?php display_navbar(); ?> -->
+		<?php
+			display_navbar();
+		?>
 
 		<div class="container">
 			<div class="row">
-				<form id="demoform" action="#" method="post" >
+				<!-- For Alternate ussage with implementation of degree specific ule, set action to alt-set-ule.php -->
+				<!-- <form id="demoform" action="alt-set-ule.php" method="post" >
 		            <div class= "form-group">
-		                <select multiple id="example" name="course_list_box" size = 20>
+		                <select multiple id="example" name="course_list_box[]" size = 20>
+							<?php
+							 	// include_once "degree-func.php";
+								// print_course();
+							?>
+						</select>
+		            </div>
+					<input type= "hidden" id="hidden_name" name="name" value="<?php //echo $_REQUEST['name']; ?>" >
+					<input type= "hidden" id="hidden_year" name="year" value="<?php //echo $_REQUEST['year']; ?>" >
+					<br>
+					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Sumbit Degree and Move to ULE Selection</button>
+		        </form>
+				<script>
+					var listbox = $('select[name="course_list_box[]"]').bootstrapDualListbox();
+				</script> -->
+
+				<form id="demoform" action="save-degree.php" method="post" >
+		            <div class= "form-group">
+		                <select multiple id="example" name="course_list_box[]" size = 20>
 							<?php
 							 	include_once "degree-func.php";
 								print_course();
 							?>
 						</select>
 		            </div>
+					<input type= "hidden" id="hidden_name" name="name" value="<?php echo $_REQUEST['name']; ?>" >
+					<input type= "hidden" id="hidden_year" name="year" value="<?php echo $_REQUEST['year']; ?>" >
 					<br>
-					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Submit Major</button>
+					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Sumbit Degree</button>
 		        </form>
 				<script>
-					var listbox = $('select[name="course_list_box"]').bootstrapDualListbox();
-					$("#demoform").submit(function() {
-						<?php
-							send_course();
-						?>
-						return false;
-					});
+					var listbox = $('select[name="course_list_box[]"]').bootstrapDualListbox();
 				</script>
-
 			</div>
 		</div>
 	</body>
