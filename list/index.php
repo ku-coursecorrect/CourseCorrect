@@ -48,29 +48,25 @@
 														plan_status 
 												FROM plan 
 												JOIN degree ON plan.degree_id = degree.degree_id
-												WHERE user_id = ?
+												WHERE user_id = ? AND deleted_ts IS NULL
 												ORDER BY modified_ts DESC", [$_SESSION["user_id"]]);
-							
-							foreach ($plans as $plan) {
-								echo "<tr>";
-								echo "<td>" . $plan["plan_title"] . planStatusToHTML($plan["plan_status"]) . "</td>";
-								echo "<td>" . $plan["major"]  . " " . $plan["year"] . "</td>";
-								echo "<td>" . date(DATE_FORMAT, strtotime($plan["created_ts"])) . "</td>";
-								echo "<td>" . date(DATE_FORMAT, strtotime($plan["modified_ts"])) . "</td>";
+							for ($i = 0; $i<count($plans); $i++) {
+								echo "<tr data-plan_id =". $plans[$i]["plan_id"].">";
+								echo "<td><span>" . $plans[$i]["plan_title"] ."</span><span>&nbsp;". planStatusToHTML($plans[$i]["plan_status"]) . "</span></td>";
+								echo "<td>" . $plans[$i]["major"]  . " " . $plans[$i]["year"] . "</td>";
+								echo "<td>" . date(DATE_FORMAT, strtotime($plans[$i]["created_ts"])) . "</td>";
+								echo "<td>" . date(DATE_FORMAT, strtotime($plans[$i]["modified_ts"])) . "</td>";
 								echo '<td class="text-nowrap">';
-								echo '<a href="../edit?plan=' . $plan["plan_id"] . '" class="text-dark" title="Edit"><i class="fas fa-edit"></i></a>';
-								echo '<i class="fas fa-copy ml-3" title="Duplicate"></i>'; // TODO: Create copy of plan (either one click or a modal for new name)
-								echo '<i class="fas fa-trash ml-3" title="Delete"></i>'; // TODO: Display a delete confirmation modal
+								echo '<a href="../edit?plan=' . $plans[$i]["plan_id"] . '" class="text-dark" title="Edit"><i class="fas fa-edit"></i></a>';
+								echo '<a data-toggle="modal" data-target="#duplicate-plan" class="text-dark" title="Duplicate"><i class="fas fa-copy ml-3"></i></a>';
+								echo '<a data-toggle="modal" data-target="#delete-plan" class="text-dark" title="Delete"><i class="fas fa-trash ml-3"</i></a>';
 								echo "</td>";
-								echo "</tr>";
+								echo "</tr>";	
 							}
 						?>
 					</tbody>
 				</table>
 			</div>
-			<script>
-				$('body').tooltip({selector: '[title]'});
-			</script>
 		</div>
 	</div>
 
@@ -155,5 +151,71 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="duplicate-plan" tabindex="-1" aria-labelledby="duplicateModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="duplicateModalLabel">Duplicate Plan</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<form id="duplication_form" method="POST" action="dup.php">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="name_change_field">Plan Name: </label>
+							<input type="text" id="name_change_field" name="name_change_field" class="form-control">
+							<input type="hidden" id="og_plan_id" name="og_plan_id">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-success">Duplicate</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="delete-plan" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="deleteModalLabel">Delete Plan</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<form id="duplication_form" method="POST" action="delete.php">
+					<div class="modal-body">
+						<p id="name_of_plan" name="name_of_plan"></p>
+						<div class="form-group">
+							<input type="hidden" id="plan_id_to_delete" name="plan_id_to_delete">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-danger">Delete</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script>
+		$('body').tooltip({selector: '[title]'});
+		$("#duplicate-plan").on("show.bs.modal", e=>{
+			let linkClicked = e.relatedTarget;
+			let cells = linkClicked.parentElement.parentElement.childNodes;
+			let target_element = document.getElementById("name_change_field");
+			target_element.value = cells[0].childNodes[0].innerText+" (copy)"; //Accesses the first <td> in the appropriate <tr>, selects the first span containing the plan name and pulls the plan name using innerText.
+			document.getElementById("og_plan_id").value = linkClicked.parentElement.parentElement.dataset.plan_id; //Retrieves the original plan id from the data-plan_id tag in the appropriate <tr>.
+		});
+		$("#delete-plan").on("show.bs.modal", e=>{
+			let linkClicked = e.relatedTarget;
+			let cells = linkClicked.parentElement.parentElement.childNodes;
+			let target_element = document.getElementById("name_of_plan");
+			target_element.innerText = "Are you sure you want to delete \""+cells[0].childNodes[0].innerText+"\"?";
+			document.getElementById("plan_id_to_delete").value = linkClicked.parentElement.parentElement.dataset.plan_id; //Retrieves the original plan id from the data-plan_id tag in the appropriate <tr>.
+		});
+	</script>
 </body>
 </html>
