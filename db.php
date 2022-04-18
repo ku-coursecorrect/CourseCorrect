@@ -1,9 +1,9 @@
 <?php
 	require_once 'db_creds.php';
-	
+
 	class DBConn {
 		private $conn;
-		
+
 		public function __construct($dbInfo) {
 			try {
 				$this->conn = new PDO($dbInfo["DB_TYPE"] . ":host=" . $dbInfo["HOST"] . ";dbname=" . $dbInfo["DB_NAME"], $dbInfo["USER"], $dbInfo["PASSWORD"]);
@@ -13,7 +13,7 @@
 				crash(ErrorCode::DBConnectionFailed, $e);
 			}
 		}
-		
+
 		public function query($query, $parameters = []) {
 			try {
 				$stmt = $this->conn->prepare($query);
@@ -43,7 +43,7 @@
 					echo "<b>File: </b>" . $shortFile . "<br>";
 					echo "<b>Line: </b>" .  $e->getTrace()[1]["line"] . "<br>";
 					echo '<b>SQL statement: </b>"' .  $e->getTrace()[1]["args"][0] . '"<br>';
-					
+
 					echo "<b>Error message: </b> <span style='font-family: monospace'>" .$e->getMessage() . "</span>";
 
 					echo "</div>";
@@ -58,7 +58,7 @@
 
 		public function lastInsertId() { return $this->conn->lastInsertId(); }
 	}
-	
+
 	$db = new DBConn($DB_INFO);
 	if (!isset($GLOBALS["db"])) $GLOBALS["db"] = $db;
 ?>
