@@ -1,6 +1,6 @@
 <?php
 	// 1 for dev/test, 0 for production (maybe this should be in db_creds.php)
-	define("DEBUG", 1);
+	define("DEBUG", 0);
 
 	abstract class ErrorCode {
 		const DBConnectionFailed = 101;
@@ -18,16 +18,21 @@
 
 		const PlanSaveFailed = 601;
 	}
+
+	function errorCodeToName($errorCode) {
+		// Find the error name via reflection
+		$errorName = "unknown";
+		foreach ((new ReflectionClass("ErrorCode"))->getReflectionConstants() as $const) {
+			if ($const->getValue() == $errorCode) $errorName = $const->getName();
+		}
+		return $errorName;
+	}
 	
 	function crash($errorCode, $data = null) {
-		// Dev/test code
 		if (DEBUG) {
+			// Dev/test code
 			http_response_code(500);
-			// Find the error name via reflection
-			$errorName = "unknown";
-			foreach ((new ReflectionClass("ErrorCode"))->getReflectionConstants() as $const) {
-				if ($const->getValue() == $errorCode) $errorName = $const->getName();
-			}
+			$errorName = errorCodeToName($errorCode);
 			echo "<div style='border: 4px dashed black; background: #faa; display: inline-block; font-size: 14px; text-shadow: none; color: black;'>";
 			echo "<h1 style='color: red; text-shadow: none;'>Error $errorCode: $errorName</h1>";
 			var_dump($data);
@@ -35,8 +40,34 @@
 		}
 		else {
 			// Production code
+			$userId = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : 0;
+			$data = var_export($data, true);
+
+			try { // Log error to database
+				// db.php is not used in case the error is with the database connection
+				include_once 'db_creds.php';
+				global $DB_INFO;
+				$conn = new PDO($DB_INFO["DB_TYPE"] . ":host=" . $DB_INFO["HOST"] . ";dbname=" . $DB_INFO["DB_NAME"], $DB_INFO["USER"], $DB_INFO["PASSWORD"]);
+				$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				
+				$stmt = $conn->prepare("INSERT INTO error_log (error_code, user_id, data) VALUES (?, ?, ?)");
+				$stmt->execute([$errorCode, $userId, $data]);
+			}
+			catch (PDOException $e) { // Database failed, log error to file
+				ob_start();
+				echo date("Y-m-d H:i:s") . " logging error to database failed:\n";
+				echo "User ID: $userId\n";
+				echo "Error code: $errorCode\n";
+				echo "Error data: $data\n";
+				echo "PDO Exception: ";
+				var_dump($e);
+				echo "\n\n";
+				$text = ob_get_clean();
+				file_put_contents(__DIR__ . "/emergency_error_log.txt", $text, FILE_APPEND | LOCK_EX);
+			}
+			
+			// Redirect to error page
 			header("Location: /error.php?code=" . $errorCode);
-			// TODO log the data/exception somewhere
 		}
 		die();
 	}
@@ -125,7 +156,7 @@
 	}
 	
 	// TODO: Useful links, maybe different for student and staff
-	function display_navbar() {
+	function display_navbar($staff = false) {
 		?>
 
 	<header class="container-fluid py-3">
@@ -133,7 +164,7 @@
 			<div class="col-sm-4">
 				<a href="../"><img class="KU_image" src="/images/eecs_logo.png" height="60"></a>
 			</div>
-			<div class="col-sm-4 text-sm-center KU_color_text">
+			<div class="col-sm-4 text-sm-center <?=$staff?"text-danger":"KU_color_text"?>">
 				<h1>CourseCorrect</h1>
 			</div>
 			<div class="col-sm-4 text-right">
@@ -153,16 +184,34 @@
 	</header>
 
 	<!-- Navigation bar -->
-	<nav class="navbar navbar-expand-md navbar-dark KU_color_background mb-3">
+	<nav class="navbar navbar-expand-md navbar-dark <?=$staff?"bg-danger":"KU_color_background"?> mb-3">
 		<a class="navbar-brand" href="../">Home</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div class="collapse navbar-collapse" id="collapsibleNavbar">
 			<ul class="navbar-nav">
-				<li class="nav-item">
-					<a class="nav-link active" href="../list">Plan list</a>
-				</li>
+				<?php
+					// TODO: Nav items based on staff permission level
+					if ($staff) {
+						$items = [
+							"../staff/edit-degrees.php" => "Edit degrees", 
+							"../staff/edit-courses/edit-courses.php" => "Edit courses", 
+							"../staff/edit-help.php" => "Edit help text",
+							"../staff/view-errors.php" => "View errors",
+						];
+					}
+					else {
+						$items = ["../list" => "Plan list"];
+					}
+					foreach ($items as $url => $text) {
+						?>
+							<li class="nav-item">
+								<a class="nav-link active" href="<?=$url?>"><?=$text?></a>
+							</li>
+						<?php
+					}
+				?>
 		  	</ul>
 		</div>
 	</nav>
@@ -177,46 +226,38 @@
 	<footer class="pt-2 mt-5 pb-2 border-top">
 		<div class="container">
 			<div class="row my-2">
-				<div class="col-lg">
-					<div class="card">
-						<div class="card-body">
-							<h5 class="card-title">Other tools</h5>
-							<ul class="mb-0">
-								<li><a href="http://vsb.ku.edu/" target="_blank">Visual schedule builder</a></li>
-								<li><a href="http://sa.ku.edu/" target="_blank">Enroll & Pay</a></li>
-								<li><a href="http://myku.edu/" target="_blank">myKU</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg">
-					<div class="card">
-						<div class="card-body">
-							<h5 class="card-title">KU course info</h5>
-							<ul class="mb-0">
-								<li><a href="https://classes.ku.edu" target="_blank">Schedule of classes</a></li>
-								<li><a href="https://kucore.ku.edu/courses" target="_blank">List of KU Core courses</a></li>
-								<li><a href="https://college.ku.edu/winter" target="_blank">Winter break courses</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg">
-					<div class="card">
-						<div class="card-body">
-							<h5 class="card-title">EECS info</h5>
-							<ul class="mb-0">
-								<li><a href="http://eecs.ku.edu/current-students/undergraduate" target="_blank">Undergraduate handbook</a></li>
-								<li><a href="https://eecs.drupal.ku.edu/prospective-students/undergraduate/degree-requirements" target="_blank">Degree requirements</a></li>
-								<li><a href="http://eecs.ku.edu/eecs-courses" target="_blank">List of all EECS courses</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
+				<?php
+					$text = $GLOBALS["db"]->query("SELECT text FROM help_text WHERE id = 'FooterLinks'")[0]["text"];
+					$text = str_replace("\r", "", $text); // Remove any carriage returns
+					$sections = explode("\n\n", $text);
+					foreach ($sections as $section) {
+						$links = explode("\n", $section);
+						$heading = array_shift($links);
+						?>
+							<div class="col-lg">
+								<div class="card">
+									<div class="card-body">
+										<h5 class="card-title"><?=$heading?></h5>
+										<ul class="mb-0">
+											<?php
+												foreach($links as $link) {
+													$link = explode(" ", $link, 2);
+													$url = $link[0];
+													$label = $link[1];
+													echo "<li><a href='$url' target='_blank'>$label</a></li>";
+												}
+											?>
+										</ul>
+									</div>
+								</div>
+							</div>
+						<?php
+					}
+				?>
 			</div>
 			<div class="row">
 				<div class="col text-center">
-					<a href="https://github.com/ku-coursecorrect/coursecorrect">CourseCorrect</a> Copyright &copy; 2022: Drake Prebyl, James Kraijcek, Rafael Alaras, Reece Mathews, Tiger Ruan
+					<a href="https://github.com/ku-coursecorrect/coursecorrect">CourseCorrect</a> Copyright &copy; 2022: Drake Prebyl, James Krajicek, Rafael Alaras, Reece Mathews, Tiger Ruan
 				</div>
 			</div>
 		</div>

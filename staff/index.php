@@ -14,26 +14,20 @@
 	<script src="../libs/jquery.slim.min.js"></script>
 	<script src="../libs/popper.min.js"></script>
 	<script src="../libs/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="../common.css">
 	<link rel="stylesheet" href="../libs/fontawesome.min.css">
 </head>
 <body>
-	<?php display_navbar(); ?>
+	<?php display_navbar(true); ?>
     <div class="container">
 		<div class="row">
-			<div class="col-lg-8">
+			<div class="col-12">
 				<h1>CourseCorrect Staff</h1>
+			</div>
+			<div class="col-lg-8 col-xl-9">
 				<div class="card mb-3">
 					<div class="card-body">
-						<h2>Admin</h2>
-						<a href="edit-users.php"><button type="button" class="btn btn-primary"><i class="fas fa-user"></i> Edit staff users</button></a>
-						<a href="edit-degrees.php"><button type="button" class="btn btn-primary"><i class="fas fa-graduation-cap"></i> Edit degrees</button></a>
-						<a href="edit-courses/edit-courses.php"><button type="button" class="btn btn-primary"><i class="fas fa-book"></i> Edit courses</button></a>
-						<a href="edit-text.php"><button type="button" class="btn btn-secondary" disabled><i class="fas fa-question"></i> Edit text and links</button></a>
-					</div>
-				</div>
-				<div class="card mb-3">
-					<div class="card-body">
-						<h2>Advisor</h2>
+						<h2>Lookup student plans</h2>
 						<form method="POST" action="search.php">
 							<div class="form-group">
 								<label>Student IDs</label>
@@ -47,19 +41,30 @@
 						</form>
 					</div>
 				</div>
+			</div>
+			<div class="col-lg-4 col-xl-3">
 				<div class="card mb-3">
 					<div class="card-body">
-						<h2>Student</h2>
-						<a href="../list"><input type="button" class="btn btn-primary" value="Simulate student experience"></a>
+						<h2>Create plans</h2>
+						<label>The student homepage</label><br>
+						<a href="../list"><input type="button" class="btn btn-primary" value="Plan list"></a>
 					</div>
 				</div>
 			</div>
-			<div class="col-lg-4">
-				<p class="mt-4">
-					This is a place that some help text could be included about what this application is and how students should use it. For example, explanations of what advisors should search for could be placed here.
-				</p>
+			<div class="col-12">
+				<div class="card mb-3">
+					<div class="card-body">
+						<h2>Administration</h2>
+						<a href="edit-users.php"><button type="button" class="btn btn-danger"><i class="fas fa-user"></i> Edit staff users</button></a>
+						<a href="edit-degrees.php"><button type="button" class="btn btn-danger"><i class="fas fa-graduation-cap"></i> Edit degrees</button></a>
+						<a href="edit-courses/edit-courses.php"><button type="button" class="btn btn-danger"><i class="fas fa-book"></i> Edit courses</button></a>
+						<a href="edit-help.php"><button type="button" class="btn btn-danger"><i class="fas fa-question"></i> Edit text and links</button></a>
+						<a href="view-errors.php"><button type="button" class="btn btn-primary"><i class="fas fa-exclamation"></i> View error logs</button></a>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
+	<?php display_footer(); ?>
 </body>
 </html>

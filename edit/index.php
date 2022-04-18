@@ -128,6 +128,7 @@
 				<button id="save-button" type="button" class="btn btn-light btn-sm" disabled><i class="fa fa-save"></i> Save</button>
 			</span>
 			<button onclick="window.print()" type="button" class="btn btn-light btn-sm"><i class="fa fa-print"></i> Print</button>
+			<button type="button" class="btn btn-light btn-sm" data-toggle="modal" data-target="#help"><i class="fa fa-question"></i> Help</button>
 		</span>
 	</nav>
 
@@ -251,5 +252,22 @@
 	</div>
 	
 	<?php display_footer() ?>
+
+	<div class="modal fade" id="help" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="helpModalLabel">Help</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" style="white-space: pre-wrap"><?=$db->query("SELECT text FROM help_text WHERE id='PlanEditHelp'")[0]["text"]?></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
