@@ -162,7 +162,7 @@
 	<header class="container-fluid py-3">
 		<div class="row">
 			<div class="col-sm-4">
-				<a href="../"><img class="KU_image" src="/images/eecs_logo.png" height="60"></a>
+				<a href="../"><img class="KU_image" src="../images/eecs_logo.png" height="60"></a>
 			</div>
 			<div class="col-sm-4 text-sm-center <?=$staff?"text-danger":"KU_color_text"?>">
 				<h1>CourseCorrect</h1>
@@ -196,7 +196,7 @@
 					if ($staff) {
 						$items = [
 							"../staff/edit-degrees.php" => "Edit degrees", 
-							"../staff/edit-courses/edit-courses.php" => "Edit courses", 
+							"../staff/edit-courses.php" => "Edit courses", 
 							"../staff/edit-help.php" => "Edit help text",
 							"../staff/view-errors.php" => "View errors",
 						];
