@@ -16,9 +16,6 @@
 	<script src="../libs/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../libs/fontawesome.min.css">
 </head>
-
-
-
 <body>
 	<?php display_navbar(); ?>
     <div class="container">
@@ -34,34 +31,50 @@
 							<th>Degree</th><th>Year</th><th>Created</th><th>Modified</th><th></th>
 						</tr>
 					</thead>
-					<!-- -->
-
 					<tbody>
-						<?php
-						 	include_once "degree-func.php";
-							print_degree();
-						?>
-
+						<tr>
+							<td>Computer Science</td><td>2021</td><td>May 28<sup>th</sup>, 2021</td><td>Jul 28<sup>th</sup>, 2021</td>
+							<td class="text-nowrap"><a href="edit-degree.php"><i class="fas fa-edit ml-3"></i></a><i class="fas fa-trash ml-3"></i></td>
+						</tr>
+						<tr>
+							<!-- <i class="fas fa-clone"></i> -->
+							<td>IC Biology</td><td>2019</td><td>May 28<sup>th</sup>, 2019</td><td>Jul 28<sup>th</sup>, 2019</td>
+							<td class="text-nowrap"><i class="fas fa-edit ml-3"></i><i class="fas fa-trash ml-3"></i></td>
+						</tr>
+						<tr>
+							<td>Computer Engineering</td><td>2019</td><td>May 28<sup>th</sup>, 2019</td><td>Jul 28<sup>th</sup>, 2019</td>
+							<td class="text-nowrap"><i class="fas fa-edit ml-3"></i><i class="fas fa-trash ml-3"></i></td>
+						</tr>
+						<tr>
+							<td>Computer Science</td><td>2019</td><td>May 28<sup>th</sup>, 2019</td><td>Jul 28<sup>th</sup>, 2019</td>
+							<td class="text-nowrap"><i class="fas fa-edit ml-3"></i><i class="fas fa-trash ml-3"></i></td>
+						</tr>
+						<tr>
+							<td>IC Biology</td><td>2018</td><td>Jun 1<sup>st</sup>, 2018</td><td>Jul 17<sup>th</sup>, 2018</td>
+							<td class="text-nowrap"><i class="fas fa-edit ml-3"></i><i class="fas fa-trash ml-3"></i></td>
+						</tr>
+						<tr>
+							<td>Computer Engineering</td><td>2018</td><td>Jun 1<sup>st</sup>, 2018</td><td>Jul 17<sup>th</sup>, 2018</td>
+							<td class="text-nowrap"><i class="fas fa-edit ml-3"></i><i class="fas fa-trash ml-3"></i></td>
+						</tr>
+						<tr>
+							<td>Computer Science</td><td>2018</td><td>Jun 1<sup>st</sup>, 2018</td><td>Jul 17<sup>th</sup>, 2018</td>
+							<td class="text-nowrap"><i class="fas fa-edit ml-3"></i><i class="fas fa-trash ml-3"></i></td>
+						</tr>
 					</tbody>
 				</table>
 			</div>
 			<div class="col-lg-4">
 				<p>
-					<b>Help and Assisstance</b>
+					This is a place that some help text could be included about how to use this page.
 				</p>
 				<p>
-					1) Before adding any new degree, check if all courses have been created and are in the database.
-				</p>
-				<p>
-					2) Check the credit hours expected per semester, verify if the suggested classes are valid with prerequisites and corequisites.
-				</p>
-				<p>
-					3) For technical help, contact coursecorrect-invalid-email@ku.edu
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ultrices lorem mi, vel dapibus diam posuere eu. Aliquam facilisis iaculis ipsum venenatis venenatis. Phasellus vulputate, ipsum quis mattis viverra, lectus dui sodales libero, id consequat massa justo ut magna. Donec sed ullamcorper metus. Donec lorem mauris, gravida eu pharetra nec, rutrum a arcu. Cras cursus eget nisl id luctus. Pellentesque sit amet sagittis felis.
 				</p>
 			</div>
 		</div>
 	</div>
-
+	
 	<!-- Modal -->
 	<div class="modal fade" id="create-plan" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
