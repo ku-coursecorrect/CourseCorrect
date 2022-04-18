@@ -136,7 +136,8 @@ function filterTable() {
                 } else {
                     row.style.display = "none";
                 }
-            }
+            },
+            "separateWordSearch": false
         });
     }
 }
@@ -202,6 +203,8 @@ function populateModal(btn) {
         course_code = course_row.children[0].innerText;
     }
 
+    $('[data-toggle="tooltip"]').tooltip({selector: '[title]'});
+
     fetch("edit-course.php?course_code="+course_code).then(
         response => response.text()
     ).then(
@@ -209,8 +212,14 @@ function populateModal(btn) {
             document.getElementById("edit-course").innerHTML = text;
             // Find last req in course to determine how many need updated with autocomplete
             let req_pos = text.lastIndexOf("reqCode");
-            let req_end = text.indexOf("'", req_pos);
-            let req_id = text.slice(req_pos + "reqCode-".length, req_end);
+            let req_id = null;
+            if (req_pos === -1) {
+                // No reqs exist yet on course
+                req_id = -1;
+            } else {
+                let req_end = text.indexOf("'", req_pos);
+                req_id = text.slice(req_pos + "reqCode-".length, req_end);
+            }
             for (let i = 0; i <= req_id; i++) {
                 // Update all reqs with autocomplete functionality
                 updateReqAutoComplete(i, course_code);
