@@ -71,6 +71,7 @@
 	<script type="text/javascript" src="Plan.js"></script>
 	<script type="text/javascript" src="Semester.js"></script>
 	<script type="text/javascript" src="Course.js"></script>
+	<script src="../libs/readmore.min.js"></script>
 	<script>
 		window.addEventListener('DOMContentLoaded', e => {
 			window.executive = new Executive(<?=json_encode($courses)?>, <?=json_encode($plan)?>);
