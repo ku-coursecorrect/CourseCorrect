@@ -1,0 +1,88 @@
+body{
+    font-family: 'Raleway', sans-serif;
+}
+.navbar.ku-eyebrow{
+    background: #0051ba url("dotted-white.svg") top left repeat;
+    border-bottom: none;
+    height: 40px;
+    font-size:.8em;
+}
+.navbar.ku-eyebrow a, .brandbar a, .brandbar{
+    color:#ffffff;
+}
+.brandbar{
+    height:100px;
+    background:#0051ba;
+}
+.brandbar .logo-img img{
+    width: 108px;
+    height: 79px;
+    border-right: 1px solid #fff;
+    margin: 5% 5% -5% 0;
+}
+.brandbar .site-name-slogan{
+    margin-left:2%;
+}
+.brandbar .site-name{
+    font-size: 1.4em;
+    font-weight:bold;
+    margin-top:4%;
+}
+.brandbar .site-slogan{
+    font-size:.9em;
+    text-indent:5%;
+}
+.topnav ul{
+    width: 100%;
+    border-bottom:1px solid #dde5ed;
+    font-size:.9em;
+    height:30px;
+    padding-top:.5%
+}
+.topnav li{
+    padding-right:1.5%;
+}
+.home-link{
+    margin-top:-3px;
+}
+footer{
+    background: #fff url("dotted-grey.svg") left top repeat;
+    background-size:1%;
+    margin-top:2%;
+    padding-top:2.5%;
+}
+footer .unit-footer-bg{
+    border-right: 55px solid transparent;
+    border-top:195px solid #dde5ed;
+    width:85%;
+    padding:0;
+}
+footer .unit-footer{
+    margin-top:-175px;
+    font-size:.9em;
+}
+footer address, footer address a{
+    color: #666;
+}
+footer .ku-footer{
+    background: #003459;
+    min-height:90px;
+    padding: 20px 0 10px 0;
+    font-size:.95em;
+}
+footer .ku-footer, footer .ku-footer li a{
+    color:#ffffff;
+}
+footer div.footer-links ul{
+    margin: 1% 0 0 0;
+    padding: 0;
+    font-size:.9em;
+}
+footer .disclaimer{
+    font-size:.6em;
+    padding-top:10px;
+}
+footer .disclaimer, footer .disclaimer a{
+    margin-top:1%;
+    color:#85898a;
+}

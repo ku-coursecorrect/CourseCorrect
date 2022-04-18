@@ -1,0 +1,315 @@
+body {
+  background-color: #0051ab
+}
+
+main {
+  min-height: 341px
+}
+
+footer {
+  margin-top: 0;
+  padding-top: 0
+}
+
+a {
+  color: #0051ba
+}
+
+ul.kusupport {
+  list-style: none;
+  line-height: 1.1;
+  padding-left: 15px;
+  margin: 0 10% 0 0
+}
+
+ul.kusupport-first {
+  padding-left: 0
+}
+
+ul.kusupport li {
+  padding-bottom: 7px
+}
+
+ul.kusupport li small {
+  color: #808080;
+  line-height: 28px;
+  white-space: nowrap;
+  display: block
+}
+
+.webui-popover .webui-popover-content {
+  font-size: .85em;
+  color: #666666;
+  max-width: 271px
+}
+
+#ku-backdrop {
+  background: #003459 url("ku-background.jpg");
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: auto;
+  height: auto
+}
+
+#notices>div {
+  margin-bottom: .75rem
+}
+
+#list-providers ul {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+  margin-bottom: 0
+}
+
+#list-providers ul li {
+  margin-bottom: 11px
+}
+
+#list-providers ul li:last-child {
+  margin-bottom: 0
+}
+
+#duo_iframe {
+  min-width: 100%;
+  min-height: 329px;
+  border: none
+}
+
+#updates-banner {
+  background: transparent;
+  border: none
+}
+
+#notices p.card-text {
+  font-size: .8em
+}
+
+.btn-cas[title="KUMC Login"] {
+  background-image: url("kumc.svg");
+  background-position: left;
+  background-size: contain;
+  background-repeat: no-repeat;
+  border: 0;
+  text-indent: 59px
+}
+
+.btn-cas:hover {
+  opacity: .5;
+}
+
+/*xs*/
+
+#banner-img {
+display:none
+}
+
+#fm1 h3 {
+  font-size: 1rem
+}
+
+.brandbar {
+  height: 73px
+}
+
+.brandbar .logo-img img {
+  width: 83px;
+  height: auto
+}
+
+.site-name-slogan h1 {
+  padding-top: 21px;
+  font-size: 1.5rem
+}
+
+.sidebar-content p, .ku-what a {
+  font-size: .6rem;
+  margin: 0
+}
+
+aside.brandbar div.container, aside.brandbar div.container div.row {
+  padding-right: 0
+}
+
+.pwd-links {
+  margin-top: 5px;
+  font-size: .8rem
+}
+
+.pwd-links p {
+  margin-bottom: .5rem;
+  text-align: center
+}
+
+.card-title {
+  font-size: 1rem
+}
+
+.card-body {
+  padding: .75rem
+}
+
+label {
+  margin-bottom: 0;
+}
+.navbar.ku-eyebrow{display:none}
+
+/* sm */
+
+@media (min-width: 576px) {
+  main.pt-sm-5 {
+    padding-top: 1rem!important;
+  }
+  .pwd-links p {
+    margin-bottom: 1rem
+  }
+  .btn-cas[title="KUMC Login"] {
+    background-image: none;
+    text-indent: 0;
+  }
+  .navbar.ku-eyebrow{display:block}
+}
+
+/* md */
+
+@media (min-width: 768px) {
+  #banner-img {
+    display:inline;
+    width: 208px
+  }
+  #fm1 h3 {
+    font-size: 1.5rem
+  }
+  .pwd-links {
+    margin-top: 10px;
+    font-size: 1rem
+  }
+  .brandbar {
+    height: 97px
+  }
+  .brandbar .logo-img img {
+    width: 108px;
+    height: auto
+  }
+  .site-name-slogan h1 {
+    padding-top: 22px;
+    font-size: 2.5rem
+  }
+  .sidebar-content p, .ku-what a {
+    font-size: .8em
+  }
+  .card-body {
+    padding: 1.25rem
+  }
+  #list-providers div.card-body {
+    padding-top: 1rem
+  }
+  .card-title {
+    font-size: 1rem
+  }
+}
+
+/* lg */
+
+@media (min-width: 992px) {
+  main.pt-sm-5 {
+    padding-top: 2rem!important;
+  }
+  #banner-img {
+    display:inline;
+    width: 288px
+  }
+  .btn-cas[title="KUMC Login"] {
+    background-image: url("kumc.svg");
+    text-indent: 59px;
+  }
+  label {
+    margin-bottom: .5em;
+  }
+}
+
+/* xl */
+
+@media (min-width: 1200px) {
+  #banner-img {
+    display:inline;
+    width: 349px
+  }
+  main.pt-sm-5 {
+    padding-top: 3rem!important;
+  }
+  .btn-cas[title="KUMC Login"] {
+    text-indent: 69px;
+  }
+}
+
+/* begin campus alert */
+
+#campusalert {
+  font-family: "Raleway", sans-serif;
+  margin: 0;
+  background-color: #E8000D;
+  clear: both;
+  padding: 0;
+  width: 100%
+}
+
+#campusalert .text {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 10px;
+  padding-right: 10px
+}
+
+@media print, screen and(min-width:40em) {
+  #campusalert .text {
+    padding-left: 0.80645%;
+    padding-right: 0.80645%
+  }
+}
+
+@media screen and(min-width:76.25em) {
+  #campusalert .text {
+    padding-left: 10px;
+    padding-right: 10px;
+    max-width: 1240px
+  }
+}
+
+#campusalert .text .link {
+  font-size: 16px;
+  line-height: 16px;
+  font-weight: 600;
+  padding: 20px 0
+}
+
+@media print, screen and(min-width:40em) {
+  #campusalert .text .link {
+    font-size: 20px;
+    line-height: 22px
+  }
+}
+
+#campusalert .text a {
+  color: #ffffff;
+  margin: 0;
+  text-decoration: none
+}
+
+#campusalert .text a:hover {
+  color: #ffffff;
+  text-decoration: underline
+}
+
+#campusalert .text a .i.fa.fa-long-arrow-right {
+  vertical-align: middle;
+  padding-left: 5px
+}
+
+#campusalert.Advisory {
+  background-color: #f20017
+}
+
+#campusalert.Weather {
+  background-color: #f20017
+}
