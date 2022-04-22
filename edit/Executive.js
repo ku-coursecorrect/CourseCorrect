@@ -38,28 +38,30 @@ class Executive {
 
 		// The rest of this sets up event listeners for user interactions
 
-		// Setup plan saving if logged in
+		// Setup plan save button if logged in
 		if (this.plan.plan_id) {
-			// Clicking save button
-			document.getElementById("save-button").addEventListener("click", () => this.save());
+			document.getElementById("save-button").addEventListener("click", () => {
+				let data = new FormData();
+				data.append("plan_id", this.plan.plan_id);
+				data.append("plan_title", document.getElementById("plan_title").value);
+				data.append("plan_status", this.plan_status);
+				data.append("json", this.plan.save_json());
 
-			// Ctrl+S
-			document.addEventListener("keydown", e => {
-				if (e.ctrlKey && e.key === "s") {
-					e.preventDefault();
-					if (!this.isSaved()) this.save();
-				}
+				fetch("save.php", {"method": "POST", "body": data}).then(response => {
+					if (response.ok) {
+						console.log(response);
+						this.displayAlert("success", "Plan saved", 5000);
+						this.markSaved();
+					}
+					else {
+						console.error(response);
+						this.displayAlert("danger", "Error saving plan", 5000);
+					}
+					response.text().then(text => console.log(text));
+				});
 			});
 
-			// Pressing enter in the plan title box
-			document.getElementById("plan_title").addEventListener("keyup", e => {
-				if (e.key === "Enter") {
-					e.preventDefault();
-					if (!this.isSaved()) this.save();
-				}
-			})
-
-			// Unsaved plan warning when closing tab
+			// Unsaved plan warning
 			window.addEventListener("beforeunload", e => {
 				if (!this.isSaved()) {
 					var msg = "Warning: Your plan has unsaved changes. Continue?";
@@ -171,27 +173,6 @@ class Executive {
 	}
 	isSaved() {
 		return document.getElementById('save-button').disabled;
-	}
-
-	save() {
-		let data = new FormData();
-		data.append("plan_id", this.plan.plan_id);
-		data.append("plan_title", document.getElementById("plan_title").value);
-		data.append("plan_status", this.plan_status);
-		data.append("json", this.plan.save_json());
-
-		fetch("save.php", {"method": "POST", "body": data}).then(response => {
-			if (response.ok) {
-				console.log(response);
-				this.displayAlert("success", "Plan saved", 5000);
-				this.markSaved();
-			}
-			else {
-				console.error(response);
-				this.displayAlert("danger", "Error saving plan", 5000);
-			}
-			response.text().then(text => console.log(text));
-		});
 	}
 
 	alertCount = 0;

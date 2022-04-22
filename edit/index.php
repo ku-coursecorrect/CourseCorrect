@@ -71,7 +71,6 @@
 	<script type="text/javascript" src="Plan.js"></script>
 	<script type="text/javascript" src="Semester.js"></script>
 	<script type="text/javascript" src="Course.js"></script>
-	<script src="../libs/readmore.min.js"></script>
 	<script>
 		window.addEventListener('DOMContentLoaded', e => {
 			window.executive = new Executive(<?=json_encode($courses)?>, <?=json_encode($plan)?>);
@@ -101,10 +100,6 @@
 						Guest mode (not logged in)
 					<?php endif; ?>
 				</div>
-
-				<button class="help-button align-top no-print">Help</button>
-
-				<img src="../images/ku_jayhawk_2.jpg" class="profile_picture align-top no-print">
 			</div>
 		</div>
 	</header>
@@ -132,7 +127,6 @@
 				<button id="save-button" type="button" class="btn btn-light btn-sm" disabled><i class="fa fa-save"></i> Save</button>
 			</span>
 			<button onclick="window.print()" type="button" class="btn btn-light btn-sm"><i class="fa fa-print"></i> Print</button>
-			<button type="button" class="btn btn-light btn-sm" data-toggle="modal" data-target="#help"><i class="fa fa-question"></i> Help</button>
 		</span>
 	</nav>
 
@@ -156,48 +150,47 @@
 		</div>
 	</div>
 
-	<!--Content-->
-	<div class="container">
-		<div class="alert alert-success mt-4" id="plan-exported" style="display:none">
-			<button type="button" class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-			Plan data copied to clipboard. You can share this with others or reimport it later.
+	<!-- Notifications (e.g. requisites, ULE) -->
+	<div id="notifications-container" class="container">
+		<div class="row">
+			<div id="notifications" class="col-12 no-print"></div>
 		</div>
-
-		<div id="redips-drag" class="row">
-			<div class="col-lg-4 no-print">
-				<div class="my-4">
-					<h3>Course Bank</h3>
-					<table id="course-bank" class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border" style="min-width: 250px; min-height: 100px;">
-						<tr><td></td></tr>
-					</table>
+	</div>
+	
+	<!-- Main content (course bank, semester grid) -->
+	<div id="redips-drag" class="d-flex flex-row">
+		<div class="ml-auto px-4 no-print" style="flex: 0 0 340px">
+			<div class="my-3 mr-3 card">
+				<div class="card-body p-2">
+					<h5 class="card-title" id="course-title">Course Info</h5>
+					<h6 class="card-subtitle mb-2 text-muted" id="course-subtitle"></h6>
+					<div class="card-text" id="course-description">Click on a course to display information and options here.</div>
+					<input type="button" id="course-delete" class="btn btn-danger mt-2" value="Delete" style="display:none">
 				</div>
-
-				<div class="mb-4">
-					<h3>Transfer Credits</h3>
-					<table id="transfer-bank" class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border" style="min-width: 250px; min-height: 60px;">
-						<tr><td></td></tr>
-					</table>
-				</div>
-
-				<div class="mb-4" id="add_extra_course_box" style="display:none">
-					<h3>Add Extra Course</h3>
-					<table>
-						<tr>
-							<td class="text-nowrap pr-2">Course Code:</td>
-							<td><input type="text" class="form-control" id="course_code"></td>
-						</tr>
-						<tr>
-							<td class="text-nowrap pr-2">Credit Hours:</td>
-							<td>
-								<div class="input-group">
-									<input type="number" class="form-control" id="credit_hours" name="credit_hours" min="0">
-									<div class="input-group-append">
-										<button type="submit" class="btn btn-primary" id="course_add_submit">Add</button>
-									</div>
-								</div>
-							</td>
-						</tr>
-					</table>
+			</div>
+			<div class="mb-3">
+				<h3>Course Bank</h3>
+				<table id="course-bank" class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border" style="min-width: 250px; min-height: 100px;">
+					<tr><td></td></tr>
+				</table>
+			</div>
+			
+			<div class="mb-3">
+				<h3>Transfer Credits</h3>
+				<table id="transfer-bank" class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light border" style="min-width: 250px; min-height: 60px;">
+					<tr><td></td></tr>
+				</table>
+			</div>
+			
+			<div class="mb-3 mr-4" id="add_extra_course_box">
+				<h3>Add Extra Course</h3>
+				<div class="form-group row">
+					<div class="col text-nowrap" style="flex: 0 0 130px">
+						<label for="course_code" class="col-form-label">Course Code:</label>
+					</div>
+					<div class="col">
+						<input type="text" class="form-control" name="course_code" id="course_code">
+					</div>
 				</div>
 				<div class="form-group row">
 					<div class="col text-nowrap" style="flex: 0 0 130px">
@@ -212,73 +205,19 @@
 				</div>
 			</div>
 
-			<div class="col-lg-8 mt-4">
-				<div class="d-flex">
-					<div id="schedule-container" class="bg-light"> <!--Schedule-->
-						<div id="arrows"></div><!--Will contain the SVG with the arrows-->
-						<table id="course-grid" class="border"></table><!--Will contain the drag-and-droppable courses-->
-						<div id="welcome" class="border p-3">
-							<h1>Welcome!</h1>
-							<h4>Select your major and first semester at KU semester to begin.</h4>
-							<div class="input-group">
-								<select id="majorSelect" class="form-control"></select>
-								<select id="startSemesterSelect" class="form-control"></select>
-								<div class="input-group-append">
-									<button type="button" class="btn btn-primary" id="done">Start Planning</button>
-								</div>
-							</div>
-							<div style="display: none !important"><!--TODO TMP-->
-							<hr class="my-4">
-							<h5>Or load a plan saved in your browser:</h5>
-							<div class="input-group mb-2">
-								<select id="planSelect" class="form-control">
-									<option disabled selected value="-1">Choose a plan...</option>
-								</select>
-								<div class="input-group-append">
-									<button type="button" class="btn btn-primary" id="load-plan">Load Plan</button>
-									<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete-plan">Delete Plan</button>
-								</div>
-							</div>
-							<h5>Or import a previously exported plan:</h5>
-							<div class="input-group">
-								<textarea class="form-control" id="plan-to-import" placeholder='{"version":1,"timestamp":1604269786608,"major":"Computer Science","course_bank":["EECS 101","EECS 140"],"transfer_bank":[],"semesters":[{"semester_year":2020,"semester_season":2,"semester_courses":["EECS 168"]}]}'></textarea>
-								<div class="input-group-append">
-									<button type="button" class="btn btn-primary" id="import-plan">Import</button>
-								</div>
-							</div>
-							</div><!--TODO TMP-->
-						</div>
-					</div>
-				</div>
-
-				<div class="modal fade" id="confirm-delete-plan">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">Delete Plan</div>
-							<div class="modal-body">Are you sure you wish to delete the selected plan?</div>
-							<div class="modal-footer">
-								<input type="button" class="btn btn-secondary" data-dismiss="modal" value="Cancel">
-								<input type="button" class="btn btn-danger" id="delete-plan" data-dismiss="modal" value="Delete">
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="row mt-2 no-print" id="add-semester" style="display:none">
-					<div class="col-sm-6 offset-sm-3 border p-3 bg-light">
-						<div class="input-group">
-							<select id="addSemesterSelect" class="form-control">
-								<option disabled selected value="-1">Choose a semester...</option>
-							</select>
-							<div class="input-group-append">
-								<button type="button" class="btn btn-primary" id="add-semester-btn">Add semester</button>
-							</div>
-						</div>
+			<div class="mb-3 mr-4 no-print">
+				<h3>Add Semester</h3>
+				<div class="input-group">
+					<select id="addSemesterSelect" class="form-control">
+						<option disabled selected value="-1">Choose a semester...</option>
+					</select>
+					<div class="input-group-append">
+						<button type="button" class="btn btn-primary" id="add-semester-btn">Add</button>
 					</div>
 				</div>
 			</div>
 		</div>
-
+	
 		<!-- Semester grid -->
 		<div id="schedule-container-container" class="mr-auto mt-3">
 			<div class="d-flex">
@@ -308,24 +247,7 @@
 			</div>
 		</div>
 	</div>
-
+	
 	<?php display_footer() ?>
-
-	<div class="modal fade" id="help" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="helpModalLabel">Help</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body" style="white-space: pre-wrap"><?=$db->query("SELECT text FROM help_text WHERE id='PlanEditHelp'")[0]["text"]?></div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
 </body>
 </html>

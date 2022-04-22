@@ -1,11 +1,9 @@
-let rmjs = null;
-
 // Possible values for upper level eligibility requirements
 const ULE = {
 	// Courses that you can take whenever you want and have nothing to do with ULE, e.g. MATH 526
 	Unaffected: 0,
 
-	// Courses that you are required to take to earn ULE, e.g. EECS 168, MATH 125
+	// Coureses that you are required to take to earn ULE, e.g. EECS 168, MATH 125
 	Requirement: 1,
 
 	// Courses that can be taken in the same semester the last required courses are being completed, e.g. EECS 368
@@ -83,6 +81,7 @@ function displayCourse(course_element) {
 	// TODO: This is not a good way of getting the courses list
 	const COURSES = window.executive.courses;
 	let course = course_id_to_object(COURSES, course_element.dataset.course);
+	console.log(course);
 
 	let custom = course.course_id.startsWith("custom");
 	let seasons = custom ? "" : (", " + course.seasons_offered().map(s => SEASON_NAMES[s]).join(" / "));
@@ -91,21 +90,12 @@ function displayCourse(course_element) {
 
 	document.getElementById("course-title").innerText = course.course_code /*+ (custom ? "" : "\n" + course.title)*/;
 	document.getElementById("course-subtitle").innerText = course.credit_hour + " credit hour" + (course.credit_hour == 1 ? "" : "s") + seasons;
-	document.getElementById("course-description").innerHTML = course.title + (custom ? "" : ("<br>Prereqs: " + prereqs + "<br>Coreqs: " + coreqs));
-	document.getElementById("desc-block").innerHTML = "<br>" + course.description;
+	//document.getElementById("course-description").innerText = course.description; // Description is way too long
+	document.getElementById("course-description").innerText = course.title + (custom ? "" : ("\nPrereqs: " + prereqs + "\nCoreqs: " + coreqs));
 	document.getElementById("course-delete").style.display = custom ? "" : "none";
 	if (custom) {
 		document.getElementById("course-delete").dataset.course = course.course_id;
 	}
-	// Recreate the readmore button so that the box size corresponds to the new height
-	if (rmjs !== null) {
-		rmjs.destroy();
-	}
-	rmjs = new Readmore('#desc-block', {
-		"collapsedHeight": 0,
-		"moreLink": '<a href="#">More</a>',
-		"lessLink": '<a href="#">Close</a>',
-	});
 }
 
 // TODO: This should be a method of major which should contain course list
