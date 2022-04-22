@@ -59,7 +59,10 @@
 					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Sumbit Degree</button>
 		        </form>
 				<script>
-					var listbox = $('select[name="course_list_box[]"]').bootstrapDualListbox();
+					var listbox = $('select[name="course_list_box[]"]').bootstrapDualListbox({
+						nonSelectedListLabel: "Unselected Courses",
+						selectedListLabel: "Selected Courses"
+					});
 				</script>
 			</div>
 		</div>

@@ -41,23 +41,26 @@
         $course_code_query = "SELECT DISTINCT course.course_id, course.course_code, course.title, course.hours FROM course, (SELECT course_id FROM degree_join_course WHERE degree_id = " . $degree_id . ") AS K WHERE course.course_id != K.course_id;";
         $course_code = $db->query($course_code_query,[]);
 
-        //unselected courses
-        foreach($course_code as $row){
-            echo "<option value ='" . $row["course_id"] . "' " ."data-hours ='" . $row["hours"] . "'";
-            echo ">";
-            echo $row["course_code"] .": ". $row["title"];
-            echo "</option>";
+        if(empty($degree_code)){
+            print_course();
         }
-
-        //selected courses
-        foreach($degree_code as $row){
-            echo "<option value ='" . $row["course_id"] . "' " ."data-hours ='" . $row["hours"] . "'";
-            echo " selected = 'selected'";
-            echo ">";
-            echo $row["course_code"] .": ". $row["title"];
-            echo "</option>";
+        else{
+            //unselected courses
+            foreach($course_code as $row){
+                echo "<option value ='" . $row["course_id"] . "' " ."data-hours ='" . $row["hours"] . "'";
+                echo ">";
+                echo $row["course_code"] .": ". $row["title"];
+                echo "</option>";
+            }
+            //selected courses
+            foreach($degree_code as $row){
+                echo "<option value ='" . $row["course_id"] . "' " ."data-hours ='" . $row["hours"] . "'";
+                echo " selected = 'selected'";
+                echo ">";
+                echo $row["course_code"] .": ". $row["title"];
+                echo "</option>";
+            }
         }
-
     }
 
     function print_arr($arr){
@@ -69,8 +72,6 @@
     }
 
     function send_course($f_name, $f_year, $f_courses){
-        #INSERT INTO `coursecorrect`.`degree` (`major`, `year`) VALUES ('Computer Science', 2021);
-        #INSERT INTO `coursecorrect`.`degree_join_course` (`course_id`, `degree_id`) VALUES ('69', '4');
         global $db;
 
         $table_query = "INSERT INTO `coursecorrect`.`degree` (`major`, `year`) VALUES ('" . $f_name . "', " . $f_year . ");";
@@ -83,8 +84,19 @@
             $course_query = "INSERT INTO `coursecorrect`.`degree_join_course` (`course_id`, `degree_id`) VALUES (" . $course_id . ", " . $degree_id . ");";
             $db->query($course_query);
         }
-        // var_dump($f_courses);
     }
+
+    function update_course($f_id, $f_courses){
+        global $db;
+
+        foreach($f_courses as $row){
+            $course_id = $row;
+
+            $course_query = "INSERT INTO `coursecorrect`.`degree_join_course` (`course_id`, `degree_id`) VALUES (" . $course_id . ", " . $f_id . ");";
+            $db->query($course_query);
+        }
+    }
+
 
     function translate_id_to_code($f_courses){
         global $db;
@@ -96,6 +108,21 @@
             $code = $code_row['course_code'];
             echo "<li class='list-group-item'>" . $code . "</li>";
         }
+    }
 
+    function get_major_and_year($f_id){
+        global $db;
+        // SELECT major, year
+        // FROM degree
+        // WHERE degree_id = 1;
+        $db_query = "SELECT major, year FROM degree WHERE degree_id =" . $f_id . ";";
+        return $db->query($db_query);
+    }
+
+    function wipe_degree_course($degree_id){
+        global $db;
+
+        $db_query = "DELETE FROM degree_join_course WHERE degree_id = " . $degree_id . ";";
+        $db->query($db_query);
     }
 ?>

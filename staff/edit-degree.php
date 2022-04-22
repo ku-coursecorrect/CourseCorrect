@@ -40,20 +40,27 @@
 		<?php
 			display_navbar();
 			$degree_id = $_POST['degree_id'];
+			//get data
+			include_once "degree-func.php";
+			$m_y = get_major_and_year($degree_id);
+			$row_my = $m_y[0];
+			$major = $row_my["major"];
+			$year = $row_my["year"];
 		?>
 
 		<div class="container">
 			<div class="row">
-
-				<form id="demoform" action="save-degree.php" method="post" >
+				<form id="demoform" action="save-edit-degree.php" method="post" >
 		            <div class= "form-group">
-						<select multiple id="example" name="course_list_box[]" size = 20>
+						<select multiple id="list" name="course_list_box[]" size = 20>
 						<?php
-						 	include_once "degree-func.php";
 							print_edit_course($degree_id);
 						?>
 						</select>
 		            </div>
+					<input type= "hidden" id="hidden_name" name="name" value="<?php echo $major; ?>" >
+					<input type= "hidden" id="hidden_year" name="year" value="<?php echo $year; ?>" >
+					<input type= "hidden" id="hidden_id" name="id" value="<?php echo $degree_id; ?>" >
 					<br>
 					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Sumbit Degree</button>
 		        </form>
