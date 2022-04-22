@@ -34,14 +34,26 @@
 							<th>Degree</th><th>Year</th><th>Created</th><th>Modified</th><th></th>
 						</tr>
 					</thead>
-					<!-- -->
 
 					<tbody>
 						<?php
 						 	include_once "degree-func.php";
 							print_degree();
 						?>
+						<script>
+							function degree_edit(degree_id){
+								var url = 'edit-degree.php';
+								var form = $('<form action="' + url + '" method="post">' +
+								  '<input type="text" name="degree_id" value="' + degree_id + '" />' +
+								  '</form>');
+								$('body').append(form);
+								form.submit();
+							}
 
+							function degree_trash(degree_id){
+								alert(degree_id);
+							}
+						</script>
 					</tbody>
 				</table>
 			</div>

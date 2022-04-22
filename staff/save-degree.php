@@ -72,9 +72,8 @@
                     <ul class = "list-group">
                         <?php
                             //check the courses in the db and see if we can get the name
-                            foreach($course_arr as $row){
-                                echo "<li class='list-group-item'>" . $row . "</li>";
-                            }
+                            
+							translate_id_to_code($course_arr);
                         ?>
                     </ul>
                 </div>
