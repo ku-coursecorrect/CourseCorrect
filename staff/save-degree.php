@@ -46,7 +46,7 @@
 
 	<body>
 		<?php
-			display_navbar();
+			display_navbar(true);
             $course_arr = $_POST['course_list_box'];
             $degree_name = $_POST['name'];
             $degree_year = $_POST['year'];
@@ -72,7 +72,7 @@
                     <ul class = "list-group">
                         <?php
                             //check the courses in the db and see if we can get the name
-                            
+
 							translate_id_to_code($course_arr);
                         ?>
                     </ul>

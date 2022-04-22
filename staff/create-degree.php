@@ -38,7 +38,7 @@
 
 	<body>
 		<?php
-			display_navbar();
+			display_navbar(true);
 		?>
 
 		<div class="container">

@@ -46,12 +46,14 @@
 
     <body>
         <?php
-			display_navbar();
+			display_navbar(true);
             $course_arr = $_POST['course_list_box'];
             $degree_name = $_POST['name'];
             $degree_year = $_POST['year'];
             $degree_id = $_POST['id'];
 			include_once "degree-func.php";
+			change_major($degree_name, $degree_id);
+			change_year($degree_year, $degree_id);
             wipe_degree_course($degree_id);
 			update_course($degree_id, $course_arr);
 		?>

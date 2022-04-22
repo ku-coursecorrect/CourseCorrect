@@ -33,12 +33,20 @@
 			margin: 4px 2px;
 			cursor: pointer;
 		}
+		.text-center {
+            background-color:   rgb(0, 81, 186);
+            color: white;
+            padding: 15px 32 px;
+            text-align: center;
+            font-size: 16px;
+            margin: 4px 2px;
+        }
 		</style>
 	</head>
 
 	<body>
 		<?php
-			display_navbar();
+			display_navbar(true);
 			$degree_id = $_POST['degree_id'];
 			//get data
 			include_once "degree-func.php";
@@ -51,6 +59,16 @@
 		<div class="container">
 			<div class="row">
 				<form id="demoform" action="save-edit-degree.php" method="post" >
+					<div class="text-center">
+                        <?php
+                            echo "Old Degree Name: " . $major;
+                            echo "<br>";
+                            echo "Old Degree Year: " . $year;
+                            echo "<br>";
+                        ?>
+                    </div>
+					<input type="text" id="hidden_name" name="name" class= "form-control col-lg-8" value="<?= $major;?>" />
+					<input type="text" id="hidden_year" name="year" class= "form-control col-lg-8" value="<?= $year;?>" />
 		            <div class= "form-group">
 						<select multiple id="list" name="course_list_box[]" size = 20>
 						<?php
@@ -58,9 +76,7 @@
 						?>
 						</select>
 		            </div>
-					<input type= "hidden" id="hidden_name" name="name" value="<?php echo $major; ?>" >
-					<input type= "hidden" id="hidden_year" name="year" value="<?php echo $year; ?>" >
-					<input type= "hidden" id="hidden_id" name="id" value="<?php echo $degree_id; ?>" >
+					<input type= "hidden" id="hidden_id" name="id" value="<?=$degree_id;?>" >
 					<br>
 					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Sumbit Degree</button>
 		        </form>
