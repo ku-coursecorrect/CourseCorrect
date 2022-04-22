@@ -18,13 +18,14 @@ window.addEventListener('load', function() {
 });
 
 // Add autocomplete functionality to a requisite input box
-function updateReqAutoComplete(req_num, course_code) {
-    let req_id = "reqCode-" + req_num;
+function updateReqAutoComplete(req_num, course_id) {
+    let req_code = "reqCode-" + req_num;
+    let req_id = "reqId-" + req_num;
     let autoCompleteJS = new autoComplete({
-        selector: "#" + req_id, 
+        selector: "#" + req_code, 
         placeHolder: "EECS 101",
         data: {
-                src: courses.filter(course => course["course_code"] !== course_code),
+                src: courses.filter(course => course["course_id"] != course_id),
                 keys: ["course_code", "title"]
             },
         resultsList: {
@@ -36,26 +37,33 @@ function updateReqAutoComplete(req_num, course_code) {
                     info.innerHTML = `Found <strong>${data.matches.length}</strong> matching results for <strong>"${data.query}"</strong>`;
                 }
                 list.prepend(info);
+                list.classList.add("list-group");
+                list.style="overflow-y: auto; overflow-x: hidden; height: 150px; width: fit-content";
             },
             noResults: true,
-            maxResults: 15,
-            tabSelect: true
+            maxResults: 100000,
+            tabSelect: true,
+            destination: "#autoComplete-" + req_num
+            
         },
         resultItem: {
             element: (item, data) => {
-                item.style = "display: flex; justify-content: space-between;";
                 item.innerHTML = `
-                <span style="white-space: nowrap; overflow: hidden;">
+                <span class="callout" data-toggle=tooltip data-placement=auto title='Course ID'>${data.value.course_id}</span>
+                <span style="white-space: nowrap; width: 12em;">
                 ${data.value.course_code}
                 </span>
-                <span style="white-space: nowrap; width:50%; overflow: hidden; text-overflow: ellipsis; align-items: left; font-size: 13px; font-weight: 100; text-transform: uppercase;">
+                <span style="display: inline-block; margin-left: 20px;" ></span>
+                <span style="white-space: nowrap; font-size: 13px; font-weight: 100; text-transform: uppercase;">
                 ${data.value.title}
                 </span>`;
+                item.classList.add("list-group-item")
             }
         },
         events: {
             input: {
                 focus: () => {
+                    document.getElementById("autoComplete-" + req_num).parentElement.parentElement.style.display="";
                     if (autoCompleteJS.input.value.length) autoCompleteJS.start();
                 }
             }
@@ -64,12 +72,44 @@ function updateReqAutoComplete(req_num, course_code) {
     autoCompleteJS.input.addEventListener("selection", function (event) {
         const feedback = event.detail;
         autoCompleteJS.input.blur();
-        const selection = feedback.selection.value['course_code'];
-        document.querySelector("#" + req_id).innerHTML = selection;
-        autoCompleteJS.input.value = selection;
+        const selection_id = feedback.selection.value['course_id'];
+        const selection_code = feedback.selection.value['course_code'];
+        document.querySelector("#" + req_id).value = selection_id;
+        document.querySelector("#" + req_code).value = selection_code;
+        autoCompleteJS.input.value = selection_code;
     });
-    document.getElementById(req_id).addEventListener('change', function() {
-        document.getElementById(req_id).style.border = "";
+    autoCompleteJS.input.addEventListener("blur", function (event) {
+        document.getElementById("autoComplete-" + req_num).parentElement.parentElement.style.display="none";
+        const id_inp = event.target.parentElement.parentElement.children[0].children[0];
+        const selection_id = id_inp.value;
+        const selection_code = event.target.value.toUpperCase();
+        if (course_codes.indexOf(selection_code) !== -1) {
+            id_inp.value = "";
+            for (course of courses) {
+                if (course["course_code"] == selection_code) {
+                    id_inp.value = course["course_id"];
+                    id_inp.innerText = course["course_id"];
+                    break;
+                }
+            }
+        } else if (selection_id != "") {
+            event.target.value = "";
+            for (course of courses) {
+                if (course["course_id"] == selection_id) {
+                    event.target.value = course["course_code"];
+                    event.target.innerText = course["course_code"];
+                    break;
+                }
+            }
+        } else {
+            id_inp.value = "";
+            event.target.value = "";
+            id_inp.innerText = "";
+            event.target.innerText = "";
+        }
+    });
+    document.getElementById(req_code).addEventListener('change', function() {
+        document.getElementById(req_code).style.border = "";
     });
 }
 
@@ -142,19 +182,6 @@ function filterTable() {
     }
 }
 
-function toggleCredits(btn) {
-    timeout = setTimeout(function(btn) {
-        if (btn.ariaPressed === 'true') { // Apparently this isn't set immediately. Timeout works
-            document.getElementById("credits_max_separator").style.display = ""; 
-            document.getElementById("max_hours").style.display = ""; 
-        } else {
-            document.getElementById("credits_max_separator").style.display = "none"; 
-            document.getElementById("max_hours").style.display = "none"; 
-        }
-        btn.value = btn.ariaPressed;
-    }, 1, btn);
-}
-
 function dropdownSelect(selection) {
     timeout = setTimeout(function(selection) {
         let drop = selection.parentNode.previousElementSibling;
@@ -172,7 +199,7 @@ function dropdownSelect(selection) {
 }
 
 function addReq() {
-    let course_code = document.getElementById("course_code").value;
+    let course_id = document.getElementById("course_id").value;
     let table = document.getElementById("reqs-table");
     table.insertRow();
 
@@ -181,7 +208,7 @@ function addReq() {
         response => response.text()
     ).then(function(text) {
         table.rows[table.rows.length -1].outerHTML = text;
-        updateReqAutoComplete(current_req, course_code);
+        updateReqAutoComplete(current_req, course_id);
     });
     nextReq++;
 }
@@ -194,18 +221,18 @@ function removeReq(btn) {
 function populateModal(btn) {
     nextReq = 0;
 
-    let course_code = "";
+    let course_id = "";
     
     if (btn.innerText.trim() === "Add new course") {
-        course_code = "New";
+        course_id = "New";
     } else {
         let course_row = btn.parentNode.parentNode;
-        course_code = course_row.children[0].innerText;
+        course_id = course_row.children[0].children[0].innerText;
     }
 
     $('[data-toggle="tooltip"]').tooltip({selector: '[title]'});
 
-    fetch("edit-course.php?course_code="+course_code).then(
+    fetch("edit-course.php?course_id="+course_id).then(
         response => response.text()
     ).then(
         function(text) {
@@ -222,7 +249,7 @@ function populateModal(btn) {
             }
             for (let i = 0; i <= req_id; i++) {
                 // Update all reqs with autocomplete functionality
-                updateReqAutoComplete(i, course_code);
+                updateReqAutoComplete(i, course_id);
             }
             nextReq = req_id + 1;
             // Handle submit button manually to prevent enter from pressing default button
@@ -285,20 +312,20 @@ function updateReqsPost() {
     let reqs_to_post = [];
 
     let reqs = document.getElementsByClassName('req');
-    let course_code = document.getElementById("course_code").value;
+    let course_id = document.getElementById("course_id").value;
 
     for (let req of reqs) {
         reqs_to_post.push({});
         let req_ind = reqs_to_post.length-1;
-        let req_course_code_inp = req.children[0].children[0].children[0].children[0];
-        let req_course_code = req_course_code_inp.value;
+        let req_course_code_inp = req.children[0].children[0].children[0].children[1].children[0];
+        let req_course_id = req.children[0].children[0].children[0].children[0].children[0].value;
 
-        if (!course_codes.includes(req_course_code) || req_course_code === course_code ) {
+        if (req_course_id === course_id || req_course_id === "") {
             req_course_code_inp.style.border = "solid red";
             return false;
         }
 
-        reqs_to_post[req_ind]["course_code"] = req_course_code;
+        reqs_to_post[req_ind]["course_id"] = req_course_id;
         reqs_to_post[req_ind]["co_req"] = req.children[1].children[0].value === 'co_req';
         
         let start_season = req.children[2].children[0].children[0].value;
@@ -317,10 +344,11 @@ function updateReqsPost() {
 }
 
 function deleteModal(btn) {
-    let course_code = btn.parentElement.parentElement.children[0].innerText;
+    let course_id = btn.parentElement.parentElement.children[0].children[0].innerText;
+    let course_code = btn.parentElement.parentElement.children[0].children[1].innerText;
     let subtitle = document.getElementById("delete-subtitle");
-    subtitle.innerText = course_code;
-    fetch("get-dependents.php?course_code=" + course_code).then(json => json.json()).then(
+    subtitle.innerHTML = course_code + "<span class='callout' style='margin-left: 5px' data-toggle=tooltip data-placement=auto title='Course ID'>" + course_id + "</span>";
+    fetch("get-dependents.php?course_id=" + course_id).then(json => json.json()).then(
         function (dependents) {
             let dependents_text = document.getElementById("dependents");
             if (dependents.length > 0) {
@@ -335,6 +363,6 @@ function deleteModal(btn) {
 }
 
 function deleteCourse(btn) {
-    let course_code = btn.parentElement.parentElement.children[0].children[0].children[0].innerText;
-    fetch("delete-course.php?course_code="+course_code).then(response => response.text()).then(text => location.reload());
+    let course_id = btn.parentElement.parentElement.children[0].children[0].children[0].children[0].innerText;
+    fetch("delete-course.php?course_id="+course_id).then(response => response.text()).then(text => location.reload());
 }
