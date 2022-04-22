@@ -83,15 +83,26 @@ function updateReqAutoComplete(req_num, course_id) {
         const id_inp = event.target.parentElement.parentElement.children[0].children[0];
         const selection_id = id_inp.value;
         const selection_code = event.target.value.toUpperCase();
+
+        // When closed preventively...
+        // Check if course code exists and update course_id
         if (course_codes.indexOf(selection_code) !== -1) {
             id_inp.value = "";
+            match = null;
             for (course of courses) {
                 if (course["course_code"] == selection_code) {
-                    id_inp.value = course["course_id"];
-                    id_inp.innerText = course["course_id"];
-                    break;
+                    match = course;
+                    // Keep searching in case there's another course with the same code that matches the current course_id
+                    if (course["course_id"] == selection_id) {
+                        break;
+                    }
                 }
             }
+            if (match !== null) {
+                id_inp.value = match["course_id"];
+                id_inp.innerText = match["course_id"];
+            }
+        // If course_id is set, update course_code to match
         } else if (selection_id != "") {
             event.target.value = "";
             for (course of courses) {
@@ -101,6 +112,7 @@ function updateReqAutoComplete(req_num, course_id) {
                     break;
                 }
             }
+        // Otherwise set field to blank
         } else {
             id_inp.value = "";
             event.target.value = "";
