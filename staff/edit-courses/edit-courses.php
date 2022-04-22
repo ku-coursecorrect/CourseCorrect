@@ -72,7 +72,7 @@
 								global $course_codes;
 								if (isset($course["requisites"])) {
 									foreach ($course["requisites"] as $req) {
-										echo '<div class="input-group data-toggle=tooltip data-placement=auto title="' . ($req["co_req"] ? "Corequisite" : "Prequisite") . '">';
+										echo '<div class="input-group style="margin: 0px" data-toggle=tooltip data-placement=auto title="' . ($req["co_req"] ? "Corequisite" : "Prequisite") . '">';
 										echo '<div class="input-group-prepend">';
 										echo '<span class="input-group-text" style="margin: 0px; padding: 3px">';
 										echo '<b>' . ($req["co_req"] ? "<i class='bi-arrow-left-right'></i>" : "<i class='bi-arrow-down-circle'></i>") . '</b>';
