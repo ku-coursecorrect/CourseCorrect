@@ -9,7 +9,7 @@
 		// Defaults in case env_vars.php is missing
 		$ENV_VARS["project_root"] = "/";
 	}
-	$GLOBALS = array_merge($GLOBALS, $ENV_VARS);
+	$GLOBALS["project_root"] = $ENV_VARS["project_root"];
 
 	abstract class ErrorCode {
 		const DBConnectionFailed = 101;
