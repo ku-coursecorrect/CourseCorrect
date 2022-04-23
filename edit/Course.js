@@ -86,8 +86,8 @@ function displayCourse(course_element) {
 
 	let custom = course.course_id.startsWith("custom");
 	let seasons = custom ? "" : (", " + course.seasons_offered().map(s => SEASON_NAMES[s]).join(" / "));
-	let prereqs = course.prereq.map(c => course_id_to_object(COURSES, c).course_code).join(", ") || "none";
-	let coreqs = course.coreq.map(c => course_id_to_object(COURSES, c).course_code).join(", ") || "none";
+	let prereqs = course.prereq.map(c => course_id_to_object(COURSES, c)?.course_code).filter(c => c).join(", ") || "none";
+	let coreqs = course.coreq.map(c => course_id_to_object(COURSES, c)?.course_code).filter(c => c).join(", ") || "none";
 
 	document.getElementById("course-title").innerText = course.course_code /*+ (custom ? "" : "\n" + course.title)*/;
 	document.getElementById("course-subtitle").innerText = course.credit_hour + " credit hour" + (course.credit_hour == 1 ? "" : "s") + seasons;
