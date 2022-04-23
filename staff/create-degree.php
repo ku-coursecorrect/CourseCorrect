@@ -56,7 +56,7 @@
 					<input type= "hidden" id="hidden_name" name="name" value="<?php echo $_REQUEST['name']; ?>" >
 					<input type= "hidden" id="hidden_year" name="year" value="<?php echo $_REQUEST['year']; ?>" >
 					<br>
-					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Sumbit Degree</button>
+					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Submit Degree</button>
 		        </form>
 				<script>
 					var listbox = $('select[name="course_list_box[]"]').bootstrapDualListbox({

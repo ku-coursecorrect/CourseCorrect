@@ -78,7 +78,7 @@
 		            </div>
 					<input type= "hidden" id="hidden_id" name="id" value="<?=$degree_id;?>" >
 					<br>
-					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Sumbit Degree</button>
+					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Submit Degree</button>
 		        </form>
 				<script>
 					var listbox = $('select[name="course_list_box[]"]').bootstrapDualListbox({
