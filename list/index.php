@@ -39,8 +39,8 @@
 						<?php
 							require_once "../common.php";
 							
-							$plans = $db->query("SELECT plan_id, 
-													    plan_title, 
+							$plans = $db->query("SELECT plan.plan_id, 
+													    plan.plan_title, 
 														degree.major, 
 														degree.year, 
 														plan.created_ts, 
@@ -48,11 +48,11 @@
 														plan_status 
 												FROM plan 
 												JOIN degree ON plan.degree_id = degree.degree_id
-												WHERE user_id = ? AND deleted_ts IS NULL
+												WHERE user_id = ? AND plan.deleted_ts IS NULL AND degree.deleted_ts IS NULL
 												ORDER BY modified_ts DESC", [$_SESSION["user_id"]]);
 							for ($i = 0; $i<count($plans); $i++) {
 								echo "<tr data-plan_id =". $plans[$i]["plan_id"].">";
-								echo "<td><span>" . $plans[$i]["plan_title"] ."</span><span>&nbsp;". planStatusToHTML($plans[$i]["plan_status"]) . "</span></td>";
+								echo "<td><span>" . $plans[$i]["plan_title"] ."</span>&nbsp;". planStatusToHTML($plans[$i]["plan_status"]) . "</td>";
 								echo "<td>" . $plans[$i]["major"]  . " " . $plans[$i]["year"] . "</td>";
 								echo "<td>" . date(DATE_FORMAT, strtotime($plans[$i]["created_ts"])) . "</td>";
 								echo "<td>" . date(DATE_FORMAT, strtotime($plans[$i]["modified_ts"])) . "</td>";
