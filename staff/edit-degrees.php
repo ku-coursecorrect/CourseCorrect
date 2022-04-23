@@ -100,7 +100,7 @@
 							<input type="text" id="year" name="year" class="form-control" placeholder="2021" value="2021">
 						</div>
 						<div class="form-group form-check">
-							<input type="checkbox" class="form-check-input" id="copy">
+							<input type="checkbox" class="form-check-input" id="copy" name="copy">
 							<label class="form-check-label" for="copy">Copy from previous year</label>
 						</div>
 					</div>

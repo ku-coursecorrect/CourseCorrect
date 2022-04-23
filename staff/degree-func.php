@@ -136,4 +136,11 @@
         $delete_query = "UPDATE degree SET deleted_ts = now() WHERE degree_id = ?";
         $db->query($delete_query, [$f_id]);
     }
+
+    function prev_degree($f_name, $f_year){
+        global $db;
+        $prev_query = "SELECT degree_id FROM degree WHERE major = ? AND year = ?-1";
+        return $db->query($prev_query, [$f_name, $f_year]);
+    }
+
 ?>

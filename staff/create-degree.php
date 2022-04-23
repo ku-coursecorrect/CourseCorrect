@@ -39,6 +39,18 @@
 	<body>
 		<?php
 			display_navbar(true);
+			include_once "degree-func.php";
+			//string, either null or "on"
+			$degree_copy = $_REQUEST["copy"];
+			$prev_selected = FALSE;
+			$prev_id;
+
+			$degree_name = $_REQUEST["name"];
+			$degree_year = $_REQUEST["year"];
+			if($degree_copy != NULL){
+				$prev_selected = TRUE;
+				$prev_id = prev_degree($degree_name, $degree_year)[0]["degree_id"];
+			}
 		?>
 
 		<div class="container">
@@ -48,8 +60,12 @@
 		            <div class= "form-group">
 		                <select multiple id="example" name="course_list_box[]" size = 20>
 							<?php
-							 	include_once "degree-func.php";
-								print_course();
+								if($prev_selected && $prev_id != NULL){
+									print_edit_course($prev_id);
+								}
+								else{
+									print_course();
+								}
 							?>
 						</select>
 		            </div>
