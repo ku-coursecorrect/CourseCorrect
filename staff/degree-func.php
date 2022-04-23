@@ -3,7 +3,7 @@
 
     function print_degree() {
         global $db;
-        $degree_info = $db->query("SELECT * FROM degree;", []);
+        $degree_info = $db->query("SELECT * FROM degree WHERE deleted_ts IS NULL;", []);
         foreach($degree_info as $row){
             echo "<tr>";
             echo "<td>" .  $row["major"] . "</td>";
@@ -24,6 +24,15 @@
             echo "'>";
             echo $row["course_code"] .": ". $row["title"];
             echo "</option>";
+        }
+    }
+
+    function print_degree_list($degree_id){
+        global $db;
+        $course_codes = $db->query("SELECT course_code FROM degree_join_course, course WHERE degree_id = ? AND course.course_id = degree_join_course.course_id;", [$degree_id]);
+        // var_dump($course_codes);
+        foreach($course_codes as $row){
+            echo "<li class='list-group-item'>" . $row["course_code"] . "</li>";
         }
     }
 
@@ -120,5 +129,11 @@
         global $db;
         $query = "UPDATE degree SET year = ? WHERE degree_id = ?;";
         $db->query($query, [$new_year, $degree_id]);
+    }
+
+    function delete_degree($f_id){
+        global $db;
+        $delete_query = "UPDATE degree SET deleted_ts = now() WHERE degree_id = ?";
+        $db->query($delete_query, [$f_id]);
     }
 ?>
