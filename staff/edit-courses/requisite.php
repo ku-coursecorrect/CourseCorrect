@@ -30,7 +30,7 @@
                 <div class="input-group-prepend">
                     <input type='text' style="width: 3em; padding: 0px; text-align: center" id='reqId-<?=$req['req_num']?>' class='form-control col-auto' disabled value='<?=$req['course_id']?>' />
                 </div>
-                <input autocomplete="off" id='reqCode-<?=$req['req_num']?>' type='text' style="width: 12em;" class='form-control col-sm' maxlength="12" placeholder='<?=$placeholder['course_code']?>' value='<?=$req['course_code']?>' />
+                <input autocomplete="off" id='reqCode-<?=$req['req_num']?>' type='text' style="width: 8em;" class='form-control col-sm' maxlength="12" placeholder='<?=$placeholder['course_code']?>' value='<?=$req['course_code']?>' />
             </div>
         </div>
     </td>
@@ -68,4 +68,4 @@
         <i class='fas fa-trash ml-3' onclick='removeReq(this)'></i>
     </td>
 </tr>
-<tr><td colspan="5"><div id='autoComplete-<?=$req['req_num']?>'></div></tr>
+<tr style="display: none" class="autocompleteRow"><td colspan="5"><div id='autoComplete-<?=$req['req_num']?>'></div></tr>
