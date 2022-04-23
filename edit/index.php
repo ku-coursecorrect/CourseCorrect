@@ -41,10 +41,16 @@
 
 	// Load all courses for this degree
 	$courses = $db->query("SELECT * FROM degree_join_course JOIN course USING (course_id) WHERE degree_id = ?", [$plan["degree_id"]]);
+
+	$requisites = $db->query("SELECT course_id, dependent_id, co_req
+							  FROM requisite
+							  JOIN course USING (course_id)
+							  JOIN degree_join_course USING (course_id)
+							  WHERE degree_id = ?", [$plan["degree_id"]]);
+	
 	foreach ($courses as &$course) {
-		// TODO: incorporate start_semester and end_semester data
-		$course["prereq"] = array_column($db->query("SELECT dependent_id FROM requisite WHERE course_id = ? AND co_req = 0", [$course["course_id"]]), "dependent_id");
-		$course["coreq"] = array_column($db->query("SELECT dependent_id FROM requisite WHERE course_id = ? AND co_req = 1", [$course["course_id"]]), "dependent_id");
+		$course["prereq"] = array_column(array_filter($requisites, function($req) use ($course) { return $req["co_req"] == 0 && $req["course_id"] == $course["course_id"]; }), "dependent_id");
+		$course["coreq"]  = array_column(array_filter($requisites, function($req) use ($course) { return $req["co_req"] == 1 && $req["course_id"] == $course["course_id"]; }), "dependent_id");
 	}
 ?>
 <html>
