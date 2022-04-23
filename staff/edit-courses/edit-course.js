@@ -213,7 +213,8 @@ function dropdownSelect(selection) {
 function addReq() {
     let course_id = document.getElementById("course_id").value;
     let table = document.getElementById("reqs-table");
-    table.insertRow();
+    table.tBodies[0].insertRow();
+    document.getElementById("reqHeaderRow").style.display = '';
 
     let current_req = nextReq;
     fetch("requisite.php?req_num="+current_req).then(
@@ -227,7 +228,15 @@ function addReq() {
 
 function removeReq(btn) {
     let row = btn.parentNode.parentNode;
+    let autoRow = row.nextElementSibling;
     row.parentNode.removeChild(row);
+    if (autoRow.className === "autocompleteRow") {
+        autoRow.parentNode.removeChild(autoRow);
+    }
+    let table = document.getElementById("reqs-table");
+    if (table.children[1].children.length == 0) {
+        document.getElementById("reqHeaderRow").style.display='none';
+    }
 }
 
 function populateModal(btn) {

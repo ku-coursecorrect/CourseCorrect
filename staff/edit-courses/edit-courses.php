@@ -78,7 +78,7 @@
 										echo '<b>' . ($req["co_req"] ? "<i class='bi-arrow-left-right'></i>" : "<i class='bi-arrow-down-circle'></i>") . '</b>';
 										echo "</span>";
 										echo "</div>";
-										echo '<span class="card" style="width: 70%"><span class="card-body" style="padding: 5px; text-align:center;">' . $course_codes[$req["dependent_id"]] . '</span></span>';
+										echo '<span class="card" style="width: 70%"><span class="card-body" style="padding: 3px; text-align:center;">' . $course_codes[$req["dependent_id"]] . '</span></span>';
 										echo '</div>';
 									}
 								}
@@ -166,7 +166,7 @@
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-			<button type="button" class="btn btn-primary" onclick="deleteCourse(this)">Delete course</button>
+			<button type="button" class="btn btn-danger" onclick="deleteCourse(this)">Delete course</button>
 		</div>
 		</div>
 	</div>

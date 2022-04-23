@@ -104,16 +104,18 @@
 				</div>
 				<label for='requisites' style='padding-top:15px'><b>Requisites</b></label>
 				<div id='requisites'>
+					<?php 
+						$requisites = $db->query("select course.course_id, course.course_code, requisite.co_req, requisite.start_semester, requisite.end_semester from requisite join course on requisite.dependent_id=course.course_id where requisite.course_id=?;", [$course_info['course_id']]);
+					?>
 					<table class='table table-striped' id='reqs-table'>
 						<thead>
-							<tr>
-								<th>Course Code</th><th>Type</th><th  data-toggle=tooltip data-placement=auto title='The first semester for which this requisite is in effect for this course'>Start Semester</th><th  data-toggle=tooltip data-placement=auto title='The final semester for which this requisite is in effect for this course'>End Semester</th><th></th>
+							<tr style="display:<?=count($requisites) > 0 ? '' : 'none'?>" id="reqHeaderRow">
+								<th>Course Code</th><th>Type</th><th data-toggle=tooltip data-placement=auto title='The first semester for which this requisite is in effect for this course'>Start Semester</th><th  data-toggle=tooltip data-placement=auto title='The final semester for which this requisite is in effect for this course'>End Semester</th><th></th>
 							</tr>
 						</thead>
 						<tbody>
 							<?php
 								// Fill out course requisites from db
-								$requisites = $db->query("select course.course_id, course.course_code, requisite.co_req, requisite.start_semester, requisite.end_semester from requisite join course on requisite.dependent_id=course.course_id where requisite.course_id=?;", [$course_info['course_id']]);
 								$req_num = 0;
 								foreach($requisites as $req) {
 									if ($req["start_semester"] != null) { 
@@ -131,13 +133,14 @@
 							?>
 						</tbody>
 					</table>
-					<button type='button' class='btn btn-secondary float-right' onclick='addReq()'><i class='fas fa-plus'></i> Add requisite</button>
+					<button type='button' class='btn btn-secondary float-left' onclick='addReq()'><i class='fas fa-plus'></i> Add requisite</button>
+					<br>
 				</div>
 				<input type='text' id='reqs-post' name='requisites' value='[]' hidden />
 			</div>
-			<div class='modal-footer float-left' style='padding-top:15px'>
+			<div class='modal-footer float-right' style='margin-top:15px'>
 				<button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
-				<button id="form-button-submit" type='button' class='btn btn-success'><?=$title?></button>
+				<button id="form-button-submit" type='button' class='btn btn-success'><?=$title == 'Edit Course' ? 'Save Changes' : 'Create New Course' ?></button>
 			</div>
 		</form>
 	</div>
