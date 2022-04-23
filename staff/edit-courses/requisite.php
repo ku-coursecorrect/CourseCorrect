@@ -1,6 +1,7 @@
 <?php
     // Requisite information can come from _GETs or from PHP via $req
-    $req['course_code'] = $_GET['course_code'] ?? $req['course_code'] ?? ''; // Null coalesce (pick B if A is null)
+    $req['course_id'] = $_GET['course_id'] ?? $req['course_id'] ?? ''; // Null coalesce (pick B if A is null)
+    $req['course_code'] = $_GET['course_code'] ?? $req['course_code'] ?? '';
     $req['co_req'] = $_GET['co_req'] ?? $req['co_req'] ?? 'false';
     $req['start_season'] = $_GET['start_season'] ?? $req['start_season'] ?? 'None';
     $req['end_season'] = $_GET['end_season'] ?? $req['end_season'] ?? 'None';
@@ -8,6 +9,7 @@
     $req['end_year'] = $_GET['end_year'] ?? $req['end_year'] ?? '';
     $req['req_num'] = $_GET['req_num'] ?? $req['req_num'] ?? '';
 
+    unset($_GET['course_id']);
     unset($_GET['course_code']);
     unset($_GET['co_req']);
     unset($_GET['start_season']);
@@ -16,6 +18,7 @@
     unset($_GET['end_year']);
     unset($_GET['req_num']);
 
+    $placeholder['course_id'] = $req['course_id'] ?: '70';
     $placeholder['course_code'] = $req['course_code'] ?: 'EECS 168';
     $placeholder['start_year'] = $req['start_year'] ?: 'year'; // Coalesce (pick B if A is false)
     $placeholder['end_year'] = $req['end_year'] ?: 'year';
@@ -23,7 +26,12 @@
 <tr class='req'>
     <td>
         <div class="autoComplete_wrapper">
-            <input autocomplete="off" style='width:300px;' type='text' id='reqCode-<?=$req['req_num']?>' class='form-control' maxlength="12" placeholder='<?=$placeholder['course_code']?>' value='<?=$req['course_code']?>' />
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <input type='text' style="width: 3em; padding: 0px; text-align: center" id='reqId-<?=$req['req_num']?>' class='form-control col-auto' disabled value='<?=$req['course_id']?>' />
+                </div>
+                <input autocomplete="off" id='reqCode-<?=$req['req_num']?>' type='text' style="width: 8em;" class='form-control col-sm' maxlength="12" placeholder='<?=$placeholder['course_code']?>' value='<?=$req['course_code']?>' />
+            </div>
         </div>
     </td>
     <td><button class='btn btn-outline-secondary dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' value='<?=$req['co_req']==='1' ? 'co_req' : 'prereq'?>' id='reqDrop'><?=$req['co_req']==='1' ? 'Corequisite' : 'Prerequisite'?></button>
@@ -60,3 +68,4 @@
         <i class='fas fa-trash ml-3' onclick='removeReq(this)'></i>
     </td>
 </tr>
+<tr style="display: none" class="autocompleteRow"><td colspan="5"><div id='autoComplete-<?=$req['req_num']?>'></div></tr>

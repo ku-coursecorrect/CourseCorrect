@@ -2,6 +2,15 @@
 	// 1 for dev/test, 0 for production (maybe this should be in db_creds.php)
 	define("DEBUG", 0);
 
+	// Allow vars defined in env_vars to be found in globals
+	if (file_exists("env_vars.php")) {
+		require_once "env_vars.php";
+	} else {
+		// Defaults in case env_vars.php is missing
+		$ENV_VARS["project_root"] = "/";
+	}
+	$GLOBALS["project_root"] = $ENV_VARS["project_root"];
+
 	abstract class ErrorCode {
 		const DBConnectionFailed = 101;
 		const DBQueryFailed = 102;
@@ -162,7 +171,7 @@
 	<header class="container-fluid py-3">
 		<div class="row">
 			<div class="col-sm-4">
-				<a href="../"><img class="KU_image" src="../images/eecs_logo.png" height="60"></a>
+				<a href="<?=$GLOBALS['project_root']?>"><img class="KU_image" src="<?=$GLOBALS['project_root']?>images/eecs_logo.png" height="60"></a>
 			</div>
 			<div class="col-sm-4 text-sm-center <?=$staff?"text-danger":"KU_color_text"?>">
 				<h1>CourseCorrect</h1>
@@ -172,7 +181,7 @@
 				<div class="d-inline-block text-left">
 					<?php if (isset($_SESSION["user_id"])): ?>
 						<?=$_SESSION["name"]?>
-						<a href="../logout.php" class="btn btn-outline-dark btn-sm no-print">Logout</a>
+						<a href="<?=$GLOBALS['project_root']?>logout.php" class="btn btn-outline-dark btn-sm no-print">Logout</a>
 						<br>
 						<span class="only-print">Student ID: <?=$_SESSION["kuid"]?></span>
 					<?php else: ?>
@@ -185,7 +194,7 @@
 
 	<!-- Navigation bar -->
 	<nav class="navbar navbar-expand-md navbar-dark <?=$staff?"bg-danger":"KU_color_background"?> mb-3">
-		<a class="navbar-brand" href="../">Home</a>
+		<a class="navbar-brand" href="<?=$GLOBALS['project_root']?>">Home</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -195,14 +204,14 @@
 					// TODO: Nav items based on staff permission level
 					if ($staff) {
 						$items = [
-							"../staff/edit-degrees.php" => "Edit degrees", 
-							"../staff/edit-courses.php" => "Edit courses", 
-							"../staff/edit-help.php" => "Edit help text",
-							"../staff/view-errors.php" => "View errors",
+							$GLOBALS['project_root'] . "staff/edit-degrees.php" => "Edit degrees", 
+							$GLOBALS['project_root'] . "staff/edit-courses/edit-courses.php" => "Edit courses", 
+							$GLOBALS['project_root'] . "staff/edit-help.php" => "Edit help text",
+							$GLOBALS['project_root'] . "staff/view-errors.php" => "View errors",
 						];
 					}
 					else {
-						$items = ["../list" => "Plan list"];
+						$items = [$GLOBALS['project_root'] . "list" => "Plan list"];
 					}
 					foreach ($items as $url => $text) {
 						?>

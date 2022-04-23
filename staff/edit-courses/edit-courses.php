@@ -18,6 +18,7 @@
 	<script src="../../libs/autoComplete.min.js"></script>
 	<script src="../../libs/readmore.min.js"></script>
 	<script src="../../libs/mark.min.js"></script>
+	<link rel="stylesheet" href="../../common.css">
 	<link rel="stylesheet" href="../../libs/autoComplete.02.css">
 	<link rel="stylesheet" href="../../libs/fontawesome.min.css">
 	<link rel="stylesheet" href="../../libs/bootstrap-icons.css">
@@ -58,14 +59,13 @@
 						$course_codes = [];
 						$TABLE_FORMAT = [
 							"Course Number" => function($course) {
-								echo $course["course_code"];
+								echo "<span class='border callout' data-toggle=tooltip data-placement=auto title='Course ID'>" . $course["course_id"] . "</span>";
+								echo "<span>" . $course["course_code"] . "</span>";
 							},
 							"Title" => function($course) {
 								echo $course["title"];
 							},
 							"Description" => function($course) {
-								$MINLEN = 20;
-								$desc = $course["description"];
 								echo "<article class='desc' style='overflow:hidden'>" . $course["description"] . "</article>";
 							},
 							"Requisites" => function($course) {
@@ -74,11 +74,11 @@
 									foreach ($course["requisites"] as $req) {
 										echo '<div class="input-group style="margin: 0px" data-toggle=tooltip data-placement=auto title="' . ($req["co_req"] ? "Corequisite" : "Prequisite") . '">';
 										echo '<div class="input-group-prepend">';
-										echo '<span class="input-group-text" id="basic-addon1">';
+										echo '<span class="input-group-text" style="margin: 0px; padding: 3px">';
 										echo '<b>' . ($req["co_req"] ? "<i class='bi-arrow-left-right'></i>" : "<i class='bi-arrow-down-circle'></i>") . '</b>';
 										echo "</span>";
 										echo "</div>";
-										echo '<span class="card" style="width: 65%"><span class="card-body" style="padding: 5px; text-align:center">' . $course_codes[$req["dependent_id"]] . '</span></span>';
+										echo '<span class="card" style="width: 70%"><span class="card-body" style="padding: 3px; text-align:center;">' . $course_codes[$req["dependent_id"]] . '</span></span>';
 										echo '</div>';
 									}
 								}
@@ -105,8 +105,11 @@
 							}
 						];
 						$TABLE_HEADER_FORMAT = [
-							"Requisites" => function($field) {
+							"Course Number" => function($field) {
 								echo '<th style="width: 13%">', $field, '</th>';
+							},
+							"Requisites" => function($field) {
+								echo '<th style="width: 13%;">', $field, '</th>';
 							}
 						];
 
@@ -163,7 +166,7 @@
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-			<button type="button" class="btn btn-primary" onclick="deleteCourse(this)">Delete course</button>
+			<button type="button" class="btn btn-danger" onclick="deleteCourse(this)">Delete course</button>
 		</div>
 		</div>
 	</div>

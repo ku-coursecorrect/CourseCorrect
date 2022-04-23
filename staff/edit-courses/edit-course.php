@@ -1,10 +1,10 @@
 <?php
     require_once "../../common.php";
     require_once "course-common.php";
-	$course_code = $_GET['course_code'];
-	unset($_GET['course_code']);
-    if ($course_code != "New") {
-        $course_info = $db->query("SELECT * FROM course where course_code=?;", [$course_code])[0];
+	$course_id = $_GET['course_id'];
+	unset($_GET['course_id']);
+    if ($course_id != "New") {
+        $course_info = $db->query("SELECT * FROM course where course_id=?;", [$course_id])[0];
         $placeholder_info = $course_info;
         $title = "Edit Course";
     } else {
@@ -44,14 +44,18 @@
 		</div>
 		<form method='POST' action='commit-course.php' id='edit-course-form' onsubmit="return checkCourseForm()">
 			<div class='modal-body'>
-				<input type='text' name='course_id' value='<?=$course_info['course_id']?>' hidden />
-				<div class='form-group'>
+				<div class="d-flex justify-content-between">
 					<label for='course_code'><b>Course Code</b></label>
-					<input type='text' id='course_code' name='course_code' class='form-control' placeholder='<?=$placeholder_info['course_code']?>' value='<?=$course_info['course_code']?>'>
+					<span>
+						<label for='course_id' style="color: #aaa">Course ID</label>
+						<input id='course_id' type='text' class="callout" style='border-width: 0px; width: 2em; text-align: center; padding: 2px' name='course_id' value='<?=$course_info['course_id']?>' readonly />
+					</span>
 				</div>
+				<input type='text' id='course_code' name='course_code' class='form-control' placeholder='<?=$placeholder_info['course_code']?>' value='<?=$course_info['course_code']?>'>
+				<br>
 				<div class='form-group'>
-					<label for='title'><b>Title</b></label>
-					<input type='text' id='title' name='title' class='form-control' placeholder='<?=$placeholder_info['title']?>' value='<?=$course_info['title']?>'>
+				<label for='title'><b>Title</b></label>
+				<input type='text' id='title' name='title' class='form-control' placeholder='<?=$placeholder_info['title']?>' value='<?=$course_info['title']?>'>
 				</div>
 				<div class='form-group'>
 					<label for='description'><b>Description</b></label>
@@ -100,16 +104,18 @@
 				</div>
 				<label for='requisites' style='padding-top:15px'><b>Requisites</b></label>
 				<div id='requisites'>
+					<?php 
+						$requisites = $db->query("select course.course_id, course.course_code, requisite.co_req, requisite.start_semester, requisite.end_semester from requisite join course on requisite.dependent_id=course.course_id where requisite.course_id=?;", [$course_info['course_id']]);
+					?>
 					<table class='table table-striped' id='reqs-table'>
 						<thead>
-							<tr>
-								<th>Course Code</th><th>Type</th><th  data-toggle=tooltip data-placement=auto title='The first semester for which this requisite is in effect for this course'>Start Semester</th><th  data-toggle=tooltip data-placement=auto title='The final semester for which this requisite is in effect for this course'>End Semester</th><th></th>
+							<tr style="display:<?=count($requisites) > 0 ? '' : 'none'?>" id="reqHeaderRow">
+								<th>Course Code</th><th>Type</th><th data-toggle=tooltip data-placement=auto title='The first semester for which this requisite is in effect for this course'>Start Semester</th><th  data-toggle=tooltip data-placement=auto title='The final semester for which this requisite is in effect for this course'>End Semester</th><th></th>
 							</tr>
 						</thead>
 						<tbody>
 							<?php
 								// Fill out course requisites from db
-								$requisites = $db->query("select course.course_code, requisite.co_req, requisite.start_semester, requisite.end_semester from requisite join course on requisite.dependent_id=course.course_id where requisite.course_id=?;", [$course_info['course_id']]);
 								$req_num = 0;
 								foreach($requisites as $req) {
 									if ($req["start_semester"] != null) { 
@@ -127,13 +133,14 @@
 							?>
 						</tbody>
 					</table>
-					<button type='button' class='btn btn-secondary float-right' onclick='addReq()'><i class='fas fa-plus'></i> Add requisite</button>
+					<button type='button' class='btn btn-secondary float-left' onclick='addReq()'><i class='fas fa-plus'></i> Add requisite</button>
+					<br>
 				</div>
 				<input type='text' id='reqs-post' name='requisites' value='[]' hidden />
 			</div>
-			<div class='modal-footer float-left' style='padding-top:15px'>
+			<div class='modal-footer float-right' style='margin-top:15px'>
 				<button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
-				<button id="form-button-submit" type='button' class='btn btn-success'><?=$title?></button>
+				<button id="form-button-submit" type='button' class='btn btn-success'><?=$title == 'Edit Course' ? 'Save Changes' : 'Create New Course' ?></button>
 			</div>
 		</form>
 	</div>

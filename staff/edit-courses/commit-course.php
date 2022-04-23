@@ -38,7 +38,7 @@
         // Add all course requisites to requisite table
         $reqs = json_decode($_POST['requisites'], true);
         foreach ($reqs as $req) {
-            $dependency_id = intval($db->query("SELECT course_id FROM course where course_code=?;", [$req["course_code"]])[0]["course_id"]);
+            $dependency_id = intval($req["course_id"]);
             $vals = [intval($course_id), $dependency_id, $req["co_req"] ? 1 : 0, $req["start_semester"], $req["end_semester"]];
             $db->query("INSERT into requisite (course_id, dependent_id, co_req, start_semester, end_semester) VALUES(?, ?, ?, ?, ?);", $vals);
         }
