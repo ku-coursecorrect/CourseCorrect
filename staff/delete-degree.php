@@ -33,7 +33,7 @@
 			margin: 4px 2px;
 			cursor: pointer;
 		}
-        .text-center {
+        .text-md-center {
             background-color:   rgb(0, 81, 186);
             color: white;
             padding: 15px 32 px;
@@ -47,20 +47,21 @@
 	<body>
 		<?php
 			display_navbar(true);
-            $course_arr = $_POST['course_list_box'];
-            $degree_name = $_POST['name'];
-            $degree_year = $_POST['year'];
 			//Time to do the sql queries
 			include_once "degree-func.php";
-			send_course($degree_name, $degree_year, $course_arr);
+            $degree_id = $_POST["degree_id"];
+            $m_y = get_major_and_year($degree_id);
+			$row_my = $m_y[0];
+			$degree_name = $row_my["major"];
+			$degree_year = $row_my["year"];
 		?>
 
 		<div class="container">
 			<div class="row">
 
-                <div class="col-lg-12">
-                    <button type="button" class="btn-block" id="return_btn">Return to Edit Degrees Page</button>
-                    <div class="text-center">
+                <div class="col-lg-12 text-center">
+                    <button type="button" class="btn btn-danger" id="delete_btn">DELETE THIS DEGREE, NO TAKE BACKS!</button>
+                    <div class="text-md-center">
                         <?php
                             echo "Degree Name: " . $degree_name;
                             echo "<br>";
@@ -68,16 +69,24 @@
                             echo "<br>";
                         ?>
                     </div>
+                    <button type="button" class="btn-block" id="return_btn">NEVERMIND GO BACK, DON'T DELETE THIS DEGREE PLEASE!</button>
                     <br>
                     <ul class = "list-group">
                         <?php
-                            //check the courses in the db and see if we can get the name
-
-							translate_id_to_code($course_arr);
+                            include_once "degree-func.php";
+                            print_degree_list($degree_id);
                         ?>
                     </ul>
                 </div>
                 <script>
+                    $(delete_btn).on('click', function(){
+                        var url = 'degree-deleted.php';
+                        var form = $('<form action="' + url + '" method="post">' +
+                          '<input type="text" name="degree_id" value="' + <?=$degree_id?> + '" />' +
+                          '</form>');
+                        $('body').append(form);
+                        form.submit();
+                    })
                     $(return_btn).on('click', function(){
                             window.location.href = "edit-degrees.php";
                     })

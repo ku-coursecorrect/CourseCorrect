@@ -3,7 +3,7 @@
 	define("DEBUG", 0);
 
 	// Allow vars defined in env_vars to be found in globals
-	if (file_exists("env_vars.php")) {
+	if (file_exists(__DIR__ ."/env_vars.php")) {
 		require_once "env_vars.php";
 	} else {
 		// Defaults in case env_vars.php is missing
@@ -14,12 +14,12 @@
 	abstract class ErrorCode {
 		const DBConnectionFailed = 101;
 		const DBQueryFailed = 102;
-		
+
 		const LoginFailed = 201;
-		
+
 		const NotLoggedIn = 301;
 		const InsufficientPermission = 302;
-		
+
 		const InvalidDegree = 401;
 
 		const PlanNotExist = 501;
@@ -36,7 +36,7 @@
 		}
 		return $errorName;
 	}
-	
+
 	function crash($errorCode, $data = null) {
 		if (DEBUG) {
 			// Dev/test code
@@ -58,7 +58,7 @@
 				global $DB_INFO;
 				$conn = new PDO($DB_INFO["DB_TYPE"] . ":host=" . $DB_INFO["HOST"] . ";dbname=" . $DB_INFO["DB_NAME"], $DB_INFO["USER"], $DB_INFO["PASSWORD"]);
 				$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				
+
 				$stmt = $conn->prepare("INSERT INTO error_log (error_code, user_id, data) VALUES (?, ?, ?)");
 				$stmt->execute([$errorCode, $userId, $data]);
 			}
@@ -74,13 +74,13 @@
 				$text = ob_get_clean();
 				file_put_contents(__DIR__ . "/emergency_error_log.txt", $text, FILE_APPEND | LOCK_EX);
 			}
-			
+
 			// Redirect to error page
 			header("Location: /error.php?code=" . $errorCode);
 		}
 		die();
 	}
-	
+
 	define("DATE_FORMAT", "M jS, Y"); // Mar 15th, 2020
 
 	// Semester seasons
@@ -93,7 +93,7 @@
 		1 => "Summer",
 		2 => "Fall"
 	];
-	
+
 	function semester_id($year, $season) {
 		return $year * 3 + $season;
 	}
@@ -118,7 +118,7 @@
 		}
 		return ["semesters" => $semesters, "transfer_bank" => [], "notes" => ""];
 	}
-	
+
 	// Status codes bit flags
 	abstract class PlanStatus {
 		const Incomplete = 1;
@@ -127,7 +127,7 @@
 		const Submitted = 8;
 		const Approved = 16;
 	}
-	
+
 	function planStatusToHTML($status) {
 		$badges = "";
 		if ($status & PlanStatus::Incomplete) $badges .= '<span class="badge badge-danger">Incomplete</span>';
@@ -136,7 +136,7 @@
 		if ($status & PlanStatus::Approved) $badges .= '<span class="badge badge-success">Approved</span>';
 		return $badges;
 	}
-	
+
 	require_once __DIR__ . "/db.php";
 	// Start the session to keep track of who's logged in
 	session_start();
@@ -152,7 +152,7 @@
 	function require_login() {
 		if (!is_logged_in()) crash(ErrorCode::NotLoggedIn, $_SESSION);
 	}
-	
+
 	// Page requires staff permissions to access (TODO: specific permission levels)
 	function require_staff() {
 		if (!is_staff()) crash(ErrorCode::InsufficientPermission, $_SESSION);
@@ -163,7 +163,7 @@
 		if (count($degree) == 1) return $degree[0]["degree_id"];
 		else crash(ErrorCode::InvalidDegree, [$_POST["major"], $_POST["year"]]);
 	}
-	
+
 	// TODO: Useful links, maybe different for student and staff
 	function display_navbar($staff = false) {
 		?>
@@ -204,8 +204,8 @@
 					// TODO: Nav items based on staff permission level
 					if ($staff) {
 						$items = [
-							$GLOBALS['project_root'] . "staff/edit-degrees.php" => "Edit degrees", 
-							$GLOBALS['project_root'] . "staff/edit-courses/edit-courses.php" => "Edit courses", 
+							$GLOBALS['project_root'] . "staff/edit-degrees.php" => "Edit degrees",
+							$GLOBALS['project_root'] . "staff/edit-courses/edit-courses.php" => "Edit courses",
 							$GLOBALS['project_root'] . "staff/edit-help.php" => "Edit help text",
 							$GLOBALS['project_root'] . "staff/view-errors.php" => "View errors",
 						];
@@ -273,5 +273,5 @@
 	</footer>
 		<?php
 	}
-	
+
 ?>

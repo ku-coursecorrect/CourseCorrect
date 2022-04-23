@@ -20,7 +20,7 @@
 
 
 <body>
-	<?php display_navbar(); ?>
+	<?php display_navbar(true); ?>
     <div class="container">
 		<div class="row">
 			<div class="col-lg-8">
@@ -34,14 +34,31 @@
 							<th>Degree</th><th>Year</th><th>Created</th><th>Modified</th><th></th>
 						</tr>
 					</thead>
-					<!-- -->
 
 					<tbody>
 						<?php
 						 	include_once "degree-func.php";
 							print_degree();
 						?>
+						<script>
+							function degree_edit(degree_id){
+								var url = 'edit-degree.php';
+								var form = $('<form action="' + url + '" method="post">' +
+								  '<input type="text" name="degree_id" value="' + degree_id + '" />' +
+								  '</form>');
+								$('body').append(form);
+								form.submit();
+							}
 
+							function degree_trash(degree_id){
+								var url = 'delete-degree.php';
+								var form = $('<form action="' + url + '" method="post">' +
+								  '<input type="text" name="degree_id" value="' + degree_id + '" />' +
+								  '</form>');
+								$('body').append(form);
+								form.submit();
+							}
+						</script>
 					</tbody>
 				</table>
 			</div>
@@ -83,7 +100,7 @@
 							<input type="text" id="year" name="year" class="form-control" placeholder="2021" value="2021">
 						</div>
 						<div class="form-group form-check">
-							<input type="checkbox" class="form-check-input" id="copy">
+							<input type="checkbox" class="form-check-input" id="copy" name="copy">
 							<label class="form-check-label" for="copy">Copy from previous year</label>
 						</div>
 					</div>
