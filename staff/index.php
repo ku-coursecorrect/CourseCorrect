@@ -28,7 +28,7 @@
 				<div class="card mb-3">
 					<div class="card-body">
 						<h2>Lookup student plans</h2>
-						<form method="POST" action="search.php">
+						<form method="GET" action="search.php">
 							<div class="form-group">
 								<label>Student IDs</label>
 								<textarea id="stu_id_list" name="stu_id_list" class="form-control" placeholder="3011111, 3022222, 3033333, ..."></textarea>
