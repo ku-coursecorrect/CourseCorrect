@@ -51,7 +51,12 @@
 							}
 
 							function degree_trash(degree_id){
-								alert(degree_id);
+								var url = 'delete-degree.php';
+								var form = $('<form action="' + url + '" method="post">' +
+								  '<input type="text" name="degree_id" value="' + degree_id + '" />' +
+								  '</form>');
+								$('body').append(form);
+								form.submit();
 							}
 						</script>
 					</tbody>
