@@ -52,7 +52,7 @@
 												ORDER BY modified_ts DESC", [$_SESSION["user_id"]]);
 							for ($i = 0; $i<count($plans); $i++) {
 								echo "<tr data-plan_id =". $plans[$i]["plan_id"].">";
-								echo "<td><span>" . $plans[$i]["plan_title"] ."</span><span>&nbsp;". planStatusToHTML($plans[$i]["plan_status"]) . "</span></td>";
+								echo "<td><span>" . $plans[$i]["plan_title"] ."</span>&nbsp;". planStatusToHTML($plans[$i]["plan_status"]) . "</td>";
 								echo "<td>" . $plans[$i]["major"]  . " " . $plans[$i]["year"] . "</td>";
 								echo "<td>" . date(DATE_FORMAT, strtotime($plans[$i]["created_ts"])) . "</td>";
 								echo "<td>" . date(DATE_FORMAT, strtotime($plans[$i]["modified_ts"])) . "</td>";
