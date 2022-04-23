@@ -31,11 +31,11 @@
 						<form method="POST" action="search.php">
 							<div class="form-group">
 								<label>Student IDs</label>
-								<textarea class="form-control" placeholder="3011111, 3022222, 3033333, ..."></textarea>
+								<textarea id="stu_id_list" name="stu_id_list" class="form-control" placeholder="3011111, 3022222, 3033333, ..."></textarea>
 							</div>
 							<div class="form-group">
 								<label>Filter plans by name (optional)</label>
-								<input type="text" class="form-control" placeholder="EECS 101">
+								<input id="search_term_list" name="search_term_list" type="text" class="form-control" placeholder="EECS 101">
 							</div>
 							<button type="submit" class="btn btn-success"><i class="fas fa-search"></i> Search</button>
 						</form>
