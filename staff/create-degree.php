@@ -38,46 +38,47 @@
 
 	<body>
 		<?php
-			display_navbar();
+			display_navbar(true);
+			include_once "degree-func.php";
+			//string, either null or "on"
+			$degree_copy = $_REQUEST["copy"];
+			$prev_selected = FALSE;
+			$prev_id;
+
+			$degree_name = $_REQUEST["name"];
+			$degree_year = $_REQUEST["year"];
+			if($degree_copy != NULL){
+				$prev_selected = TRUE;
+				$prev_id = prev_degree($degree_name, $degree_year)[0]["degree_id"];
+			}
 		?>
 
 		<div class="container">
 			<div class="row">
-				<!-- For Alternate ussage with implementation of degree specific ule, set action to alt-set-ule.php -->
-				<!-- <form id="demoform" action="alt-set-ule.php" method="post" >
-		            <div class= "form-group">
-		                <select multiple id="example" name="course_list_box[]" size = 20>
-							<?php
-							 	// include_once "degree-func.php";
-								// print_course();
-							?>
-						</select>
-		            </div>
-					<input type= "hidden" id="hidden_name" name="name" value="<?php //echo $_REQUEST['name']; ?>" >
-					<input type= "hidden" id="hidden_year" name="year" value="<?php //echo $_REQUEST['year']; ?>" >
-					<br>
-					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Sumbit Degree and Move to ULE Selection</button>
-		        </form>
-				<script>
-					var listbox = $('select[name="course_list_box[]"]').bootstrapDualListbox();
-				</script> -->
 
 				<form id="demoform" action="save-degree.php" method="post" >
 		            <div class= "form-group">
 		                <select multiple id="example" name="course_list_box[]" size = 20>
 							<?php
-							 	include_once "degree-func.php";
-								print_course();
+								if($prev_selected && $prev_id != NULL){
+									print_edit_course($prev_id);
+								}
+								else{
+									print_course();
+								}
 							?>
 						</select>
 		            </div>
 					<input type= "hidden" id="hidden_name" name="name" value="<?php echo $_REQUEST['name']; ?>" >
 					<input type= "hidden" id="hidden_year" name="year" value="<?php echo $_REQUEST['year']; ?>" >
 					<br>
-					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Sumbit Degree</button>
+					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Submit Degree</button>
 		        </form>
 				<script>
-					var listbox = $('select[name="course_list_box[]"]').bootstrapDualListbox();
+					var listbox = $('select[name="course_list_box[]"]').bootstrapDualListbox({
+						nonSelectedListLabel: "Unselected Courses",
+						selectedListLabel: "Selected Courses"
+					});
 				</script>
 			</div>
 		</div>

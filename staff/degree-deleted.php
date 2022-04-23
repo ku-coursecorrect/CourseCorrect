@@ -33,10 +33,8 @@
 			margin: 4px 2px;
 			cursor: pointer;
 		}
-        .text-center {
-            background-color:   #3555f2;
-            border: 2px;
-            border-color:   black;
+        .text-md-center {
+            background-color:   red;
             color: white;
             padding: 15px 32 px;
             text-align: center;
@@ -48,43 +46,39 @@
 
 	<body>
 		<?php
-			display_navbar();
-            $course_ule = $_POST['ule_list_box'];
-            $course_all = $_POST['course'];
-            $degree_name = $_POST['name'];
-            $degree_year = $_POST['year'];
-            $course_dif = array_diff($course_ule, $course_all);
+			display_navbar(true);
+			//Time to do the sql queries
+			include_once "degree-func.php";
+            $degree_id = $_POST["degree_id"];
+            $m_y = get_major_and_year($degree_id);
+			$row_my = $m_y[0];
+			$degree_name = $row_my["major"];
+			$degree_year = $row_my["year"];
+            delete_degree($degree_id);            
 		?>
 
 		<div class="container">
 			<div class="row">
+                <div class="col-lg-12 text-center">
 
-                <div class="col-lg-8">
-                    <div class="text-center">
+                    <div class="text-md-center">
                         <?php
+                            echo "THE FOLLOWING DEGREE HAS BEEN DELETED";
+                            echo "<br>";
                             echo "Degree Name: " . $degree_name;
                             echo "<br>";
                             echo "Degree Year: " . $degree_year;
                             echo "<br>";
                         ?>
                     </div>
+                    <button type="button" class="btn-block" id="return_btn">Return to Edit Degrees</button>
                     <br>
-                    <ul class = "list-group ">
-                        <?php
-                            foreach($course_all as $row){
-                                echo "<li class='list-group-item'>" . $row . "</li>";
-                            }
-                        ?>
-                    </ul>
-                    <br>
-                    <ul class = "list-group">
-                        <?php
-                            foreach($course_ule as $row){
-                                echo "<li class='list-group-item'>" . $row . "</li>";
-                            }
-                        ?>
-                    </ul>
                 </div>
+                <script>
+                    $(return_btn).on('click', function(){
+                            window.location.href = "edit-degrees.php";
+                    })
+                </script>
 			</div>
 		</div>
 	</body>

@@ -4,115 +4,90 @@
 	require_staff();
 ?>
 <html lang="en">
-<head>
-    <title>Staff - CourseCorrect</title>
-    <meta charset="utf-8">
-	<link rel="icon" href="../favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="../libs/bootstrap.min.css">
-	<script src="../libs/jquery.slim.min.js"></script>
-	<script src="../libs/popper.min.js"></script>
-	<script src="../libs/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="../libs/fontawesome.min.css">
-	<style>
-		.course {
-			width: 90px;
-			height: 45px;
-			border: 2px outset gray;
-			border-radius: 5px;
-			display: flex;
-			justify-content: center;
-			align-items: center;
+	<head>
+	    <title>Staff - CourseCorrect</title>
+	    <meta charset="utf-8">
+		<link rel="icon" href="../favicon.ico">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<!-- Bootstrap -->
+	    <link href="../libs/bootstrap.min.css" rel="stylesheet">
+	    <link href="../libs/bootstrap-duallistbox.css" rel="stylesheet" />
+		<link href="../libs/fontawesome.min.css" rel="stylesheet">
+
+	    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	    <script src="../libs/jquery.slim.min.js"></script>
+	    <script src="../libs/bootstrap.min.js"></script>
+	    <script src="../libs/jquery.bootstrap-duallistbox.js"></script>
+
+		<style>
+		.btn-block {
+			background-color: #4CAF50;
+			border: none;
+			color: white;
+			padding: 15px 32px;
 			text-align: center;
-			line-height: 1;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			margin: 4px 2px;
+			cursor: pointer;
 		}
-		.course:hover {
-			background: yellow;
-		}
-	</style>
-</head>
-<body>
-	<?php display_navbar(); ?>
-    <div class="container">
-		<div class="row">
-			<div class="col-lg-8">
-				<h1>
-					Computer Science 2021 <span class="badge badge-success">Visible</span><!-- TODO: Option to hide from students before ready -->
-				</h1>
-				<div class="card mb-3">
-					<div class="card-body">
-						<h2>
-							Required courses
-							<!--<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#create-plan"><i class="fas fa-plus"></i> Add course</button>-->
-						</h2>
-						<div class="btn btn-outline-dark" data-toggle="modal" data-target="#edit-course">EECS 101</div>
-						<div class="btn btn-outline-dark">EECS 168</div>
-						<div class="btn btn-outline-dark">EECS 268</div>
-						<div class="btn btn-outline-dark">MATH 125</div>
-						<div class="btn btn-outline-dark">MATH 126</div>
-						<div class="btn btn-outline-dark">MATH 127</div>
-						<div class="btn btn-outline-dark">GE 2.1(1)</div>
-						<div class="btn btn-outline-dark">GE 2.1(2)</div>
-						<div class="btn btn-outline-dark">GE 3S</div>
-						<br>
-						Total credit hours: 128
-						<hr>
-						<div class="form-group">
-							<label>Add an existing course:</label>
-							<div class="input-group">
-								<input type="text" class="form-control" placeholder="EECS 168">
-								<div class="input-group-append">
-									<input type="button" class="btn btn-primary" value="Add">
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="card">
-					<div class="card-body">
-						<h2>
-							Senior electives
-						</h2>
-					</div>
-				</div>
-			</div>
-			<div class="col-lg-4">
-				<p>
-					This is a place that some help text could be included about how to use this page.
-				</p>
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ultrices lorem mi, vel dapibus diam posuere eu. Aliquam facilisis iaculis ipsum venenatis venenatis. Phasellus vulputate, ipsum quis mattis viverra, lectus dui sodales libero, id consequat massa justo ut magna. Donec sed ullamcorper metus. Donec lorem mauris, gravida eu pharetra nec, rutrum a arcu. Cras cursus eget nisl id luctus. Pellentesque sit amet sagittis felis.
-				</p>
+		.text-center {
+            background-color:   rgb(0, 81, 186);
+            color: white;
+            padding: 15px 32 px;
+            text-align: center;
+            font-size: 16px;
+            margin: 4px 2px;
+        }
+		</style>
+	</head>
+
+	<body>
+		<?php
+			display_navbar(true);
+			$degree_id = $_POST['degree_id'];
+			//get data
+			include_once "degree-func.php";
+			$m_y = get_major_and_year($degree_id);
+			$row_my = $m_y[0];
+			$major = $row_my["major"];
+			$year = $row_my["year"];
+		?>
+
+		<div class="container">
+			<div class="row">
+				<form id="demoform" action="save-edit-degree.php" method="post" >
+					<div class="text-center">
+                        <?php
+                            echo "Old Degree Name: " . $major;
+                            echo "<br>";
+                            echo "Old Degree Year: " . $year;
+                            echo "<br>";
+                        ?>
+                    </div>
+					<input type="text" id="hidden_name" name="name" class= "form-control col-lg-8" value="<?= $major;?>" />
+					<input type="text" id="hidden_year" name="year" class= "form-control col-lg-8" value="<?= $year;?>" />
+		            <div class= "form-group">
+						<select multiple id="list" name="course_list_box[]" size = 20>
+						<?php
+							print_edit_course($degree_id);
+						?>
+						</select>
+		            </div>
+					<input type= "hidden" id="hidden_id" name="id" value="<?=$degree_id;?>" >
+					<br>
+					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Submit Degree</button>
+		        </form>
+				<script>
+					var listbox = $('select[name="course_list_box[]"]').bootstrapDualListbox({
+						nonSelectedListLabel: "Unselected Courses",
+						selectedListLabel: "Selected Courses"
+					});
+				</script>
 			</div>
 		</div>
-	</div>
-	
-	<!-- Modal -->
-	<div class="modal fade" id="edit-course" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">EECS 101</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<b>Title:</b> New Student Seminar<br>
-					<b>Credit hours:</b> 1<br>
-					<b>Semesters offered:</b> Fall<br>
-					<b>Prerequisites:</b> None<br>
-					<b>Corequisites:</b> MATH 104<br>
-					<b>Upper Level Eligibility:</b> Required to obtain ULE
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-					<button type="submit" class="btn btn-danger">Remove from degree</button>
-					<button type="submit" class="btn btn-primary">Edit course</button>
-				</div>
-			</div>
-		</div>
-	</div>
-</body>
+	</body>
+
 </html>

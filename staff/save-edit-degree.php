@@ -34,9 +34,7 @@
 			cursor: pointer;
 		}
         .text-center {
-            background-color:   #3555f2;
-            border: 2px;
-            border-color:   black;
+            background-color:   rgb(0, 81, 186);
             color: white;
             padding: 15px 32 px;
             text-align: center;
@@ -46,46 +44,45 @@
 		</style>
 	</head>
 
-	<body>
-		<?php
-			display_navbar();
-
+    <body>
+        <?php
+			display_navbar(true);
             $course_arr = $_POST['course_list_box'];
-
-            $degree_year = $_POST['year'];
             $degree_name = $_POST['name'];
+            $degree_year = $_POST['year'];
+            $degree_id = $_POST['id'];
+			include_once "degree-func.php";
+			change_major($degree_name, $degree_id);
+			change_year($degree_year, $degree_id);
+            wipe_degree_course($degree_id);
+			update_course($degree_id, $course_arr);
 		?>
         <div class="container">
 			<div class="row">
-                <div class = col-lg-12>
-    				<form id="demoform" action="alt-save-degree.php" method="post" >
-    		            <div class= "form-group">
-    		                <select multiple id="example" name="ule_list_box[]" size = 20>
-    							<?php
-    							 	include_once "degree-func.php";
-    								print_arr($course_arr);
-    							?>
-    						</select>
-    		            </div>
+                <div class="col-lg-12">
+                    <button type="button" class="btn-block" id="return_btn">Return to Edit Degrees Page</button>
+                    <div class="text-center">
                         <?php
-                        foreach($course_arr as $idx=>$row){
-                            $name=htmlentities('course['.$idx.']');
-                            $value=htmlentities($row);
-                            echo '<input type= "hidden" name="'.$name.'" value="'.$value.'">';
-                        }
-
+                            echo "Degree Name: " . $degree_name;
+                            echo "<br>";
+                            echo "Degree Year: " . $degree_year;
+                            echo "<br>";
                         ?>
-                        <input type= "hidden" id="hidden_name" name="name" value="<?php echo $_REQUEST['name']; ?>" >
-    					<input type= "hidden" id="hidden_year" name="year" value="<?php echo $_REQUEST['year']; ?>" >
-    					<br>
-    					<button class = "btn btn-default btn-block" type="submit" id="submit_btn">Sumbit ULE Selection and Complete</button>
-    		        </form>
-    				<script>
-    					var listbox = $('select[name="ule_list_box[]"]').bootstrapDualListbox();
-    				</script>
+                    </div>
+                    <br>
+                    <ul class = "list-group">
+                        <?php
+                            //check the courses in the db and see if we can get the name
+                            include_once "degree-func.php";
+                            translate_id_to_code($course_arr);
+                        ?>
+                    </ul>
                 </div>
+                <script>
+                    $(return_btn).on('click', function(){
+                            window.location.href = "edit-degrees.php";
+                    })
+                </script>
 			</div>
 		</div>
-	</body>
-
-</html>
+    </body>
