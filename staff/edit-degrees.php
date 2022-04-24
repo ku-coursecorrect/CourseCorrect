@@ -15,6 +15,7 @@
 	<script src="../libs/popper.min.js"></script>
 	<script src="../libs/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../libs/fontawesome.min.css">
+	<link rel="stylesheet" href="../common.css">
 </head>
 
 
@@ -31,7 +32,7 @@
 				<table class="table table-striped">
 					<thead>
 						<tr>
-							<th>Degree</th><th>Year</th><th>Created</th><th>Modified</th><th></th>
+							<th>Degree</th><th>Year</th><th>Created</th><th>Modified</th><th></th><th></th>
 						</tr>
 					</thead>
 

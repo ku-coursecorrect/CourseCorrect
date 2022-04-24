@@ -20,6 +20,7 @@
 	    <script src="../libs/bootstrap.min.js"></script>
 	    <script src="../libs/jquery.bootstrap-duallistbox.js"></script>
 
+		<link rel="stylesheet" href="../common.css">
 		<style>
 		.btn-block {
 			background-color: #4CAF50;

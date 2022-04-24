@@ -230,8 +230,7 @@
 
 	function display_footer() {
 		?>
-
-	<!-- Copyright line -->
+	<div class="mt-auto">
 	<footer class="pt-2 mt-5 pb-2 border-top">
 		<div class="container">
 			<div class="row my-2">
@@ -271,6 +270,7 @@
 			</div>
 		</div>
 	</footer>
+	</div>
 		<?php
 	}
 

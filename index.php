@@ -15,21 +15,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="libs/bootstrap.min.css">
+	<link rel="stylesheet" href="../common.css">
 	<script src="libs/jquery.slim.min.js"></script>
 	<script src="libs/popper.min.js"></script>
 	<script src="libs/bootstrap.min.js"></script>
 </head>
 <body>
-	<nav class="navbar navbar-light bg-light">
-		<a class="navbar-brand" href="https://ku.edu">
-			<img src="images/KUSig_Horz_Web_Blue.png" height="30" alt="">
-		</a>
-		<ul class="navbar-nav mr-auto">
-			<li class="nav-item">
-				<a class="nav-link" href="https://eecs.ku.edu">Electrical Engineering and Computer Science</a>
-			</li>
-		</ul>
-	</nav>
+	<header class="container-fluid py-3">
+		<div class="row">
+			<div class="col-sm-4">
+				<a href="https://eecs.ku.edu"><img class="KU_image" src="images/eecs_logo.png" height="60"></a>
+			</div>
+			<div class="col-sm-4 text-sm-center KU_color_text">
+				<h1>CourseCorrect</h1>
+			</div>
+		</div>
+	</header>
     <div class="container">
 		<div class="row">
 			<div class="col-lg-8">
@@ -56,6 +57,8 @@
 			</div>
 		</div>
 	</div>
+
+	<?=display_footer()?>
 
 	<!-- Modal -->
 	<div class="modal fade" id="create-plan" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
