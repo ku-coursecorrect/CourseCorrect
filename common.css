@@ -33,3 +33,10 @@ header, footer {
         display: none;
 	}
 }
+
+/* Used to ensure footer is at bottom */
+body {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
