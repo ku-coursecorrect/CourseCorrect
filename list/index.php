@@ -100,12 +100,13 @@
 								</select>
 							</div>
 							<script>
-								const DEGREES = <?=json_encode($db->query("SELECT major, year FROM degree ORDER BY major, year DESC"))?>;
+								const DEGREES = <?=json_encode($db->query("SELECT major, year FROM degree where deleted_ts IS NULL ORDER BY major, year DESC"))?>;
 								
 								// Create list of majors, e.g.: {"Computer Science": ["2018", "2019", ...], ...}
 								let majors = {};
 								for (const degree of DEGREES) {
 									const key = degree["major"];
+									console.log(degree);
 									if (!(key in majors)) majors[key] = [];
 									majors[key].push(degree["year"]);
 								}

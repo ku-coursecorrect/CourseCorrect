@@ -159,7 +159,7 @@
 	}
 
 	function find_degree_id($major, $year) {
-		$degree = $GLOBALS["db"]->query("SELECT degree_id FROM degree WHERE major = ? AND year = ?", [$major, $year]);
+		$degree = $GLOBALS["db"]->query("SELECT degree_id FROM degree WHERE major = ? AND year = ? AND deleted_ts IS NULL", [$major, $year]);
 		if (count($degree) == 1) return $degree[0]["degree_id"];
 		else crash(ErrorCode::InvalidDegree, [$_POST["major"], $_POST["year"]]);
 	}
