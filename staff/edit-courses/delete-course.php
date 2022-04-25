@@ -7,6 +7,7 @@
 	    unset($_GET['course_id']);
         $db->query("delete from requisite where dependent_id=?;", [$course_id]);
         $db->query("delete from requisite where course_id=?;", [$course_id]);
+        $db->query("delete from degree_join_course where course_id=?;", [$course_id]);
         $db->query("delete from course where course_id=?;", [$course_id]);
     }
 

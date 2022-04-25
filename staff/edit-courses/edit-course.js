@@ -373,7 +373,7 @@ function deleteModal(btn) {
         function (dependents) {
             let dependents_text = document.getElementById("dependents");
             if (dependents.length > 0) {
-                dependents_text.innerHTML = "<ul class='list-group'><li class='list-group-item list-group-item-danger'><b>" + course_code + " will be removed as a requisite from the following courses:</b></li>";
+                dependents_text.innerHTML = "<ul class='list-group'><li class='list-group-item list-group-item-danger'><b>" + course_code + " will be removed as a requisite from the following courses</b></li>";
                 dependents_text.innerHTML += "<li class='list-group-item'>" + dependents.join("</li><li class='list-group-item'>") + "</li>";
                 dependents_text.innerHTML += "</ul>";
             } else {
@@ -381,6 +381,21 @@ function deleteModal(btn) {
             }
         }
     )
+    fetch("get-dependent-degrees.php?course_id=" + course_id).then(json => json.json()).then(
+        function (degrees) {
+            let degrees_text = document.getElementById("degrees");
+            if (degrees.length > 0) {
+                degrees_text.innerHTML = "<ul class='list-group'><li class='list-group-item list-group-item-danger'><b>" + course_code + " will be removed as a course from the following degrees</b></li>";
+                for (deg of degrees) {
+                    degrees_text.innerHTML += "<li class='list-group-item'>" + (deg["major"] + ", " + deg["year"]) + "</li>";
+                }
+                degrees_text.innerHTML += "</ul>";
+            } else {
+                degrees_text.innerHTML = "";
+            }
+        }
+    )
+    
 }
 
 function deleteCourse(btn) {
