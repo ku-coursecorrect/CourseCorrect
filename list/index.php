@@ -106,7 +106,6 @@
 								let majors = {};
 								for (const degree of DEGREES) {
 									const key = degree["major"];
-									console.log(degree);
 									if (!(key in majors)) majors[key] = [];
 									majors[key].push(degree["year"]);
 								}
